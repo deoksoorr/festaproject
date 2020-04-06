@@ -81,19 +81,34 @@
 					btn.hide();
 				}
 				if (del == data[index].pronum|| del == fpronum|| pronum == mpronum) {
-					comments.append('<li>'
-						+ '<a href="" class="pf_picture">'
-						+ '<img src="${root }resources/upload/thumb/no_profile.png" alt="'+data[index].mcauthor+'님의 프로필 썸네일">'
-						+ '</a><p class="cmt_content">'
-						+ '<a href="" class="cmt_name">'
-						+ data[index].mcauthor
-						+ '</a>&nbsp;&nbsp;'
-						+ data[index].mccontent
-						+ '<span class="cmt_date">'
-						+ data[index].mcdate1
-						+ '</span>'
-						+ '<button class="btn_pop btn_delete btn_cmmt" id="mycmmtdelete" data-layer="deletecmmt" data-value="'+data[index].mcnum+'"><em class="snd_only">삭제하기</em></button></p>'
-						+ '</li>');
+					console.log("데이터 : "+data[index].pronum);
+					var check = "${profile.prophoto eq null}";
+					var tag = '<li>'
+						+ '<a href="${root}user/?pronum='+data[index].pronum+'" class="pf_picture">';
+						
+					if (check == "true") {
+						tag += '<img src="${upload }/${profile.prophoto}" alt="'+data[index].mcauthor+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+					} else {
+						tag += '<img src="${root }resources/upload/thumb/no_profile.png" alt="'+data[index].gcauthor+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+					}
+					
+						tag += '</a><p class="cmt_content">'
+							+ '<a href="" class="cmt_name">'
+							+ data[index].mcauthor
+							+ '</a>&nbsp;&nbsp;'
+							+ data[index].mccontent
+							+ '<span class="cmt_date">'
+							+ data[index].mcdate1
+							+ '</span>';
+					var pronum_check ="${profile.pronum eq login.pronum}";
+					if(check == "true"){
+						tag += '<button class="btn_pop btn_delete btn_cmmt" id="mycmmtdelete" data-layer="deletecmmt" data-value="'+data[index].mcnum+'"><em class="snd_only">삭제하기</em></button></p>'
+					}
+							
+						tag	+= '</li>';
+					
+					comments.append(tag);
+
 					$('.snd_only').last().focus();
 				} else {
 					comments.append('<li>'
@@ -145,6 +160,38 @@
 			});
 		});
 	});
+	
+	//좋아요 버튼 클릭시
+	$(document).on('click','.btn_liked',function(){
+		var pronum = $('#mypronum').val();
+		var num = $(this).parent().parent().siblings('.feed_inform').find('input[type=hidden]').eq(1).val();
+		var checking = $(this).hasClass('act');
+		//좋아요 등록
+		if(checking){
+			console.log('mpnum = '+num);
+			$.post('${root}user/likeadd','pronum='+pronum+'&mpnum='+num,function(html){
+				window.location.reload();
+			});
+		}
+		//좋아요 해제
+		else{
+			console.log('mpnum = '+num);
+			$.post('${root}user/likedel','pronum='+pronum+'&mpnum='+num,function(html){
+				window.location.reload();
+			});
+		}
+	})
+	
+	//좋아요버튼 갯수조절
+	var goodSize =$('.content_area>.feed_viewer .feed_options').length;
+	console.log('goodSize : '+goodSize);
+	if($('#wrap>input[type=hidden]').eq(0).val()!=''){
+	    for(var i = 0; i< goodSize; i++){
+	    	if($('.content_area>.feed_viewer .feed_options').eq(i).find('.btn_liked').hasClass('act')==false){
+				$('.content_area>.feed_viewer .feed_options').eq(i).prepend('<li><button class="btn_liked"><em class="snd_only">하트</em></button></li>');
+	        }
+	    }
+	}
 });
 	
 </script>
@@ -166,7 +213,7 @@
 						<a href="${root }"><em class="snd_only">FESTA</em></a>
 					</h1>
 					<form class="search_box">
-						<input type="text" placeholder="캠핑장 또는 그룹을 검색해보세요!">
+						<input type="text" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 						<button type="submit">
 							<img src="${root }resources/images/ico/btn_search.png" alt="검색">
 						</button>
@@ -290,16 +337,21 @@
 								<a href="">${profile.proaddr }</a>
 							</dd>
 							<dd class="pf_picture">
+								<c:if test="${profile.prophoto ne '' }">
 									<img src="${upload }/${profile.prophoto}"
 										alt="${profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${profile.prophoto eq '' }">
+									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
+								</c:if>
 							</dd>
 						</dl>
 					</div>
 					<div class="cnt_list">
 						<ul>
 							<li>피드<b>${myFeedCount }</b></li>
-							<li>팔로워<a class="btn_pop" href="${root }user/follower">${myFollowerCount}</a></li>
-							<li>팔로우<a class="btn_pop" href="${root }user/following">${myFollowingCount }</a></li>
+							<li>팔로워<a class="btn_pop" href="${root }user/follower?pronum=${login.pronum}">${myFollowerCount}</a></li>
+							<li>팔로우<a class="btn_pop" href="${root }user/following?pronum=${login.pronum}">${myFollowingCount }</a></li>
 						</ul>
 					</div>
 				</div>
@@ -309,77 +361,84 @@
 				<!-- 컨텐츠영역 시작 { -->
 				<section class="content_area">
 					<!-- #피드 만들기 -->
-					<div class="feed_maker">
-						<h3>피드 만들기</h3>
-						<form action="${root }user/add" method="post" class="maker_form"
-							enctype="multipart/form-data">
-							<input type="hidden" name="mpauthor" value="${login.proname }" />
-							<input type="hidden" name="pronum" value="${login.pronum }" />
-							<div class="mk_cont box">
-								<p class="pf_picture">
-										<img src="${upload }/${profile.prophoto}"
-										alt="${profile.proname }님의 프로필 썸네일">
-								</p>
-								<textarea id="mpcontent" name="mpcontent"
-									placeholder="${profile.proname } 님, 무슨 생각을 하고 계신가요?"></textarea>
-							</div>
-							<div class="file_thumbnail mk_thumb box">
-								<ul>
-									<li class="ft_btn"><input type="file" id="file1"
-										name="files" accept="video/*, image/*"> <img src=""
-										alt="">
-										<button class="btn_cancle" type="button">
-											<em class="snd_only">업로드 취소하기</em>
-										</button> <label for="file1" class="btn_file"><em
-											class="snd_only">사진/동영상 업로드하기</em></label></li>
-									<li class="ft_btn"><input type="file" id="file2"
-										name="files" accept="video/*, image/*"> <img src=""
-										alt="">
-										<button class="btn_cancle" type="button">
-											<em class="snd_only">업로드 취소하기</em>
-										</button> <label for="file2" class="btn_file"><em
-											class="snd_only">사진/동영상 업로드하기</em></label></li>
-									<li class="ft_btn"><input type="file" id="file3"
-										name="files" accept="video/*, image/*"> <img src=""
-										alt="">
-										<button class="btn_cancle" type="button">
-											<em class="snd_only">업로드 취소하기</em>
-										</button> <label for="file3" class="btn_file"><em
-											class="snd_only">사진/동영상 업로드하기</em></label></li>
-									<li class="ft_btn"><input type="file" id="file4"
-										name="files" accept="video/*, image/*"> <img src=""
-										alt="">
-										<button class="btn_cancle" type="button">
-											<em class="snd_only">업로드 취소하기</em>
-										</button> <label for="file4" class="btn_file"><em
-											class="snd_only">사진/동영상 업로드하기</em></label></li>
-									<li class="ft_btn"><input type="file" id="file5"
-										name="files" accept="video/*, image/*"> <img src=""
-										alt="">
-										<button class="btn_cancle" type="button">
-											<em class="snd_only">업로드 취소하기</em>
-										</button> <label for="file5" class="btn_file"><em
-											class="snd_only">사진/동영상 업로드하기</em></label></li>
-								</ul>
-							</div>
-							<div class="mk_bottom box">
-								<ul class="mk_tags">
-									<li><input type="text" id="httitle1" name="httitle1"></li>
-									<li><input type="text" id="httitle2" name="httitle2"></li>
-									<li><input type="text" id="httitle3" name="httitle3"></li>
-								</ul>
-								<ul class="mk_btns">
-									<li><label for="file1" class="btn_file"><em
-											class="snd_only">사진/동영상 업로드하기</em></label></li>
-									<li>
-										<button type="submit" class="btn_send">
-											<em class="snd_only">피드 게시하기</em>
-										</button>
-									</li>
-								</ul>
-							</div>
-						</form>
-					</div>
+					<c:if test="${login.pronum eq profile.pronum}">
+						<div class="feed_maker">
+							<h3>피드 만들기</h3>
+							<form action="${root }user/add" method="post" class="maker_form"
+								enctype="multipart/form-data">
+								<input type="hidden" name="mpauthor" value="${login.proname }" />
+								<input type="hidden" id="mypronum" name="pronum" value="${login.pronum }" />
+								<div class="mk_cont box">
+									<p class="pf_picture">
+										<c:if test="${profile.prophoto ne '' }">
+											<img src="${upload }/${profile.prophoto}"
+											alt="${profile.proname }님의 프로필 썸네일">
+										</c:if>
+										<c:if test="${profile.prophoto eq '' }">
+											<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >										
+										</c:if>
+									</p>
+									<textarea id="mpcontent" name="mpcontent"
+										placeholder="${profile.proname } 님, 무슨 생각을 하고 계신가요?"></textarea>
+								</div>
+								<div class="file_thumbnail mk_thumb box">
+									<ul>
+										<li class="ft_btn"><input type="file" id="file1"
+											name="files" accept="video/*, image/*"> <img src=""
+											alt="">
+											<button class="btn_cancle" type="button">
+												<em class="snd_only">업로드 취소하기</em>
+											</button> <label for="file1" class="btn_file"><em
+												class="snd_only">사진/동영상 업로드하기</em></label></li>
+										<li class="ft_btn"><input type="file" id="file2"
+											name="files" accept="video/*, image/*"> <img src=""
+											alt="">
+											<button class="btn_cancle" type="button">
+												<em class="snd_only">업로드 취소하기</em>
+											</button> <label for="file2" class="btn_file"><em
+												class="snd_only">사진/동영상 업로드하기</em></label></li>
+										<li class="ft_btn"><input type="file" id="file3"
+											name="files" accept="video/*, image/*"> <img src=""
+											alt="">
+											<button class="btn_cancle" type="button">
+												<em class="snd_only">업로드 취소하기</em>
+											</button> <label for="file3" class="btn_file"><em
+												class="snd_only">사진/동영상 업로드하기</em></label></li>
+										<li class="ft_btn"><input type="file" id="file4"
+											name="files" accept="video/*, image/*"> <img src=""
+											alt="">
+											<button class="btn_cancle" type="button">
+												<em class="snd_only">업로드 취소하기</em>
+											</button> <label for="file4" class="btn_file"><em
+												class="snd_only">사진/동영상 업로드하기</em></label></li>
+										<li class="ft_btn"><input type="file" id="file5"
+											name="files" accept="video/*, image/*"> <img src=""
+											alt="">
+											<button class="btn_cancle" type="button">
+												<em class="snd_only">업로드 취소하기</em>
+											</button> <label for="file5" class="btn_file"><em
+												class="snd_only">사진/동영상 업로드하기</em></label></li>
+									</ul>
+								</div>
+								<div class="mk_bottom box">
+									<ul class="mk_tags">
+										<li><input type="text" id="httitle1" name="httitle1"></li>
+										<li><input type="text" id="httitle2" name="httitle2"></li>
+										<li><input type="text" id="httitle3" name="httitle3"></li>
+									</ul>
+									<ul class="mk_btns">
+										<li><label for="file1" class="btn_file"><em
+												class="snd_only">사진/동영상 업로드하기</em></label></li>
+										<li>
+											<button type="submit" class="btn_send">
+												<em class="snd_only">피드 게시하기</em>
+											</button>
+										</li>
+									</ul>
+								</div>
+							</form>
+						</div>
+					</c:if>
 					<!-- } #피드만들기 끝 -->
 					<!-- #텍스트+썸네일 피드 시작 { -->
 					<c:forEach items="${myFeedSelectAll }" var="myFeedSelectAll">
@@ -387,19 +446,21 @@
 							<div class="tit box">
 								<dl class="feed_inform">
 									<dt>
-										<a href=""> <input type="hidden" id="mcauthor"
-											name="mcauthor" value="${profile.proname }" /> <input
-											type="hidden" id="mpnum" name="mpnum"
-											value="${myFeedSelectAll.mpnum }" /> <input type="hidden"
-											id="pronum" name="pronum" value="${profile.pronum }" /> <input
-											type="hidden" id="pronum_sync" name="pronum_sync"
-											value="${myFeedSelectAll.pronum}" /> 
-											<input type="hidden" id="feedPronum" value="${myFeedSelectAll.pronum }"/>
-											<span
-											class="pf_picture">									
-											<img src="${upload }/${profile.prophoto}"
-										alt="${profile.proname }님의 프로필 썸네일"></span> <span
-											class="fd_name">${profile.proname }</span>
+										<a href=""> 
+											<input type="hidden" id="mcauthor"	name="mcauthor" value="${profile.proname }" /> 
+											<input type="hidden" id="mpnum" name="mpnum" value="${myFeedSelectAll.mpnum }" /> 
+											<input type="hidden" id="pronum" name="pronum" value="${profile.pronum }" /> 
+											<input type="hidden" id="pronum_sync" name="pronum_sync" value="${myFeedSelectAll.pronum}" /> 
+											<input type="hidden" id="feedPronum" value="${myFeedSelectAll.pronum }" /> 
+											<span class="pf_picture"> 
+											<c:if test="${profile.prophoto ne '' }">
+												<img src="${upload }/${profile.prophoto}" alt="${profile.proname }님의 프로필 썸네일">
+											</c:if> 
+											<c:if test="${profile.prophoto eq '' }">
+												<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일">
+											</c:if>
+											</span> 
+											<span class="fd_name">${profile.proname }</span>
 										</a>
 									</dt>
 									<dd>
@@ -408,7 +469,12 @@
 									</dd>
 								</dl>
 								<ul class="feed_options">
-									<li><a href="" class="btn_liked act"><em class="snd_only">하트</em></a></li>
+									<c:forEach items="${goodlist }" var="goodlist">
+										<c:if test="${goodlist.mpnum eq myFeedSelectAll.mpnum }">
+
+											<li><a href="" class="btn_liked act"><em class="snd_only">하트</em></a></li>
+										</c:if>
+									</c:forEach>
 									<c:if test="${login.pronum ne myFeedSelectAll.pronum }">
 										<li><a href="${root }user/report"
 											class="btn_pop btn_report"><em class="snd_only">신고하기</em></a></li>
@@ -462,15 +528,22 @@
 												<c:if test="${not doneLoop }">
 													<li class="">
 														<!-- # 프로필 이미지 없음 { -->
-														<a href="${root }user/?pronum=${myFeedCmmtSelectAll.pronum}" class="pf_picture">
-														<img src="${upload }/${profile.prophoto}" alt="${myFeedCmmtSelectAll.mcauthor }님의 프로필 썸네일"/>
-														</a>
-														<!-- } # 프로필 이미지 없음 -->
+														<a
+														href="${root }user/?pronum=${myFeedCmmtSelectAll.pronum}"
+														class="pf_picture"> <c:if
+																test="${profile.prophoto ne '' }">
+																<img src="${upload }/${profile.prophoto}"
+																	alt="${profile.proname }님의 프로필 썸네일">
+															</c:if> <c:if test="${profile.prophoto eq '' }">
+																<img src="${root }resources/upload/thumb/no_profile.png"
+																	alt="${profile.proname }님의 프로필 썸네일">
+															</c:if>
+													</a> <!-- } # 프로필 이미지 없음 -->
 														<p class="cmt_content">
 														<input type="hidden" id="delCmmtNum" value="${myFeedCmmtSelectAll.mcnum}" />
 														<a href="" class="cmt_name">${myFeedCmmtSelectAll.mcauthor }</a>&nbsp;&nbsp;${myFeedCmmtSelectAll.mccontent }
 														<span class="cmt_date">${myFeedCmmtSelectAll.mcdate1 }</span>
-															<c:if test="${(profile.pronum eq myFeedSelectAll.pronum ) or (profile.pronum eq feedcmmt.pronum)}">
+															<c:if test="${profile.pronum eq login.pronum}">
 																<button class="btn_delete btn_pop" id="mycmmtdelete" data-layer="deletecmmt" data-value="${myFeedCmmtSelectAll.mcnum }">
 																	<em class="snd_only">삭제하기</em>
 																</button>
@@ -492,8 +565,12 @@
 									</c:if>
 								</div>
 								<form class="message_form">
-									<a class="pf_picture" href=""> <img src="${upload }/${profile.prophoto}"
-										alt="${profile.proname }님의 프로필 썸네일">
+									<a class="pf_picture" href=""> 
+									<c:if test="${profile.prophoto ne '' }">
+										<img src="${upload }/${profile.prophoto}" alt="${profile.proname }님의 프로필 썸네일">
+										</c:if> <c:if test="${profile.prophoto eq '' }">
+											<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일">
+										</c:if>
 									</a>
 									<p class="msg_input">
 										<textarea id="mccontent" name="mccontent"

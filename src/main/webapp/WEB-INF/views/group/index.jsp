@@ -7,7 +7,7 @@
 		<c:redirect url="/empty" />
 	</c:if>
 </c:if>
-<c:url value="/resources/upload" var="upload"></c:url>
+<c:url value="/upload" var="upload"></c:url>
 <c:url value="/" var="root" />
 <!DOCTYPE html>
 <html lang="ko">
@@ -35,7 +35,7 @@
 			$('#ntc4').removeAttr("name").attr({name : "gncontent"});
 			
 			if("on" != $("input:checkbox[name='ntc']:checked").val()){
-				$("#insertform").attr("action", "${root}group/add");4
+				$("#insertform").attr("action", "${root}group/add");
 				$('#ntc1').removeAttr("name").attr({name : "gpauthor"}); 
 				$('#ntc4').removeAttr("name").attr({name : "gpcontent"});
 				$(".mk_tags").show();
@@ -310,7 +310,7 @@
 													<c:when test="${joinGroup.group.grphoto eq null }">
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-																<span><img src="${root }resources/upload/thumb/no_profile.png"
+																<span><img src="${upload }/${joinGroup.group.grphoto}"
 																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
 														</a></li>
 													</c:when>
@@ -449,7 +449,7 @@
 					</div>
 					<p class="social_btns">
 						<button type="button" class="btn_chat"
-							onclick="window.open('${root}group/chat?grnum=${detail.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">그룹채팅</button>
+							onclick="window.open('${root}group/chat','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">그룹채팅</button>
 					</p>
 				</div>
 			</section>
@@ -467,7 +467,7 @@
 							<c:choose>
 								<c:when test="${!empty ntc }">
 									<c:forEach items="${ntc}" var="ntc">
-										<li><a class="btn_pop"
+										<li><a class="btn_feed"
 											href="${root }group/ntc_feed?gnnum=${ntc.gnnum}&grnum=${detail.grnum}">
 												<b>${ntc.gndate1 }</b>&nbsp;&nbsp;|&nbsp;&nbsp;${ntc.gncontent } </a></li>
 									</c:forEach>
@@ -958,6 +958,7 @@
 		feedType('feed_viewer');
 		btnPop('btn_pop2');
 		setFile();
+		openFeed();
 	</script>
 </body>
 </html>

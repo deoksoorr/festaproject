@@ -32,6 +32,8 @@ public interface AdminService {
 		
 		void adminGroupDetail(Model model, GroupVo groupVo);
 		
+		List<List<?>> adminGroupDetailScroll(Model model, GroupVo groupVo);
+		
 		void adminGroupDetailNotice(Model model, GroupNoticeVo grroupnoticeVo);
 		
 		void adminGroupDetailNoticeDelete(Model model, GroupNoticeVo groupNoticeVo);
@@ -51,6 +53,8 @@ public interface AdminService {
 		void adminUserKick(Model model, MyAdminVo myAdminVo);
 		
 		void adminUserDetail(HttpServletRequest req, ProfileVo profileVo);
+		
+		List<List<?>> adminUserDetailScroll(HttpServletRequest req, ProfileVo profileVo);
 		
 		void adminUserDelete(Model model, MyPostVo myPostVo);
 		

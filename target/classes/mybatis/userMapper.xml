@@ -105,6 +105,13 @@
       <result column="httitle3" property="httitle3"/>
    </resultMap>
   
+   <!-- 내 좋아요목록 -->
+   <resultMap type="MyGoodVo" id="good">
+      <result column="pronum6" property="pronum"/>
+      <result column="canum3" property="canum"/>
+      <result column="gpnum3" property="gpnum"/>
+      <result column="mpnum2" property="mpnum"/>
+   </resultMap>
    
    <!-- 추가 사항 -->
 
@@ -252,7 +259,7 @@
    </update>
       
    <!-- 내 좋아요목록 갱신 -->
-   <select id="myGoodRenewal" parameterType="MyGoodVo" resultType="MyGoodVo">
+   <select id="myGoodRenewal" parameterType="MyGoodVo" resultMap="good">
       select * from mygood where pronum6=#{pronum}
    </select>
    

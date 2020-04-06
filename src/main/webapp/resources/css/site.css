@@ -999,12 +999,12 @@ textarea:focus {
 .comm_buttons {
   display: table;
   margin: 25px auto 0;
+  overflow: hidden;
 }
 
 .comm_buttons li {
-  display: table-cell;
-  vertical-align: middle;
-  padding: 0 15px;
+  float: left;
+  margin: 0 15px;
 }
 
 .comm_btn {
@@ -2335,6 +2335,7 @@ form .f_message.ok {
   top: 9px;
   left: 15px;
   width: 30px;
+  height: 30px;
 }
 
 .message_form .msg_input {
@@ -4899,12 +4900,22 @@ form .f_message.ok {
 
 .chat_wrap .ch_user li .pf_picture {
   width: 24px;
+  height: 24px;
   margin: 3px 0;
-  border-radius: 5px;
+  border-radius: 8px;
 }
 
 .chat_wrap .ch_user li .pf_picture:before {
-  border-radius: 5px;
+  border-radius: 8px;
+}
+
+.chat_wrap .ch_user li img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  max-width: none;
 }
 
 .chat_wrap .ch_user li .pf_name {
@@ -4949,12 +4960,22 @@ form .f_message.ok {
 }
 
 .chat_wrap .chat_info.box .pf_picture {
-  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
 }
 
 .chat_wrap .chat_info.box .pf_picture:before {
-  border-radius: 10px;
   border-color: #fff;
+}
+
+.chat_wrap .chat_info.box .pf_picture img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  max-width: none;
 }
 
 .chat_wrap .chat_info.box .ch_gpname {
@@ -5921,6 +5942,11 @@ form .f_message.ok {
   font-size: 30px;
   margin: -15px 0 0 -15px;
   color: #fff;
+  z-index: 10;
+}
+
+#fstLoad.in {
+  color: #999;
 }
 
 .fstPop {

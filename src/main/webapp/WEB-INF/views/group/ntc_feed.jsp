@@ -3,14 +3,24 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <jsp:useBean id="now" class="java.util.Date" />
-<c:url value="/resources/upload" var="upload"></c:url>
+<c:url value="/upload" var="upload"></c:url>
 <c:url value="/" var="root" />
 <!doctype html>
 <!-- #팝업 피드 -->
 <!-- #텍스트+썸네일 피드 시작 { -->
 <script type="text/javascript">
 	$(document).ready(function(){
-
+		// 신고하기 팝업
+		$('.btn_report').on('click', function(e) {
+			var url = $(this).attr('href');
+			openLayer(e, url);
+		});
+		
+		// 피드 수정하기 팝업
+		$('.btn_edit').on('click', function() {
+			openPop('ntcmaker', none, none, setFile);
+		});
+		
 		//댓글입력 엔터
 		$("#ntcaddmsg").keydown(function(key) {
             if (key.keyCode == 13) {
@@ -55,7 +65,8 @@
 	    			      url: "${root}group/ntc_feed?gnnum=${ntcDetail.gnnum}&grnum=${ntcDetail.grnum}",   
 	    			      cache: false   
 	    			}).done(function(html) {
-	    			      $("#feed_viewerntc").replaceWith(html);   
+	    			      $("#feed_viewerntc").replaceWith(html);
+	    			      imageLoad(0);
 	    			});  
 		        }
 		    });
@@ -160,9 +171,7 @@
 			});//ajax통신 end
 		});//댓글더보기 end
 		
-		
 		$('#feedUpdate').on('click', function(){
-			
 			var files = new FormData($('#update_feed')[0]);
 			$.ajax({
 				type: "POST",
@@ -179,7 +188,9 @@
 	    			}).done(function(html) {
 	    				openPop('updateOk');
 	    				$('#finish_update').on('click', function(){
-		    			    $("#feed_viewerntc").replaceWith(html);   	    					
+		    			    $("#feed_viewerntc").replaceWith(html);
+		    			    imageLoad(150);
+		    			    scrBar('.fstPop .scrBar');
 	    				});
 	    			});  
 		        },
@@ -195,7 +206,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:url value="/" var="root" />
 
-<div class="feed_viewer" id="feed_viewerntc">
+<div class="feed_viewer<c:if test="${!empty ntcDetail.gnphoto}"> half</c:if>" id="feed_viewerntc">
 	<div class="tit box">
 		<dl class="feed_inform">
 			<dt>
@@ -217,10 +228,10 @@
 		</dl>
 		<ul class="feed_options">
 			<c:if test="${login.pronum ne detail.pronum }">
-				<li><a href="${root }group/ntc_report?gnnum=${ntcDetail.gnnum}&profile.pronum=${detail.profile.pronum}&profile.proname=${detail.profile.proname}&profile.proid=${detail.profile.proid}" class="btn_pop2 btn_report"><em class="snd_only">신고하기</em></a></li>
+				<li><a href="${root }group/ntc_report?gnnum=${ntcDetail.gnnum}&profile.pronum=${detail.profile.pronum}&profile.proname=${detail.profile.proname}&profile.proid=${detail.profile.proid}" class="btn_report"><em class="snd_only">신고하기</em></a></li>
 			</c:if>
 			<c:if test="${login.pronum eq detail.pronum}">
-				<li><button class="btn_edit btn_pop ntc" id="editntcfeed" data-layer="ntcmaker"><em class="snd_only">수정하기</em></button></li>		
+				<li><button class="btn_edit ntc" id="editntcfeed"><em class="snd_only">수정하기</em></button></li>		
 				<li><button class="btn_delete btn_pop ntc" id="deletentcfeed" data-layer="deletentcfe" data-value="${ntcDetail.gnnum }"><em class="snd_only">삭제하기</em></button></li>
 			</c:if>
 		</ul>
@@ -319,9 +330,6 @@
 				</ul>
 			</div>
 		</div>
-		<button type="button" class="btn_close">
-			<em class="snd_only">창 닫기</em>
-		</button>
 	</div>
 	
 	<div id="deletentcfe" class="fstPop">
@@ -335,9 +343,6 @@
 				</ul>
 			</div>
 		</div>
-		<button type="button" class="btn_close">
-			<em class="snd_only">창 닫기</em>
-		</button>
 	</div>
 	
 		<!-- #팝업 처리완료 { -->
@@ -385,7 +390,7 @@
 						<c:set var="count" value="${count+1 }" />
 						<li class="ft_thumb">
 							<input type="hidden" id="gnphoto${count }" name="gnphoto" value="${item }" />
-							<input type="file" id="file1_${count }" name="filess" accept="video/*, image/*" value="${item }" /> 
+							<input type="file" id="file1_${count }" name="filess" accept="video/*, image/*" value="${item}" /> 
 							<img src="${upload }/${item}" alt="">
 							<button class="btn_cancle" id="btn_gnphoto${count }" type="button">
 								<em class="snd_only">업로드 취소하기</em>
@@ -427,13 +432,7 @@
 			</ul>
 		</div>
 	</div>
-		<button type="button" class="btn_close"><em class="snd_only">창 닫기</em></button>
-	</div>
 	
 <script type="text/javascript">
-	scrBar();
-	feedType('feed_viewer');
 	btnToggle('btn_liked');
-	btnPop('btn_pop2');
-	setFile();
 </script>

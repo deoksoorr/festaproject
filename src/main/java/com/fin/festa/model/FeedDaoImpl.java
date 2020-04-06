@@ -12,6 +12,7 @@ import com.fin.festa.model.entity.GroupPostVo;
 import com.fin.festa.model.entity.MyCommentVo;
 import com.fin.festa.model.entity.MyGoodVo;
 import com.fin.festa.model.entity.MyPostVo;
+import com.fin.festa.model.entity.PageSearchVo;
 import com.fin.festa.model.entity.ReportListVo;
 
 @Repository
@@ -26,9 +27,9 @@ public class FeedDaoImpl implements FeedDao{
 	
 	//인기그룹피드 출력
 	@Override
-	public List<FeedVo> hotGroupFeedSelectAll() {
+	public List<FeedVo> hotGroupFeedSelectAll(PageSearchVo page) {
 		
-		return sqlSession.selectList("feed.hotGroupFeedList");
+		return sqlSession.selectList("feed.hotGroupFeedList", page);
 	}
 
 	//인기그룹피드 댓글출력
@@ -40,9 +41,9 @@ public class FeedDaoImpl implements FeedDao{
 	
 	//인기개인피드 출력
 	@Override
-	public List<FeedVo> hotMyFeedSelectAll() {
+	public List<FeedVo> hotMyFeedSelectAll(PageSearchVo page) {
 		
-		return sqlSession.selectList("feed.hotMyFeedList");
+		return sqlSession.selectList("feed.hotMyFeedList", page);
 	}
 	
 	//인기개인피드 댓글출력

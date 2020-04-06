@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -19,6 +18,7 @@ import com.fin.festa.model.entity.GroupPostVo;
 import com.fin.festa.model.entity.MyCommentVo;
 import com.fin.festa.model.entity.MyGoodVo;
 import com.fin.festa.model.entity.MyPostVo;
+import com.fin.festa.model.entity.PageSearchVo;
 import com.fin.festa.model.entity.ReportListVo;
 import com.fin.festa.service.FeedService;
 
@@ -39,6 +39,13 @@ public class FeedController {
 		
 		feedService.hotFeedSelectAll(req);
 		return "hot/index";
+	}
+	
+	//인기피드 조회
+	@RequestMapping(value = "scroll", method = RequestMethod.GET)
+	public @ResponseBody List<List<?>> hotFeedScroll(HttpServletRequest req, PageSearchVo pagesearchVo) {
+		
+		return feedService.hotFeedScroll(req, pagesearchVo);
 	}
 
 	//내 인기피드 수정 (팝업)

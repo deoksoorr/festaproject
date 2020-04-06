@@ -19,7 +19,7 @@
 	<title>FESTA</title>
 	<script type="text/javascript">
 	$(function() {
-		var login = '${login.pronum ne null}';
+		var login = '${login ne null}';
 		var goBtn = $('.btn_go a');
 		goBtn.on('click', function(e) {
 			if (login == 'false') {
@@ -41,8 +41,7 @@
 				'pronum': $('[name=pronum]').val(),
 			};
 			$.post('${root}camp/detail/revadd', rvParam)
-				.done(refresh
-			);
+				.done(refresh);
 		});
 		
 		var alertText = $('#layer').find('.pop_tit');
@@ -50,15 +49,17 @@
 		var deleteBtn = $('#layer').find('#deleteBtn');
 		var confirmBtn = buttons.find('#confirmBtn');
 		var otherBtns = buttons.find('button').not('#confirmBtn');
-		var deleteVal;
-		var container = '.rateList';
+		var deleteUrl;
+		var container = '.rate_list';
 		
 		function cfmMessage() {
 			alertText.text('한줄평을 삭제하시겠습니까?');
 			confirmBtn.hide();
 			otherBtns.show();
 		}
-		$(document).on('click', '.btn_delete', function() {
+		$(document).on('click', '.btn_delete', function(e) {
+			e.preventDefault();
+			deleteUrl = $(this).attr('href');
 			openPop('layer', cfmMessage, refresh);
 		});
 		
@@ -68,18 +69,44 @@
 			confirmBtn.show();
 		}
 		deleteBtn.on('click', function() {
-			deleteVal = $(this).data('value');
 			$.ajax({
 				type: 'POST',
-				url: '${root}/camp/detail/revdel?crnum='+deleteVal,
-				data: deleteVal,
+				url: deleteUrl,
 				success: delMessage,
 				error: function() {
 					alertText.text('올바른 방법으로 다시 시도해주세요.');
 					otherBtns.hide();
-					confirmBtn.show(buttons);
+					confirmBtn.show();
 				}
 			});
+		});
+		
+		if (login == 'true' && $('.btn_liked').length == 0) {
+			var tag = '<button class="btn_liked"><em class="snd_only">하트</em></button>';
+			var container = $('.cp_options li:first-child');
+			container.append(tag);
+		}
+		$(document).on('click', '.btn_liked', function() {
+			var cntTag = $(this).siblings('.cp_liked'),
+				cnt = Number(cntTag.text());
+			var addLike = $(this).hasClass('act');
+			var likedParam = {
+				'pronum': '${login.pronum}',
+				'canum': '${camp.canum}',
+			};
+			if (addLike) {
+				$.post('${root}camp/detail/likeadd', likedParam)
+					.done(function() {
+						console.log(cntTag);
+						cntTag.text(cnt+1);
+					});
+			} else {
+				$.post('${root}camp/detail/likedel', likedParam)
+					.done(function() {
+						console.log("del ok");
+						cntTag.text(cnt-1);
+					});
+			}
 		});
 	});
 	</script>
@@ -98,7 +125,7 @@
 					<a href="${root}"><em class="snd_only">FESTA</em></a>
 				</h1>
 				<form class="search_box" action="${root }search">
-					<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!">
+					<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 					<button type="submit">
 						<img src="${root }resources/images/ico/btn_search.png" alt="검색">
 					</button>
@@ -207,10 +234,27 @@
 						<ul class="cp_options">
 							<li>
 								<b class="cp_liked">${camp.cagood}</b>
-								<button class="btn_liked act"><em class="snd_only">하트</em></button>
+								<c:choose>
+									<c:when test="${login ne null}">
+										<c:forEach items="${goodlist}" var="good">
+											<c:if test="${good.canum eq camp.canum}"><button class="btn_liked act"><em class="snd_only">하트</em></button></c:if>
+										</c:forEach>
+									</c:when>
+									<c:otherwise><a class="btn_liked2 btn_pop" href="${root}member/login"><em class="snd_only">하트</em></a></c:otherwise>
+								</c:choose>
 							</li>
-							<li><button class="btn_bookmark"><em class="snd_only">저장하기</em></button></li>
-							<c:if test="${login.pronum ne null}">
+							<c:choose>
+							<c:when test="${login ne null}">
+								<li>
+								<c:forEach items="${bookMark}" var="book">
+								${book}
+								</c:forEach>
+									<button class="btn_bookmark2"><em class="snd_only">저장하기</em></button>
+								</li>
+							</c:when>
+							<c:otherwise><li><a class="btn_bookmark2 btn_pop" href="${root}member/login"><em class="snd_only">저장하기</em></a></li></c:otherwise>
+							</c:choose>
+							<c:if test="${login ne null}">
 							<li><a href="${root}camp/detail/report" class="btn_report"><em class="snd_only">신고하기</em></a></li>
 							</c:if>
 							<li><a class="btn_back" href="${root}camp/"><em class="snd_only">목록으로</em></a></li>
@@ -278,9 +322,9 @@
 					<p>
 						한줄평 <c:if test="${campReviewCount ne null}"><span><fmt:formatNumber value='${campReviewCount}' pattern='000' />개</span></c:if>
 					</p>
-					<p>평점 <span>${camp.caavg}</span></p>
+					<p>평점 <span><fmt:formatNumber value="${camp.caavg}" pattern=".0" /></span></p>
 				</h4>
-				<ul id="rateList" class="rate_list">
+				<ul class="rate_list">
 				<c:choose>
 					<c:when test="${campReviewCount ne null}">
 						<c:forEach items="${campReviewList}" var="review">
@@ -305,7 +349,7 @@
 							<p class="rt_date">${review.crdate}</p>
 							<c:if test="${login.pronum eq review.pronum}">
 							<p class="rt_option">
-								<button type="button" class="btn_delete" data-value="${review.crnum}"><em class="snd_only">삭제하기</em></button>
+								<a class="btn_delete" href="${root}camp/detail/revdel?canum=${camp.canum}&crnum=${review.crnum}"><em class="snd_only">삭제하기</em></a>
 							</p>
 							</c:if>
 						</li>
@@ -317,8 +361,9 @@
 				</c:choose>
 				</ul>
 				<div class="fstPage"><ul></ul></div>
-				<c:if test="${login.pronum ne null}">
 				<h4 class="snd_only">한줄평 작성</h4>
+				<c:choose>
+				<c:when test="${login ne null}">
 				<form class="rate_form" method="POST" action="${root}camp/detail/revadd">
 					<input type="hidden" name="pronum" value="${profile.pronum}">
 					<input type="hidden" name="canum" value="${camp.canum}">
@@ -352,7 +397,17 @@
 					<button type="submit" class="rt_btn_send">등록</button>
 					<p class="rt_caution"><span>캠핑장에 관련된 내용이 아니거나 허위사실 기재 시 운영원칙에 따라 삭제될 수 있습니다.</span></p>
 				</form>
-				</c:if>
+				</c:when>
+				<c:otherwise>
+				<form class="rate_form">
+					<div class="fstEmpty">
+						<textarea class="rt_input fstEmpty" placeholder="로그인이 필요한 서비스입니다." disabled="disabled"></textarea>
+					</div>
+					<button type="button" class="rt_btn_send">등록</button>
+					<p class="rt_caution"><span>캠핑장에 관련된 내용이 아니거나 허위사실 기재 시 운영원칙에 따라 삭제될 수 있습니다.</span></p>
+				</form>
+				</c:otherwise>
+				</c:choose>
 			</div>
 		</section>
 		<section class="others_area">
@@ -420,7 +475,7 @@
 		<h4 class="pop_tit"></h4>
 		<ul class="comm_buttons">
 			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
-			<li><button type="button" id="deleteBtn" class="comm_btn cfm">삭제하기</button></li>
+			<li><button type="button" id="deleteBtn" class="comm_btn cfm">확인</button></li>
 			<li><button type="button" id="confirmBtn" class="btn_close comm_btn cfm">확인</button></li>
 		</ul>
 	</div>

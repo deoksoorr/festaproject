@@ -69,6 +69,9 @@
 		<result column="mpgood" property="mpgood"/>
 		<result column="pronum12" property="pronum"/>
 		<result column="mptotal" property="mptotal"/>
+		<result column="httitle1" property="httitle1"/>
+		<result column="httitle2" property="httitle2"/>
+		<result column="httitle3" property="httitle3"/>
 		<association property="profile" resultMap="profile4"/>
 	</resultMap>
 	
@@ -86,6 +89,7 @@
 		<result column="httitle1" property="httitle1"/>
 		<result column="httitle2" property="httitle2"/>
 		<result column="httitle3" property="httitle3"/>
+		<association property="group" resultMap="group1"/>
 		<association property="profile" resultMap="profile4"/>
 	</resultMap>
 	
@@ -323,7 +327,7 @@
 	
 	<!-- 그룹피드출력 -->
 	<select id="groupFeedInfoSelectAll" parameterType="GroupVo" resultMap="grouppost">
-		select d.*,(select count(*) from groupcomment where gpnum1=d.gpnum) as gptotal from (select a.*,c.prophoto from grouppost a inner join profile c on a.pronum3=c.pronum where grnum1=#{grnum} order by gpdate desc) d
+		 select d.*,(select count(*) from groupcomment where gpnum1=d.gpnum) as gptotal from (select @rownum:=@rownum+1 as gprn,a.*,b.grname,c.prophoto,c.proname from grouppost a inner join group1 b on a.grnum1=b.grnum inner join profile c on a.pronum3=c.pronum,(select @rownum:=0) r where grnum1=#{grnum} order by gpdate desc) d where gprn<![CDATA[ >= ]]>#{pageSearch.startnum} and gprn<![CDATA[ <= ]]>#{pageSearch.endnum}
 	</select>
 	
 	<!-- 그룹피드댓글 더보기 비동기 -->
@@ -431,9 +435,9 @@
 	
 	<!-- 유저 피드목록 출력 -->
 	<select id="userFeed" parameterType="ProfileVo" resultMap="post">
-		select d.*,(select count(*) from mycomment where mpnum1=d.mpnum) as mptotal from 
-		(select a.*,c.prophoto,c.proname from mypost a inner join profile c
-		 on a.pronum12=c.pronum where pronum12=#{pronum} order by mpdate desc) d
+		 select d.*,(select count(*) from mycomment where mpnum1=d.mpnum) as mptotal from 
+		(select @rownum:=@rownum+1 as mprn,a.*,c.prophoto,c.proname from mypost a inner join profile c
+		 on a.pronum12=c.pronum,(select @rownum:=0) r where pronum12=#{pronum} order by mpdate desc) d where mprn<![CDATA[ >= ]]>#{pageSearch.startnum} and mprn<![CDATA[ <= ]]>#{pageSearch.endnum}
 	</select>
 	
 	<!-- 유저 피드댓글목록 출력 -->

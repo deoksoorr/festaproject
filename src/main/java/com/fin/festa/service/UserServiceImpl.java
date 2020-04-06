@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,7 +34,7 @@ import com.fin.festa.util.UploadPhoto;
 @Service
 public class UserServiceImpl implements UserService {
 
-	// ë“±ë¡,ìˆ˜ì •,ì‚­ì œê°€ ìµœì†Œ2ê°œì´ìƒ ë“¤ì–´ê°€ëŠ” ë©”ì†Œë“œëŠ” ê¼­ íŠ¸ëœì­ì…˜ ì ìš©í• ê²ƒ!!
+	// µî·Ï,¼öÁ¤,»èÁ¦°¡ ÃÖ¼Ò2°³ÀÌ»ó µé¾î°¡´Â ¸Ş¼Òµå´Â ²À Æ®·£Àè¼Ç Àû¿ëÇÒ°Í!!
 
 	@Autowired
 	UserDaoImpl userDao;
@@ -41,8 +42,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	MemberDaoImpl memberDao;
 
-	// ì¶”ê°€ì‚¬í•­
-	// ìœ ì € ëŒ“ê¸€ ë”ë³´ê¸° ë¹„ë™ê¸°
+	// Ãß°¡»çÇ×
+	// À¯Àú ´ñ±Û ´õº¸±â ºñµ¿±â
 
 	@Override
 	public List<MyCommentVo> userDetailCmmt(Model model, MyPostVo post) {
@@ -53,13 +54,13 @@ public class UserServiceImpl implements UserService {
 		return userDao.FeedDetailCmmt(model, post);
 	}
 
-	// ë¹„í™œì„±í™”ê³„ì •, ì •ì§€ê³„ì •, ì¶”ë°©ê³„ì • ì²´í¬ v
-	// ë‚´ì •ë³´ ì¶œë ¥ v
-	// ë‚´í”¼ë“œ ì¶œë ¥ v
-	// ë‚´í”¼ë“œëŒ“ê¸€ ì¶œë ¥ v
-	// ë‚´í”¼ë“œê°¯ìˆ˜ ì¶œë ¥ v
-	// ë‚´íŒ”ë¡œì‰ê°¯ìˆ˜ ì¶œë ¥ v
-	// ë‚´íŒ”ë¡œì›Œê°¯ìˆ˜ ì¶œë ¥ v
+	// ºñÈ°¼ºÈ­°èÁ¤, Á¤Áö°èÁ¤, Ãß¹æ°èÁ¤ Ã¼Å© v
+	// ³»Á¤º¸ Ãâ·Â v
+	// ³»ÇÇµå Ãâ·Â v
+	// ³»ÇÇµå´ñ±Û Ãâ·Â v
+	// ³»ÇÇµå°¹¼ö Ãâ·Â v
+	// ³»ÆÈ·ÎÀ×°¹¼ö Ãâ·Â v
+	// ³»ÆÈ·Î¿ö°¹¼ö Ãâ·Â v
 	@Override
 	public void feedSelectOne(HttpServletRequest req, ProfileVo profile) {
 		HttpSession session = req.getSession();
@@ -67,8 +68,8 @@ public class UserServiceImpl implements UserService {
 		profile = userDao.myInfo(profile);
 		MyAdminVo myAdmin = userDao.adminCheck(profile);
 		if (myAdmin.getPropublic() == 1 && myAdmin.getProstop() == 1 && myAdmin.getProkick() == 1) {
-			List<MyPostVo> myFeedSelectAll = userDao.myFeedSelectAll(profile); // í”¼ë“œ ë¦¬ìŠ¤íŠ¸
-			List<MyCommentVo> myFeedCmmtSelectAll = userDao.myFeedCmmtSelectAll(profile); // í”¼ë“œ ëŒ“ê¸€ ë¦¬ìŠ¤íŠ¸
+			List<MyPostVo> myFeedSelectAll = userDao.myFeedSelectAll(profile); // ÇÇµå ¸®½ºÆ®
+			List<MyCommentVo> myFeedCmmtSelectAll = userDao.myFeedCmmtSelectAll(profile); // ÇÇµå ´ñ±Û ¸®½ºÆ®
 			int myFeedCount = userDao.myFeedCount(profile);
 			int myFollowerCount = userDao.myFollowerCount(profile);
 			int myFollowingCount = userDao.myFollowingCount(profile);
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-	// ë‚´í”¼ë“œ ë“±ë¡
+	// ³»ÇÇµå µî·Ï
 	@Override
 	public void feedInsertOne(HttpServletRequest req, MultipartFile[] files, MyPostVo myPostVo) {
 		UploadPhoto up = new UploadPhoto();
@@ -91,14 +92,14 @@ public class UserServiceImpl implements UserService {
 		userDao.myFeedInsertOne(myPostVo);
 	}
 
-	// ë‚´í”¼ë“œ ë””í…Œì¼
+	// ³»ÇÇµå µğÅ×ÀÏ
 	@Override
 	public void myFeedDetail(Model model, MyPostVo myPostVo) {
 		myPostVo = userDao.myFeedDetail(myPostVo);
 		model.addAttribute("feedDetail", myPostVo);
 	}
 
-	// ë‚´í”¼ë“œ ìˆ˜ì •
+	// ³»ÇÇµå ¼öÁ¤
 	@Override
 	public void feedUpdateOne(HttpServletRequest req, MultipartFile[] filess, MyPostVo myPostVo) {
 		UploadPhoto up = new UploadPhoto();
@@ -116,13 +117,13 @@ public class UserServiceImpl implements UserService {
 		userDao.myFeedUpdateOne(myPostVo);
 	}
 
-	// ë‚´í”¼ë“œ ì‚­ì œ
+	// ³»ÇÇµå »èÁ¦
 	@Override
 	public void feedDeleteOne(Model model, MyPostVo myPostVo) {
 		userDao.myFeedDeleteOne(myPostVo);
 	}
 
-	// ë‚´í”¼ë“œëŒ“ê¸€ ë“±ë¡
+	// ³»ÇÇµå´ñ±Û µî·Ï
 	@Override
 	public void feedCmmtInsertOne(HttpServletRequest req, MyCommentVo myCommentVo) {
 		userDao.myFeedCmmtInsertOne(myCommentVo);
@@ -134,70 +135,83 @@ public class UserServiceImpl implements UserService {
 		 */
 	}
 
-	// ë‚´í”¼ë“œëŒ“ê¸€ ì‚­ì œ
+	// ³»ÇÇµå´ñ±Û »èÁ¦
 	@Override
 	public void feedCmmtDeleteOne(Model model, MyCommentVo myCommentVo) {
 		userDao.myFeedCmmtDeleteOne(myCommentVo);
 	}
 
-	// ë‚´í”¼ë“œ ì¢‹ì•„ìš”ë“±ë¡
-	// ë‚´í”¼ë“œ ì¢‹ì•„ìš”ë“±ë¡ì‹œ í”¼ë“œì¢‹ì•„ìš”ê°¯ìˆ˜ +1
-	// ë‚´ ì¢‹ì•„ìš”ëª©ë¡ ê°±ì‹ 
+	// ³»ÇÇµå ÁÁ¾Æ¿äµî·Ï
+	// ³»ÇÇµå ÁÁ¾Æ¿äµî·Ï½Ã ÇÇµåÁÁ¾Æ¿ä°¹¼ö +1
+	// ³» ÁÁ¾Æ¿ä¸ñ·Ï °»½Å
+	@Transactional
 	@Override
 	public void likeInsertOne(HttpServletRequest req, MyGoodVo myGoodVo) {
-		// TODO Auto-generated method stub
-
+		userDao.myFeedLikeInsertOne(myGoodVo);
+		MyPostVo post = new MyPostVo();
+		post.setMpnum(myGoodVo.getMpnum());
+		
+		userDao.myFeedLikeOnePlus(post);
+		req.getSession().setAttribute("goodlist", userDao.myGoodRenewal(myGoodVo));
 	}
 
-	// ë‚´í”¼ë“œ ì¢‹ì•„ìš”í•´ì œ
-	// ë‚´í”¼ë“œ ì¢‹ì•„ìš”í•´ì œì‹œ í”¼ë“œì¢‹ì•„ìš”ê°¯ìˆ˜ -1
-	// ë‚´ ì¢‹ì•„ìš”ëª©ë¡ ê°±ì‹ 
+	// ³»ÇÇµå ÁÁ¾Æ¿äÇØÁ¦
+	// ³»ÇÇµå ÁÁ¾Æ¿äÇØÁ¦½Ã ÇÇµåÁÁ¾Æ¿ä°¹¼ö -1
+	// ³» ÁÁ¾Æ¿ä¸ñ·Ï °»½Å
+	@Transactional
 	@Override
 	public void likeDeleteOne(HttpServletRequest req, MyGoodVo myGoodVo) {
-		// TODO Auto-generated method stub
-
+		userDao.myFeedLikeDeleteOne(myGoodVo);
+		MyPostVo post = new MyPostVo();
+		post.setMpnum(myGoodVo.getMpnum());
+		
+		userDao.myFeedLikeOneMinus(post);
+		req.getSession().setAttribute("goodlist", userDao.myGoodRenewal(myGoodVo));
+		
 	}
 
-	// ë‚´íŒ”ë¡œì‰ëª©ë¡ì— ë“±ë¡
-	// ìƒëŒ€íŒ”ë¡œì›Œëª©ë¡ì— ë“±ë¡
-	// ë‚´ íŒ”ë¡œì‰ëª©ë¡ ê°±ì‹ 
+	// ³»ÆÈ·ÎÀ×¸ñ·Ï¿¡ µî·Ï
+	// »ó´ëÆÈ·Î¿ö¸ñ·Ï¿¡ µî·Ï
+	// ³» ÆÈ·ÎÀ×¸ñ·Ï °»½Å
 	@Override
 	public void followInsertOne(HttpServletRequest req, MyFollowingVo myFollowingVo) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
-	// ë‚´íŒ”ë¡œì‰ëª©ë¡ì— ì‚­ì œ
-	// ìƒëŒ€íŒ”ë¡œì›Œëª©ë¡ì— ì‚­ì œ
-	// ë‚´ íŒ”ë¡œì‰ëª©ë¡ ê°±ì‹ 
+	// ³»ÆÈ·ÎÀ×¸ñ·Ï¿¡ »èÁ¦
+	// »ó´ëÆÈ·Î¿ö¸ñ·Ï¿¡ »èÁ¦
+	// ³» ÆÈ·ÎÀ×¸ñ·Ï °»½Å
 	@Override
 	public void followDeleteOne(HttpServletRequest req, MyFollowingVo myFollowingVo) {
-		// TODO Auto-generated method stub
-
+		userDao.myFollowingDeleteOne(myFollowingVo);
+		userDao.yourFollowerDeleteOne(myFollowingVo);
+		
+		HttpSession session = req.getSession();
+		session.setAttribute("followlist", userDao.myFollowingRenewal(myFollowingVo));
 	}
 
-	// ìœ ì €ì‹ ê³ ë“±ë¡
-	// ì‹ ê³ ë‹¹í•œìœ ì € ì‹ ê³ ë‹¹í•œíšŸìˆ˜ +1
+	// À¯Àú½Å°íµî·Ï
+	// ½Å°í´çÇÑÀ¯Àú ½Å°í´çÇÑÈ½¼ö +1
 	@Override
 	public void userReport(Model model, ReportListVo reportListVo) {
 		// TODO Auto-generated method stub
 
 	}
 
-	// í”¼ë“œì‹ ê³ ë“±ë¡
-	// ì‹ ê³ ë‹¹í•œìœ ì € ì‹ ê³ ë‹¹í•œíšŸìˆ˜ +1
+	// ÇÇµå½Å°íµî·Ï
+	// ½Å°í´çÇÑÀ¯Àú ½Å°í´çÇÑÈ½¼ö +1
 	@Override
 	public void feedReport(Model model, ReportListVo reportListVo) {
 		// TODO Auto-generated method stub
 
 	}
 
-	// ê·¸ë£¹ ì¡´ì¬ìœ ë¬´ ì²´í¬ v
-	// ì‚¬ì—…ì ì¡´ì¬ìœ ë¬´ ì²´í¬ v
-	// ì‚¬ì—…ì ë¯¸ì¡´ì¬ ì‹œ ë“±ë¡ì‹ ì²­ ìœ ë¬´ ì²´í¬ v
-	// ì‚¬ì—…ì ì¡´ì¬ì‹œ ì‚¬ì—…ìì •ë³´ ì¶œë ¥(ì„¸ì…˜ì— ê°’ë‹´ê¸°) v
-	// ìº í•‘ì¥ ì¡´ì¬ìœ ë¬´ ì²´í¬ v
-	// ë‚´í”„ë¡œí•„ì •ë³´ ì¶œë ¥ v
+	// ±×·ì Á¸ÀçÀ¯¹« Ã¼Å© v
+	// »ç¾÷ÀÚ Á¸ÀçÀ¯¹« Ã¼Å© v
+	// »ç¾÷ÀÚ ¹ÌÁ¸Àç ½Ã µî·Ï½ÅÃ» À¯¹« Ã¼Å© v
+	// »ç¾÷ÀÚ Á¸Àç½Ã »ç¾÷ÀÚÁ¤º¸ Ãâ·Â(¼¼¼Ç¿¡ °ª´ã±â) v
+	// Ä·ÇÎÀå Á¸ÀçÀ¯¹« Ã¼Å© v
+	// ³»ÇÁ·ÎÇÊÁ¤º¸ Ãâ·Â v
 	@Override
 	public void myProfile(HttpServletRequest req, ProfileVo profileVo) {
 		HttpSession session = req.getSession();
@@ -226,7 +240,7 @@ public class UserServiceImpl implements UserService {
 		// }
 	}
 
-	// ë‚´í”„ë¡œí•„ ìˆ˜ì •
+	// ³»ÇÁ·ÎÇÊ ¼öÁ¤
 	@Override
 	public int myProfileUpdateOne(HttpServletRequest req, ProfileVo profileVo) {
 		System.out.println(profileVo.getProintro());
@@ -240,22 +254,22 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	// ì†Œì…œë¡œê·¸ì¸ ì²´í¬
-	// ë‚´ê°€ì…ì •ë³´ ì¶œë ¥
+	// ¼Ò¼È·Î±×ÀÎ Ã¼Å©
+	// ³»°¡ÀÔÁ¤º¸ Ãâ·Â
 	@Override
 	public void myAdmin(Model model, ProfileVo prifileVo) {
 		// TODO Auto-generated method stub
 
 	}
 
-	// ê°€ì…ì •ë³´ ë³¸ì¸í™•ì¸
+	// °¡ÀÔÁ¤º¸ º»ÀÎÈ®ÀÎ
 	@Override
 	public int myAdminCheck(Model model, LoginVo loginVo) {
 		int result = userDao.identify(loginVo);
 		return result;
 	}
 
-	// ë‚´ê°€ì…ì •ë³´ ìˆ˜ì •
+	// ³»°¡ÀÔÁ¤º¸ ¼öÁ¤
 	@Override
 	public void myAdminUpdateOne(HttpServletRequest req, ProfileVo profileVo) {
 		userDao.joinInfoUpdate(profileVo);
@@ -264,30 +278,29 @@ public class UserServiceImpl implements UserService {
 		System.out.println(profileVo.getPronum());
 	}
 
-	// ë¹„í™œì„±í™”ê³„ì • ì²˜ë¦¬
-	// ê·¸ë£¹ ì¡´ì¬ìœ ë¬´ ì²´í¬
-	// ê·¸ë£¹ì— ê°€ì…ëœ ì¸ì›ìˆ˜ ì²´í¬
+	// ºñÈ°¼ºÈ­°èÁ¤ Ã³¸®
+	// ±×·ì Á¸ÀçÀ¯¹« Ã¼Å©
+	// ±×·ì¿¡ °¡ÀÔµÈ ÀÎ¿ø¼ö Ã¼Å©
 	@Override
 	public void myAdminInactive(Model model, MyAdminVo myAdminVo) {
 		// TODO Auto-generated method stub
 
 	}
 
-	// ê³„ì •íƒˆí‡´ ì²˜ë¦¬
-	// ê·¸ë£¹ ì¡´ì¬ìœ ë¬´ ì²´í¬
-	// ê·¸ë£¹ì— ê°€ì…ëœ ì¸ì›ìˆ˜ ì²´í¬
+	// °èÁ¤Å»Åğ Ã³¸®
+	// ±×·ì Á¸ÀçÀ¯¹« Ã¼Å©
+	// ±×·ì¿¡ °¡ÀÔµÈ ÀÎ¿ø¼ö Ã¼Å©
 	@Override
 	public void myAdminGoodbye(Model model, ProfileVo profileVo) {
 		// TODO Auto-generated method stub
 
 	}
 
-	// ì‚¬ì—…ì ìœ ë¬´ ì²´í¬(ê³µì‹ê·¸ë£¹,ë¹„ê³µì‹ê·¸ë£¹ ë¶„ë¥˜)
-	// ê·¸ë£¹ ë“±ë¡
-	// ê·¸ë£¹ ë“±ë¡
+	// »ç¾÷ÀÚ À¯¹« Ã¼Å©(°ø½Ä±×·ì,ºñ°ø½Ä±×·ì ºĞ·ù)
+	// ±×·ì µî·Ï
+	// ±×·ì µî·Ï
 	@Override
 	public GroupVo groupInsertOne(HttpServletRequest req, GroupVo groupVo) {
-		;
 		HttpSession session = req.getSession();
 		ProfileVo profile = (ProfileVo) session.getAttribute("profile");
 
@@ -305,7 +318,7 @@ public class UserServiceImpl implements UserService {
 		return groupVo;
 	}
 
-	// ì‚¬ì—…ìë“±ë¡ ì‹ ì²­
+	// »ç¾÷ÀÚµî·Ï ½ÅÃ»
 	@Override
 	public void ventureInsertOne(HttpServletRequest req, UpdateWaitVo updateWaitVo) {
 		userDao.ventureRequest(updateWaitVo);
@@ -314,7 +327,7 @@ public class UserServiceImpl implements UserService {
 		session.setAttribute("myVentureRequestCheck", 1);
 	}
 
-	// ì‚¬ì—…ìì •ë³´ ì¶œë ¥(ì„¸ì…˜)
+	// »ç¾÷ÀÚÁ¤º¸ Ãâ·Â(¼¼¼Ç)
 	@Override
 	public void ventureAdmin(HttpServletRequest req) {
 		HttpSession session = req.getSession();
@@ -325,8 +338,8 @@ public class UserServiceImpl implements UserService {
 		session.setAttribute("myVenture", myVenture);
 	}
 
-	// ì‚¬ì—…ìì •ë³´ ìˆ˜ì •
-	// ìº í•‘ì¥ì •ë³´ ìë™ìˆ˜ì •(ì‚¬ì—…ìì •ë³´ ìˆ˜ì •ê°’ë§Œ)
+	// »ç¾÷ÀÚÁ¤º¸ ¼öÁ¤
+	// Ä·ÇÎÀåÁ¤º¸ ÀÚµ¿¼öÁ¤(»ç¾÷ÀÚÁ¤º¸ ¼öÁ¤°ª¸¸)
 	@Override
 	public void ventureAdminUpdateOne(HttpServletRequest req, MyVentureVo myVenture) {
 		userDao.ventureUpdate(myVenture);
@@ -336,13 +349,13 @@ public class UserServiceImpl implements UserService {
 		session.setAttribute("myVenture", myVenture);
 	}
 
-	// ìº í•‘ì¥ ë“±ë¡
+	// Ä·ÇÎÀå µî·Ï
 	@Override
 	public void campInsertOne(Model model, CampVo campVo) {
 
 	}
 
-	// ì„¸ì…˜ì— ë‹´ê¸´ ì‚¬ì—…ìì •ë³´ë¡œ ìº í•‘ì¥ì •ë³´ ì¶œë ¥
+	// ¼¼¼Ç¿¡ ´ã±ä »ç¾÷ÀÚÁ¤º¸·Î Ä·ÇÎÀåÁ¤º¸ Ãâ·Â
 	@Override
 	public void campAdmin(HttpServletRequest req) {
 		HttpSession session = req.getSession();
@@ -353,25 +366,23 @@ public class UserServiceImpl implements UserService {
 		session.setAttribute("myCamp", camp);
 	}
 
-	// ìº í•‘ì¥ì •ë³´ ìˆ˜ì •
+	// Ä·ÇÎÀåÁ¤º¸ ¼öÁ¤
 	@Override
 	public void campUpdateOne(Model model, CampVo campVo) {
 		int result = userDao.campUpdate(campVo);
 		model.addAttribute("myCamp", campVo);
 	}
 
-	// ë‚´ íŒ”ë¡œì›Œë¦¬ìŠ¤íŠ¸ ì¶œë ¥
+	// ³» ÆÈ·Î¿ö¸®½ºÆ® Ãâ·Â
 	@Override
-	public void followerList(Model model, ProfileVo profile) {
-		// TODO Auto-generated method stub
-
+	public void followerList(HttpServletRequest req, ProfileVo profile) {
+		req.setAttribute("follower", userDao.myFollowerSelectAll(profile));
 	}
 
-	// ë‚´ íŒ”ë¡œì‰ë¦¬ìŠ¤íŠ¸ ì¶œë ¥
+	// ³» ÆÈ·ÎÀ×¸®½ºÆ® Ãâ·Â
 	@Override
-	public void followList(Model model, ProfileVo profile) {
-		// TODO Auto-generated method stub
-
+	public void followList(HttpServletRequest req, ProfileVo profile) {
+		req.setAttribute("following", userDao.myFollowingSelectAll(profile));
 	}
 
 }

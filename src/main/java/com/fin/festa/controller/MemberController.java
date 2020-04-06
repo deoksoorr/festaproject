@@ -18,19 +18,19 @@ import com.fin.festa.service.MemberService;
 public class MemberController {
 
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////ë¡œê·¸ì¸ ê´€ë ¨//////////////////////////////
+//////////////////////////////·Î±×ÀÎ °ü·Ã//////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 	@Autowired
 	private MemberService memberService;
 
-	// ë¡œê·¸ì¸ í™”ë©´ (íŒì—…)
+	// ·Î±×ÀÎ È­¸é (ÆË¾÷)
 	@RequestMapping(value = "login", method = RequestMethod.GET)
 	public String login() {
 		return "member/login";
 	}
 
-	// ë¡œê·¸ì¸ ì²˜ë¦¬
+	// ·Î±×ÀÎ Ã³¸®
 	@RequestMapping(value = "login", method = RequestMethod.POST)
 	public @ResponseBody ProfileVo login(HttpServletRequest req, LoginVo loginVo) {
 		ProfileVo profile = memberService.login(req, loginVo);
@@ -38,69 +38,68 @@ public class MemberController {
 		return profile;
 	}
 	
-	//ì •ì§€
+	//Á¤Áö
 	@RequestMapping(value = "stop", method = RequestMethod.GET)
 	public String stop() {
 		return "member/stop";
 	}
 	
-	//ì¶”ë°©
+	//Ãß¹æ
 	@RequestMapping(value = "kick", method = RequestMethod.GET)
 	public String kick() {
 		return "member/kick";
 	}
 
-	// ë¡œê·¸ì•„ì›ƒ (íŒì—…)
+	// ·Î±×¾Æ¿ô (ÆË¾÷)
 	@RequestMapping(value = "logout", method = RequestMethod.GET)
 	public String logout() {
 		return "member/logout";
 	}
 
-	// ë¡œê·¸ì•„ì›ƒ (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
+	// ·Î±×¾Æ¿ô (ÆË¾÷>ÆË¾÷ ³» ±â´É)
 	@RequestMapping(value = "logout", method = RequestMethod.POST)
 	public String logout(HttpServletRequest req) {
-		System.out.println("ë¡œê·¸ì•„ì›ƒ íŒì—…");
+		System.out.println("·Î±×¾Æ¿ô ÆË¾÷");
 		memberService.logout(req);
 		
 		return "index";
 	}
 
-	// íšŒì›ê°€ì… í™”ë©´
+	// È¸¿ø°¡ÀÔ È­¸é
 	@RequestMapping(value = "join", method = RequestMethod.GET)
 	public String memberInsertOne() {
 		return "member/join";
 	}
 
-	// IDì¤‘ë³µì²´í¬
+	// IDÁßº¹Ã¼Å©
 	@RequestMapping(value = "join/idcheck", method = RequestMethod.POST)
 	@ResponseBody
 	public int idCheck(Model model, LoginVo loginVo) {
-		System.out.println("ì ‘ì†");
 		int result = memberService.idCheck(model, loginVo);
-		System.out.println(result);
 		return result;
 	}
 
-	// íšŒì›ê°€ì… ì„±ê³µ
+	// È¸¿ø°¡ÀÔ ¼º°ø
 	@RequestMapping(value = "join", method = RequestMethod.POST)
 	public String memberInsertOne(Model model, ProfileVo profileVo) {
 		memberService.memberInsertOne(model, profileVo);
 		return "member/success";
 	}
 
-	// íšŒì›ê°€ì… ì„±ê³µ
-	@RequestMapping(value = "success", method = RequestMethod.POST)
-	public String memberInsertSuccess() {
-		return "member/success";
-	}
+	/*
+	 * // È¸¿ø°¡ÀÔ ¼º°ø
+	 * 
+	 * @RequestMapping(value = "success", method = RequestMethod.POST) public String
+	 * memberInsertSuccess() { return "member/success"; }
+	 */
 
-	// IDì°¾ê¸° í™”ë©´ (íŒì—…)
+	// IDÃ£±â È­¸é (ÆË¾÷)
 	@RequestMapping(value = "find_id", method = RequestMethod.GET)
 	public String findId() {
 		return "member/find_id";
 	}
 
-	// IDì°¾ê¸° ì²˜ë¦¬ (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
+	// IDÃ£±â Ã³¸® (ÆË¾÷>ÆË¾÷ ³» ±â´É)
 	@RequestMapping(value = "find_id", method = RequestMethod.POST)
 	@ResponseBody
 	public ProfileVo findId(Model model, LoginVo loginVo) {
@@ -109,13 +108,13 @@ public class MemberController {
 		return profile;
 	}
 
-	// PWì°¾ê¸° í™”ë©´ (íŒì—…)
+	// PWÃ£±â È­¸é (ÆË¾÷)
 	@RequestMapping(value = "find_pw", method = RequestMethod.GET)
 	public String findPw() {
 		return "member/find_pw";
 	}
 
-	// PWì°¾ê¸° ì²˜ë¦¬ (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
+	// PWÃ£±â Ã³¸® (ÆË¾÷>ÆË¾÷ ³» ±â´É)
 	@RequestMapping(value = "find_pw", method = RequestMethod.POST)
 	@ResponseBody
 	public ProfileVo findPw(Model model, LoginVo loginVo) {
@@ -123,10 +122,10 @@ public class MemberController {
 		return profile;
 	}
 	
-	// PW ì—…ë°ì´íŠ¸
+	// PW ¾÷µ¥ÀÌÆ®
 	@RequestMapping(value="update_pw", method= RequestMethod.POST)
 	public String updatePw(Model model,ProfileVo profile) {
-		System.out.println("ì ‘ì†");
+		System.out.println("Á¢¼Ó");
 		memberService.updatePw(model, profile);
 		return "index";
 	}

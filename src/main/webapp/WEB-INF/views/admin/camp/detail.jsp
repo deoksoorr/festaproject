@@ -13,6 +13,7 @@
 	<script type="text/javascript" src="${root }resources/js/jquery-1.12.4.js"></script>
 	<script type="text/javascript" src="${root }resources/js/util.js"></script>
 	<script type="text/javascript" src="${root }resources/js/site.js"></script>
+	<script type="text/javascript" src="${root }resources/js/jh.js"></script>
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<link rel="stylesheet" href="${root }resources/css/site.css">
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
@@ -38,138 +39,26 @@
 					});
 				});
 			});
-			
-			//첫화면 로딩시 백에서 가져온 페이징값저장
-			var totalCount1='${paging.totalCount}';
+
+			//해당 한줄평의 태그
+			var tag = $('.rate_list li');
 			//첫화면시 페이징기능 호출,페이지뷰,로우뷰 출력
-			paging(page,totalCount1);
-			pageView(pageText);
-			rowView();
+			funcLoad(tag);
 			
 			//페이지버튼 눌렀을때 이벤트
 			$(document).on('click','.fstPage a',function(e){
-				pageText=$(this).text();
-				//다음버튼 눌렀을경우
-				if(pageText=='다음 페이지'){
-					if(page==totalPage){
-						return false;						
-					}else{
-						page+=1;
-					}
-				//이전버튼 눌렀을경우
-				}else if(pageText=='이전 페이지'){
-					if(page==1){
-						return false;						
-					}else{
-						page-=1;
-					}
-				//맨끝버튼 눌렀을경우
-				}else if(pageText=='맨 끝으로'){
-					if(totalPage==endPage){
-						page=endPage;
-					}else if(totalPage!=endPage){
-						page=endPage+1;
-					}
-				//맨앞버튼 눌렀을경우
-				}else if(pageText=='맨 앞으로'){
-					if(beginPage==1){
-						page=beginPage;
-					}else if(beginPage!=1){
-						page=beginPage-1;
-					}
-				//그외 숫자버튼 눌렀을경우
-				}else{
-					page=Number(pageText);
-				}
-				paging(page,totalCount1);
-				pageView(pageText);
-				rowView();
+				//해당 버튼을 인자로 넣고 페이지조건처리해줌
+				ifPage(this);
+				//페이징기능 호출,페이지뷰,로우뷰 출력
+				funcLoad(tag);
 				e.preventDefault();
 			});
 			
 		});
 		
 		//페이징에 필요한 필드선언
-		var pageText=1;
-		var page=1;
-		var displayRow2=5;	
-		var beginPage;		
-		var endPage;		
-		var prev;				
-		var next;	
-		var totalPage;
-		var startnum;		
-		var endnum;			
-		var displayPage=5;
-		var totalCount;
+		pagenation(5,5,'${paging.totalCount}');
 		
-		//페이징함수 
-		function paging(page,totalCount1){
-			totalCount=totalCount1;		
-			startnum=(page-1)*5+1;
-			endnum=page*5;
-			
-			totalPage=Math.floor(totalCount/displayRow2);
-			
-			if(totalCount%displayRow2!=0){
-				totalPage+=1;
-			}
-			
-			endPage = Math.floor((page+(displayPage-1))/displayPage)*displayPage;
-			beginPage = endPage - (displayPage-1);
-			
-			if(totalPage<endPage&&totalPage==page){
-				endPage=totalPage;
-				next=false;
-			}else if(totalPage<endPage&&totalPage>page) {
-				endPage=totalPage;
-				next=true;
-			}else if(totalPage==endPage&&totalPage==page){
-				next=false;
-			}else {
-				next=true;
-			}
-			if(beginPage==1){
-				prev=false;
-			}else{
-				prev=true;
-			}
-		}
-		
-		//페이지뷰 함수
-		function pageView(pageText){
-			if(totalCount!=0){
-				if(page==1){
-					$('.fstPage ul').html('<li><a class="pg_start off"><em class="snd_only">맨 앞으로</em></a></li>'+
-					'<li><a class="pg_prev off"><em class="snd_only">이전 페이지</em></a></li>');
-				}else{
-					$('.fstPage ul').html('<li><a class="pg_start" href=""><em class="snd_only">맨 앞으로</em></a></li>'+
-					'<li><a class="pg_prev" href=""><em class="snd_only">이전 페이지</em></a></li>');
-				}
-				for(var i=beginPage; i<=endPage; i++){
-					if(i==page){
-						$('.fstPage ul').append('<li><b>'+i+'</b></li>');
-					}else{
-						$('.fstPage ul').append('<li><a href="">'+i+'</a></li>');
-					}
-				}
-				if(next==true){
-					$('.fstPage ul').append('<li><a class="pg_next" href=""><em class="snd_only">다음 페이지</em></a></li>'+
-					'<li><a class="pg_end" href=""><em class="snd_only">맨 끝으로</em></a></li>');
-				}else{
-					$('.fstPage ul').append('<li><a class="pg_next off"><em class="snd_only">다음 페이지</em></a></li>'+
-					'<li><a class="pg_end off"><em class="snd_only">맨 끝으로</em></a></li>');
-				}
-			}
-		}
-
-		//로우뷰 함수
-		function rowView(){
-			$('.rate_list li').hide();
-			for(var i=startnum; i<=endnum; i++){
-				$('.rate_list li').eq(i-1).show();
-			}
-		}
 	</script>
 </head>
 <body>

@@ -8,15 +8,16 @@ import com.fin.festa.model.entity.GroupPostVo;
 import com.fin.festa.model.entity.MyCommentVo;
 import com.fin.festa.model.entity.MyGoodVo;
 import com.fin.festa.model.entity.MyPostVo;
+import com.fin.festa.model.entity.PageSearchVo;
 import com.fin.festa.model.entity.ReportListVo;
 
 public interface FeedDao {
 	
-	List<FeedVo> hotGroupFeedSelectAll();
+	List<FeedVo> hotGroupFeedSelectAll(PageSearchVo pageSearchVo);
 	
 	List<GroupCommentVo> hotGroupCommentSelectAll(FeedVo feed);
 	
-	List<FeedVo> hotMyFeedSelectAll();
+	List<FeedVo> hotMyFeedSelectAll(PageSearchVo pageSearchVo);
 	
 	List<MyCommentVo> hotMyCommentSelectAll(FeedVo feed);
 	

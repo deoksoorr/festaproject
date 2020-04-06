@@ -69,6 +69,13 @@ public class AdminController {
 		return "admin/group/detail";
 	}
 	
+	//그룹 피드스크롤 더보기 비동기
+	@RequestMapping(value = "group/detail/scroll", method = RequestMethod.GET)
+	public @ResponseBody List<List<?>> adminGroupDetailScroll(Model model, GroupVo groupVo) {
+		
+		return adminService.adminGroupDetailScroll(model, groupVo);
+	}
+	
 	//그룹피드댓글 더보기 비동기
 	@RequestMapping(value = "group/detail/cmmt", method = RequestMethod.GET)
 	public @ResponseBody List<GroupCommentVo> adminGroupDetailCmmt(Model model, GroupPostVo grouppost){
@@ -161,6 +168,13 @@ public class AdminController {
 		
 		adminService.adminUserDetail(req, profileVo);
 		return "admin/user/detail";
+	}
+	
+	//유저 피드 스크롤 더보기 비동기
+	@RequestMapping(value = "user/detail/scroll", method = RequestMethod.GET)
+	public @ResponseBody List<List<?>> adminUserDetailScroll(HttpServletRequest req, ProfileVo profileVo) {
+		
+		return adminService.adminUserDetailScroll(req, profileVo);
 	}
 	
 	//피드댓글 더보기 비동기

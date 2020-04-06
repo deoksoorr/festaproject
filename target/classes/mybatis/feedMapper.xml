@@ -82,8 +82,8 @@
 	<!-- 화면출력 start -->
 	
 	<!-- 인기개인피드리스트 -->
-	<select id="hotMyFeedList" resultMap="mypost">
-		select d.*,(select count(*) from mycomment where mpnum1=d.mpnum) as mptotal from (select @rownum:=@rownum+1 as mprn,a.*,c.proid,c.prophoto,c.proname from mypost a inner join profile c on a.pronum12=c.pronum,(select @rownum:=0) r where mpnum!=1 order by mpgood desc, mpdate desc) d where mprn<![CDATA[ >= ]]>1 and mprn<![CDATA[ <= ]]>25
+	<select id="hotMyFeedList" parameterType="PageSearchVo" resultMap="mypost">
+		select d.*,(select count(*) from mycomment where mpnum1=d.mpnum) as mptotal from (select @rownum:=@rownum+1 as mprn,a.*,c.proid,c.prophoto,c.proname from mypost a inner join profile c on a.pronum12=c.pronum,(select @rownum:=0) r where mpnum!=1 order by mpgood desc, mpdate desc) d
 	</select>
 	
 	<!-- 인기개인피드댓글 리스트 -->
@@ -96,8 +96,8 @@
 	</select>
 	
 	<!-- 인기그룹피드리스트 -->
-	<select id="hotGroupFeedList" resultMap="grouppost">
-		select e.*,(select count(*) from groupcomment where gpnum1=e.gpnum) as gptotal from (select @rownum:=@rownum+1 as gprn,d.* from (select a.*,c.proid,c.prophoto,c.proname,b.grname from grouppost a inner join profile c on a.pronum3=c.pronum inner join group1 b on a.grnum1=b.grnum where gpnum!=1 order by gpgood desc, gpdate desc) d,(select @rownum:=0) r) e where gprn<![CDATA[ >= ]]>1 and gprn<![CDATA[ <= ]]>25
+	<select id="hotGroupFeedList" parameterType="PageSearchVo" resultMap="grouppost">
+		select e.*,(select count(*) from groupcomment where gpnum1=e.gpnum) as gptotal from (select @rownum:=@rownum+1 as gprn,d.* from (select a.*,c.proid,c.prophoto,c.proname,b.grname from grouppost a inner join profile c on a.pronum3=c.pronum inner join group1 b on a.grnum1=b.grnum where gpnum!=1 order by gpgood desc, gpdate desc) d,(select @rownum:=0) r) e
 	</select>
 	
 	<!-- 인기그룹피드댓글리스트 -->

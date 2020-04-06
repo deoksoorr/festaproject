@@ -13,6 +13,7 @@
 	<script type="text/javascript" src="${root }resources/js/jquery-1.12.4.js"></script>
 	<script type="text/javascript" src="${root }resources/js/util.js"></script>
 	<script type="text/javascript" src="${root }resources/js/site.js"></script>
+	<script type="text/javascript" src="${root }resources/js/jh.js"></script>
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<link rel="stylesheet" href="${root }resources/css/site.css">
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
@@ -89,9 +90,9 @@
 						}
 						comments.append('<li>'+
 								'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="pf_picture">'+
-									'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일">'+
+									'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
 								'</a><p class="cmt_content">'+
-									'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].mcauthor+'</a>'+
+									'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].mcauthor+'</a>&nbsp;'+
 									data[index].mccontent+
 									'<span class="cmt_date">'+data[index].mcdate1+'</span>'+
 									'<button class="btn_pop btn_delete btn_cmmt" data-layer="delete" data-value="'+data[index].mcnum+'"><em class="snd_only">삭제하기</em></button></p>'+
@@ -99,14 +100,6 @@
 					});//each문 end
 				});//ajax통신 end
 			});//댓글더보기 end
-			
-			
-			//첫화면때 2개만 피드출력
-			$('.feed_viewer').each(function(index){
-				if(index>1){
-					$('.feed_viewer').eq(index).hide();
-				}
-			});
 			
 			//스크롤 내렸을때 피드 2개씩 출력
 			$(window).scroll(function(){
@@ -117,11 +110,11 @@
 					scroll++;
 					scrollTag.text(scroll);
 					console.log(scroll);
-					var curfeedcnt=$('.feed_viewer').length;
-					var myfeedcnt=$('.cnt_list li b').eq(0).text();
-					myfeedcnt=Number(myfeedcnt);
-					$('.feed_viewer').eq(scroll*2).show();
-					$('.feed_viewer').eq(scroll*2+1).show();
+					$.get('${root}admin/user/detail/scroll','pronum=${userdetail.pronum}&pageSearch.page5='+scroll,function(){
+						
+					}).done(function(data){
+						feedList(data,'admin/user');
+					});
 			    }
 			});
 		});

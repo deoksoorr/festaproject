@@ -21,18 +21,18 @@ import com.fin.festa.service.CampService;
 public class CampController {
 
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////ìº í•‘ìž¥ ê´€ë ¨//////////////////////////////
+//////////////////////////////Ä·ÇÎÀå °ü·Ã//////////////////////////////
 //////////////////////////////////////////////////////////////////////
 	
 	@Autowired
 	private CampService campService;
 	
-	//ìº í•‘ìž¥ ë¦¬ìŠ¤íŠ¸
-	//ìº í•‘ìž¥ ì§€ì—­ë³„ ë¦¬ìŠ¤íŠ¸
+	//Ä·ÇÎÀå ¸®½ºÆ®
+	//Ä·ÇÎÀå Áö¿ªº° ¸®½ºÆ®
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String campSelectAll(Model model, CampVo campVo) {
 		String caaddrsel = campVo.getCaaddrsel();
-		if (caaddrsel == null) {		// ì²« íŽ˜ì´ì§€ ì´ˆê¸°í™”
+		if (caaddrsel == null) {		// Ã¹ ÆäÀÌÁö ÃÊ±âÈ­
 			campVo.setCaaddrsel("");
 		}
 		campService.campSelectAll(model);
@@ -40,60 +40,64 @@ public class CampController {
 		return "camp/index";
 	}
 	
-	//ìº í•‘ìž¥ ìƒì„¸íŽ˜ì´ì§€
+	//Ä·ÇÎÀå »ó¼¼ÆäÀÌÁö
 	@RequestMapping(value = "detail", method = RequestMethod.GET)
-	public String campSelectOne(Model model, CampVo campVo) {
+	public String campSelectOne(HttpServletRequest req, Model model, CampVo campVo) {
 		campService.campSelectOne(model, campVo);
 		campService.sameLocation(model, campVo);
 		return "camp/detail/index";
 	}
 	
-	//ìº í•‘ìž¥ ì¢‹ì•„ìš”
+	//Ä·ÇÎÀå ÁÁ¾Æ¿ä
 	@RequestMapping(value = "detail/likeadd", method = RequestMethod.POST)
 	public String likeInsertOne(HttpServletRequest req, MyGoodVo myGoodVo) {
+		campService.likeInsertOne(req, myGoodVo);
 		return "camp/detail/index";
 	}
 	
-	//ìº í•‘ìž¥ ì¢‹ì•„ìš” ì·¨ì†Œ
+	//Ä·ÇÎÀå ÁÁ¾Æ¿ä Ãë¼Ò
 	@RequestMapping(value = "detail/likedel", method = RequestMethod.POST)
 	public String likeDeleteOne(HttpServletRequest req, MyGoodVo myGoodVo) {
+		campService.likeDeleteOne(req, myGoodVo);
 		return "camp/detail/index";
 	}
 	
-	//ìº í•‘ìž¥ ë¶ë§ˆí¬
+	//Ä·ÇÎÀå ºÏ¸¶Å©
 	@RequestMapping(value = "detail/bookadd", method = RequestMethod.POST)
 	public String bookInsertOne(HttpServletRequest req, MyBookMarkVo myBookMarkVo) {
+		campService.bookInsertOne(req, myBookMarkVo);
 		return "camp/detail/index";
 	}
 	
-	//ìº í•‘ìž¥ ë¶ë§ˆí¬ ì·¨ì†Œ
+	//Ä·ÇÎÀå ºÏ¸¶Å© Ãë¼Ò
 	@RequestMapping(value = "detail/bookdel", method = RequestMethod.POST)
 	public String bookDeleteOne(HttpServletRequest req, MyBookMarkVo myBookMarkVo) {
+		campService.bookDeleteOne(req, myBookMarkVo);
 		return "camp/detail/index";
 	}
 	
-	//ìº í•‘ìž¥ í•œì¤„í‰ ìž…ë ¥
+	//Ä·ÇÎÀå ÇÑÁÙÆò ÀÔ·Â
 	@RequestMapping(value = "detail/revadd", method = RequestMethod.POST)
 	public String reviewInsertOne(HttpServletRequest req, CampReviewVo campReviewVo) {
 		campService.reviewInsertOne(req, campReviewVo);
 		return "camp/detail/index";
 	}
 	
-	//ìº í•‘ìž¥ í•œì¤„í‰ ì‚­ì œ (ë‚´ë¶€íŒì—… ê¸°ëŠ¥)
+	//Ä·ÇÎÀå ÇÑÁÙÆò »èÁ¦ (³»ºÎÆË¾÷ ±â´É)
 	@RequestMapping(value = "detail/revdel", method = RequestMethod.POST)
 	public String reviewDeleteOne(CampReviewVo campReviewVo) {
 		campService.reviewDeleteOne(campReviewVo);
 		return "camp/detail/index";
 	}
 
-	//ìº í•‘ìž¥ ì‹ ê³  (íŒì—…)
+	//Ä·ÇÎÀå ½Å°í (ÆË¾÷)
 	@RequestMapping(value = "detail/report", method = RequestMethod.GET)
 	public String campReport(Model model, CampVo campVo) {
 		model.addAttribute("campReport", campVo);
 		return "camp/detail/report";
 	}
 	
-	//ìº í•‘ìž¥ ì‹ ê³  (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
+	//Ä·ÇÎÀå ½Å°í (ÆË¾÷>ÆË¾÷ ³» ±â´É)
 	@RequestMapping(value = "detail/report", method = RequestMethod.POST)
 	public String campReport(HttpServletRequest req, MultipartFile[] files, ReportListVo reportListVo) {
 		campService.campReport(req, files, reportListVo);

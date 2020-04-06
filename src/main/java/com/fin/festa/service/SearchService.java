@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fin.festa.model.entity.FeedVo;
 import com.fin.festa.model.entity.GroupCommentVo;
 import com.fin.festa.model.entity.GroupPostVo;
 import com.fin.festa.model.entity.MyCommentVo;
@@ -18,6 +19,8 @@ import com.fin.festa.model.entity.ReportListVo;
 public interface SearchService {
 
 		void search(HttpServletRequest req, PageSearchVo pageSearchVo);
+		
+		List<FeedVo> searchScroll(HttpServletRequest req, PageSearchVo pageSearchVo);
 		
 		void searchFeedDetail(Model model, MyPostVo myPostVo, GroupPostVo groupPostVo);
 		

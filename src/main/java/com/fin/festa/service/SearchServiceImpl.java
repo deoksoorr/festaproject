@@ -65,6 +65,16 @@ public class SearchServiceImpl implements SearchService{
 		
 	}
 
+	//검색피드 스크롤더보기
+	@Override
+	public List<FeedVo> searchScroll(HttpServletRequest req, PageSearchVo pageSearchVo) {
+
+		DateCalculate cal=new DateCalculate();
+		List<FeedVo> myFeedList = searchDao.searchMyFeedSelectAll(pageSearchVo);
+		List<FeedVo> groupFeedList = searchDao.searchGroupFeedSelectAll(pageSearchVo);
+		return cal.VoGoodReturn(groupFeedList, myFeedList);
+	}
+
 	//피드상세페이지 출력(그룹피드,개인피드 구분) 
 	@Override
 	public void searchFeedDetail(Model model, MyPostVo myPostVo, GroupPostVo groupPostVo) {

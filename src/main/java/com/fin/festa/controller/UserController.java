@@ -33,20 +33,20 @@ import com.fin.festa.service.UserService;
 public class UserController {
 
 //////////////////////////////////////////////////////////////////////
-///////////////////////////////ìœ ì € ê´€ë ¨///////////////////////////////
+///////////////////////////////À¯Àú °ü·Ã///////////////////////////////
 //////////////////////////////////////////////////////////////////////
 	
 	@Autowired
 	private UserService userSerivce;
 	
-	//ë‚´ í”¼ë“œ
+	//³» ÇÇµå
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String feedSelectOne(HttpServletRequest req, ProfileVo profile) {
 		userSerivce.feedSelectOne(req,profile);
 		return "user/index";
 	}
 	
-	//ê²Œì‹œê¸€ ì…ë ¥
+	//°Ô½Ã±Û ÀÔ·Â
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	public String feedInsertOne(HttpServletRequest req, MultipartFile[] files, MyPostVo myPostVo,ProfileVo profile) {
 		userSerivce.feedInsertOne(req, files, myPostVo);
@@ -55,140 +55,147 @@ public class UserController {
 	}
 
 
-	//ê²Œì‹œê¸€ ìˆ˜ì • (íŒì—…)
+	//°Ô½Ã±Û ¼öÁ¤ (ÆË¾÷)
 	@RequestMapping(value = "maker", method = RequestMethod.GET)
 	public String feedDetail(Model model,MyPostVo myPostVo) {
 		userSerivce.myFeedDetail(model, myPostVo);
 		return "user/maker";
 	}
 
-	//ê²Œì‹œê¸€ ìˆ˜ì • (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
+	//°Ô½Ã±Û ¼öÁ¤ (ÆË¾÷>ÆË¾÷ ³» ±â´É)
 	@RequestMapping(value = "maker", method = RequestMethod.POST)
 	public String feedUpdateOne(HttpServletRequest req,MultipartFile[] filess,  MyPostVo myPostVo) {
 		userSerivce.feedUpdateOne(req, filess, myPostVo);
 		return "user/index";
 	}
 
-	//ê²Œì‹œê¸€ ì‚­ì œ (ë‚´ë¶€íŒì—… ê¸°ëŠ¥)
+	//°Ô½Ã±Û »èÁ¦ (³»ºÎÆË¾÷ ±â´É)
 	@RequestMapping(value = "del", method = RequestMethod.POST)
 	public String feedDeleteOne(Model model, MyPostVo myPostVo) {
 		userSerivce.feedDeleteOne(model, myPostVo);
 		return "user/index";
 	}
 
-	//í”¼ë“œ ëŒ“ê¸€ ì…ë ¥
+	//ÇÇµå ´ñ±Û ÀÔ·Â
 	@RequestMapping(value = "cmmtadd", method = RequestMethod.POST)
 	public String feedCmmtInsertOne(HttpServletRequest req, MyCommentVo myCommentVo) {
 		userSerivce.feedCmmtInsertOne(req, myCommentVo);
 		return "user/index";
 	}
 
-	//í”¼ë“œ ëŒ“ê¸€ ì‚­ì œ (ë‚´ë¶€íŒì—… ìƒì„±)
+	//ÇÇµå ´ñ±Û »èÁ¦ (³»ºÎÆË¾÷ »ı¼º)
 	@RequestMapping(value = "cmmtdel", method = RequestMethod.POST)
 	public String feedCmmtDeleteOne(Model model, MyCommentVo myCommentVo) {
+		userSerivce.feedCmmtDeleteOne(model, myCommentVo);
 		return "user/index";
 	}
 	
-	//í”¼ë“œëŒ“ê¸€ ë”ë³´ê¸° ë¹„ë™ê¸°
+	//ÇÇµå´ñ±Û ´õº¸±â ºñµ¿±â
 	@RequestMapping(value = "cmmt", method = RequestMethod.GET)
 	public @ResponseBody List<MyCommentVo> GroupDetailCmmt(Model model, MyPostVo mypost){
-		System.out.println("ì ‘ì†");
 		return userSerivce.userDetailCmmt(model, mypost);
 	}
 
-	//ì¢‹ì•„ìš” ì²´í¬
+	//ÁÁ¾Æ¿ä Ã¼Å©
 	@RequestMapping(value = "likeadd", method = RequestMethod.POST)
 	public String likeInsertOne(HttpServletRequest req, MyGoodVo myGoodVo) {
+		System.out.println("´õÇÏ±â");
+		userSerivce.likeInsertOne(req, myGoodVo);
 		return "user/index";
 	}
 
-	//ì¢‹ì•„ìš” ì·¨ì†Œ
+	//ÁÁ¾Æ¿ä Ãë¼Ò
 	@RequestMapping(value = "likedel", method = RequestMethod.POST)
 	public String likeDeleteOne(HttpServletRequest req, MyGoodVo myGoodVo) {
+		System.out.println("»©±â");
+		userSerivce.likeDeleteOne(req, myGoodVo);
 		return "user/index";
 	}
 
-	//íŒ”ë¡œì›Œ ëª©ë¡ (íŒì—…)
+	//ÆÈ·Î¿ö ¸ñ·Ï (ÆË¾÷)
 	@RequestMapping(value = "follower", method = RequestMethod.GET)
-	public String followerList(Model model, ProfileVo profile){
+	public String followerList(HttpServletRequest req, ProfileVo profile){
+		userSerivce.followerList(req, profile);
 		return "user/follower";
 	}
 
-	//íŒ”ë¡œìš° ëª©ë¡ (íŒì—…)
+	//ÆÈ·Î¿ì ¸ñ·Ï (ÆË¾÷)
 	@RequestMapping(value = "following", method = RequestMethod.GET)
-	public String followList(Model model, ProfileVo profile){
+	public String followList(HttpServletRequest req, ProfileVo profile){
+		userSerivce.followList(req, profile);
 		return "user/following";
 	}
 	
-	//íŒ”ë¡œìš° (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
+	//ÆÈ·Î¿ì (ÆË¾÷>ÆË¾÷ ³» ±â´É)
 	@RequestMapping(value = "foll", method = RequestMethod.POST)
 	public String followInsertOne(HttpServletRequest req, MyFollowingVo myFollowingVo) {
 		//return "user/follower";
 		return "user/follow";
 	}
 	
-	//íŒ”ë¡œìš° ì·¨ì†Œ (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
-	@RequestMapping(value = "unfoll", method = RequestMethod.POST)
+	//ÆÈ·Î¿ì Ãë¼Ò (ÆË¾÷>ÆË¾÷ ³» ±â´É)
+	@RequestMapping(value = "unfollow", method = RequestMethod.POST)
 	public String followDeleteOne(HttpServletRequest req, MyFollowingVo myFollowingVo) {
+		userSerivce.followDeleteOne(req, myFollowingVo);
 		//return "user/follower";
 		return "user/follow";
 	}
 
-	//ìœ ì € ì‹ ê³  (íŒì—…)
+	//À¯Àú ½Å°í (ÆË¾÷)
 	@RequestMapping(value = "us_report", method = RequestMethod.GET)
 	public String userReport(){
 		return "user/us_report";
 	}
 	
-	//ìœ ì € ì‹ ê³  (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
+	//À¯Àú ½Å°í (ÆË¾÷>ÆË¾÷ ³» ±â´É)
 	@RequestMapping(value = "us_report", method = RequestMethod.POST)
 	public String userReport(Model model, ReportListVo reportListVo){
 		return "user/index";
 	}
 
-	//í”¼ë“œ ì‹ ê³  (íŒì—…)
+	//ÇÇµå ½Å°í (ÆË¾÷)
 	@RequestMapping(value = "report", method = RequestMethod.GET)
 	public String feedReport(){
 		return "user/report";
 	}
 	
-	//í”¼ë“œ ì‹ ê³  (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
+	//ÇÇµå ½Å°í (ÆË¾÷>ÆË¾÷ ³» ±â´É)
 	@RequestMapping(value = "report", method = RequestMethod.POST)
 	public String feedReport(Model model, ReportListVo reportListVo){
 		return "user/index";
 	}
 	
 //////////////////////////////////////////////////////////////////////
-///////////////////////////////ìœ ì € ì„¸íŒ…///////////////////////////////
+///////////////////////////////À¯Àú ¼¼ÆÃ///////////////////////////////
 //////////////////////////////////////////////////////////////////////	
 	
-	//ë‚´ í”„ë¡œí•„ ê´€ë¦¬
+	//³» ÇÁ·ÎÇÊ °ü¸®
 	@RequestMapping(value = "profile", method = RequestMethod.GET)
 	public String myProfile(HttpServletRequest req, ProfileVo profileVo) {
 		userSerivce.myProfile(req, profileVo);
 		return "user/profile";
 	}
 	
-	//ë‚´ í”„ë¡œí•„ ìˆ˜ì •
+	//³» ÇÁ·ÎÇÊ ¼öÁ¤
 	@RequestMapping(value = "profile", method = RequestMethod.POST)
 	public String myProfileUpdateOne(HttpServletRequest req, ProfileVo profileVo) {
 		int result = userSerivce.myProfileUpdateOne(req, profileVo);
 		return "user/profile";
 	}
 	
-	//ë‚´ ê³„ì • ê´€ë¦¬
+	//³» °èÁ¤ °ü¸®
 	@RequestMapping(value = "adm", method = RequestMethod.GET)
 	public String myAdmin(Model model, ProfileVo prifileVo) {
 		return "user/adm";
 	}
 	
-	//ë‚´ ê³„ì • ê´€ë¦¬(ë¹„ë°€ë²ˆí˜¸ í™•ì¸)
+	//³» °èÁ¤ °ü¸®(ºñ¹Ğ¹øÈ£ È®ÀÎ)
 	@RequestMapping(value = "check", method = RequestMethod.GET)
 	public String myAdminCheck() {
 		return "user/check";
 	}
 	
-	//ë‚´ ê³„ì • ê´€ë¦¬(ë¹„ë°€ë²ˆí˜¸ í™•ì¸)
+	//³» °èÁ¤ °ü¸®(ºñ¹Ğ¹øÈ£ È®ÀÎ)
 	@RequestMapping(value = "check", method = RequestMethod.POST)
 	public String myAdminCheck(Model model, LoginVo loginVo) {
 		int result = userSerivce.myAdminCheck(model, loginVo);
@@ -200,91 +207,91 @@ public class UserController {
 		}
 	}
 	
-	//ë‚´ ê³„ì • ì •ë³´ ìˆ˜ì •
+	//³» °èÁ¤ Á¤º¸ ¼öÁ¤
 	@RequestMapping(value = "adm", method = RequestMethod.POST)
 	public String myAdminUpdateOne(HttpServletRequest req, ProfileVo profileVo) {
 		userSerivce.myAdminUpdateOne(req, profileVo);
 		return "user/check";
 	}
 	
-	//ë‚´ ê³„ì • ë¹„í™œì„±í™” (íŒì—… ê¸°ëŠ¥)
+	//³» °èÁ¤ ºñÈ°¼ºÈ­ (ÆË¾÷ ±â´É)
 	@RequestMapping(value = "out", method = RequestMethod.POST)
 	public String myAdminInactive(Model model, MyAdminVo myAdminVo) {
 		return "index";
 	}
 	
-	//ë‚´ ê³„ì • íƒˆí‡´ (íŒì—… ê¸°ëŠ¥)
+	//³» °èÁ¤ Å»Åğ (ÆË¾÷ ±â´É)
 	@RequestMapping(value = "inactive", method = RequestMethod.POST)
 	public String myAdminGoodbye(Model model, ProfileVo profileVo) {
 		return "index";
 	}
 
-	//ê·¸ë£¹ ìƒì„±
+	//±×·ì »ı¼º
 	@RequestMapping(value = "group", method = RequestMethod.GET)
 	public String groupInsertOne() {
 		return "user/group";
 	}
 	
-	//ê·¸ë£¹ ìƒì„± ì™„ë£Œ
+	//±×·ì »ı¼º ¿Ï·á
 	@RequestMapping(value = "group", method = RequestMethod.POST)
 	public String groupInsertOne(HttpServletRequest req, GroupVo groupVo) {
 		groupVo = userSerivce.groupInsertOne(req, groupVo);
 		return "redirect:../group/?grnum=" + groupVo.getGrnum() + "&pronum=" + groupVo.getPronum();
 	}
 	   
-	//ì‚¬ì—…ì ê³„ì • ì‹ ì²­
+	//»ç¾÷ÀÚ °èÁ¤ ½ÅÃ»
 	@RequestMapping(value = "venture/add", method = RequestMethod.GET)
 	public String ventureInsertOne(Model model) {
 		return "user/venture/add";
 	}
 	
-	//ì‚¬ì—…ì ê³„ì • ì‹ ì²­ ì™„ë£Œ
+	//»ç¾÷ÀÚ °èÁ¤ ½ÅÃ» ¿Ï·á
 	@RequestMapping(value = "venture/add", method = RequestMethod.POST)
 	public String ventureInsertOne(HttpServletRequest req, UpdateWaitVo updateWaitVo) {
 		userSerivce.ventureInsertOne(req, updateWaitVo);
 		return "user/venture/standby";
 	}
 
-	//ì‚¬ì—…ì ê³„ì • ì‹ ì²­ ìŠ¹ì¸ ëŒ€ê¸°
+	//»ç¾÷ÀÚ °èÁ¤ ½ÅÃ» ½ÂÀÎ ´ë±â
 	@RequestMapping(value = "venture/standby", method = RequestMethod.GET)
 	public String ventureInsertOne() {
 		return "user/venture/standby";
 	}
 
-	//ì‚¬ì—…ì ê³„ì • ê´€ë¦¬
+	//»ç¾÷ÀÚ °èÁ¤ °ü¸®
 	@RequestMapping(value = "venture", method = RequestMethod.GET)
 	public String ventureAdmin(HttpServletRequest req) {
 		userSerivce.ventureAdmin(req);
 		return "user/venture/index";
 	}
 	
-	//ì‚¬ì—…ì ê³„ì • ìˆ˜ì •
+	//»ç¾÷ÀÚ °èÁ¤ ¼öÁ¤
 	@RequestMapping(value = "venture/edit", method = RequestMethod.POST)
 	public String ventureAdminUpdateOne(HttpServletRequest req, MyVentureVo myVenture) {
 		userSerivce.ventureAdminUpdateOne(req, myVenture);
 		return "user/venture/index";
 	}
 	
-	//ìº í•‘ì¥ ì •ë³´ ë“±ë¡
+	//Ä·ÇÎÀå Á¤º¸ µî·Ï
 	@RequestMapping(value = "camp/add", method = RequestMethod.GET)
 	public String campInsertOne() {
 		return "user/camp/add";
 	}
 
-	//ìº í•‘ì¥ ì •ë³´ ë“±ë¡ ì™„ë£Œ
+	//Ä·ÇÎÀå Á¤º¸ µî·Ï ¿Ï·á
 	@RequestMapping(value = "camp/add", method = RequestMethod.POST)
 	public String campInsertOne(Model model, CampVo campVo) {
 		return "camp/detail";
 	}
 	
-	//ìº í•‘ì¥ ì •ë³´ ê´€ë¦¬
+	//Ä·ÇÎÀå Á¤º¸ °ü¸®
 	@RequestMapping(value = "camp", method = RequestMethod.GET)
 	public String campAdmin(HttpServletRequest req) {
 		userSerivce.campAdmin(req);
 		return "user/camp/index";
 	}
 	
-	//ìº í•‘ì¥ ì •ë³´ ìˆ˜ì •
+	//Ä·ÇÎÀå Á¤º¸ ¼öÁ¤
 	@RequestMapping(value = "camp/edit", method = RequestMethod.POST)
 	public String campUpdateOne(Model model, CampVo campVo) {
 		userSerivce.campUpdateOne(model, campVo);

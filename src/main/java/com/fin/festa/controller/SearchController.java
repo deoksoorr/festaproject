@@ -49,6 +49,12 @@ public class SearchController {
 		return "common/feed";
 	}
 	
+	@RequestMapping(value = "scroll", method = RequestMethod.GET)
+	public @ResponseBody List<FeedVo> searchScroll(HttpServletRequest req, PageSearchVo pageSearchVo) {
+		
+		return searchService.searchScroll(req, pageSearchVo);
+	}
+	
 	//검색 그룹피드댓글 더보기 비동기
 	@RequestMapping(value = "feed/group_cmmt", method = RequestMethod.GET)
 	public @ResponseBody List<GroupCommentVo> searchGroupCmmt(Model model, GroupCommentVo groupCommentVo){

@@ -25,20 +25,20 @@ import com.fin.festa.model.entity.ProfileVo;
 @Service
 public class MemberServiceImpl implements MemberService {
 
-	// ë“±ë¡,ìˆ˜ì •,ì‚­ì œê°€ ìµœì†Œ2ê°œì´ìƒ ë“¤ì–´ê°€ëŠ” ë©”ì†Œë“œëŠ” ê¼­ íŠ¸ëœì­ì…˜ ì ìš©í• ê²ƒ!!
+	// µî·Ï,¼öÁ¤,»èÁ¦°¡ ÃÖ¼Ò2°³ÀÌ»ó µé¾î°¡´Â ¸Ş¼Òµå´Â ²À Æ®·£Àè¼Ç Àû¿ëÇÒ°Í!!
 
 	@Autowired
 	MemberDaoImpl memberDao;
 
-	// ë¡œê·¸ì¸ì²˜ë¦¬ ìœ ë¬´, íšŒì›ì´ ìˆì„ì‹œ í•´ë‹¹íšŒì›ì •ë³´ ì¶œë ¥ v
-	// ë¡œê·¸ì¸ì™„ë£Œì‹œ ê³„ì •ë¹„í™œì„±í™” í™œì„±í™”ë¡œ ì—…ë°ì´íŠ¸ v
-	// ë¡œê·¸ì¸ì™„ë£Œì‹œ ì •ì§€,ì¶”ë°©,ê´€ë¦¬ì ê³„ì •ì¸ì§€ ì²´í¬ v
-	// ë¡œê·¸ì¸ì™„ë£Œì‹œ í•´ë‹¹íšŒì›ì˜ ê°€ì…ê·¸ë£¹ëª©ë¡ ì¶œë ¥ v
-	// ë¡œê·¸ì¸ì™„ë£Œì‹œ í•´ë‹¹íšŒì›ì˜ ë¶ë§ˆí¬ëª©ë¡ ì¶œë ¥ v
-	// ë¡œê·¸ì¸ì™„ë£Œì‹œ ì¶”ì²œê·¸ë£¹ë¦¬ìŠ¤íŠ¸ ì¶œë ¥ v
-	// ë¡œê·¸ì¸ì™„ë£Œì‹œ ì¶”ì²œìº í•‘ì¥ë¦¬ìŠ¤íŠ¸ ì¶œë ¥ v
-	// ë¡œê·¸ì¸ì™„ë£Œì‹œ ë‚´ì¢‹ì•„ìš”ëª©ë¡ ì¶œë ¥ v
-	// ë‚´ íŒ”ë¡œì‰ë¦¬ìŠ¤íŠ¸ ì¶œë ¥(ì„¸ì…˜ì´ ê°’ë§Œ ë‹´ì•„ë‘ê¸° ë‹¤ë¥¸ì‚¬ëŒí”„ë¡œí•„ ì ‘ì†ì‹œ íŒ”ë¡œìš° ìœ ë¬´ì²´í¬í•˜ê¸°ìœ„í•¨) v
+	// ·Î±×ÀÎÃ³¸® À¯¹«, È¸¿øÀÌ ÀÖÀ»½Ã ÇØ´çÈ¸¿øÁ¤º¸ Ãâ·Â v
+	// ·Î±×ÀÎ¿Ï·á½Ã °èÁ¤ºñÈ°¼ºÈ­ È°¼ºÈ­·Î ¾÷µ¥ÀÌÆ® v
+	// ·Î±×ÀÎ¿Ï·á½Ã Á¤Áö,Ãß¹æ,°ü¸®ÀÚ °èÁ¤ÀÎÁö Ã¼Å© v
+	// ·Î±×ÀÎ¿Ï·á½Ã ÇØ´çÈ¸¿øÀÇ °¡ÀÔ±×·ì¸ñ·Ï Ãâ·Â v
+	// ·Î±×ÀÎ¿Ï·á½Ã ÇØ´çÈ¸¿øÀÇ ºÏ¸¶Å©¸ñ·Ï Ãâ·Â v
+	// ·Î±×ÀÎ¿Ï·á½Ã ÃßÃµ±×·ì¸®½ºÆ® Ãâ·Â v
+	// ·Î±×ÀÎ¿Ï·á½Ã ÃßÃµÄ·ÇÎÀå¸®½ºÆ® Ãâ·Â v
+	// ·Î±×ÀÎ¿Ï·á½Ã ³»ÁÁ¾Æ¿ä¸ñ·Ï Ãâ·Â v
+	// ³» ÆÈ·ÎÀ×¸®½ºÆ® Ãâ·Â(¼¼¼ÇÀÌ °ª¸¸ ´ã¾ÆµÎ±â ´Ù¸¥»ç¶÷ÇÁ·ÎÇÊ Á¢¼Ó½Ã ÆÈ·Î¿ì À¯¹«Ã¼Å©ÇÏ±âÀ§ÇÔ) v
 	@Override
 	public ProfileVo login(HttpServletRequest req, LoginVo loginVo) {
 		ProfileVo profile = memberDao.login(loginVo);
@@ -46,16 +46,16 @@ public class MemberServiceImpl implements MemberService {
 		if (profile.getLogincheck() != 0) {
 			HttpSession session = req.getSession();
 			session.setAttribute("login", profile);
-			// ì •ì§€,ê°•í‡´ ì•„ë‹ˆë©´1 í•´ë‹¹ì´ë©´ 2
+			// Á¤Áö,°­Åğ ¾Æ´Ï¸é1 ÇØ´çÀÌ¸é 2
 			MyAdminVo myAdmin = memberDao.stopAndKickMember(profile);
 			if (myAdmin.getProstop() == 2) {
-				// ì •ì§€íšŒì›
+				// Á¤ÁöÈ¸¿ø
 				profile.setProrn(1);
 			} else if (myAdmin.getProkick() == 2) {
-				// ì¶”ë°©íšŒì›
+				// Ãß¹æÈ¸¿ø
 				profile.setProrn(2);
 			} else if (myAdmin.getPropublic() == 3) {
-				// ê´€ë¦¬ì
+				// °ü¸®ÀÚ
 				profile.setProrn(3);
 			} else {
 				memberDao.inactiveUpdate(profile);
@@ -81,25 +81,33 @@ public class MemberServiceImpl implements MemberService {
 		return profile;
 	}
 
-	// í•´ë‹¹íšŒì› ë¡œê·¸ì•„ì›ƒì²˜ë¦¬
+	// ÇØ´çÈ¸¿ø ·Î±×¾Æ¿ôÃ³¸®
 	@Override
 	public void logout(HttpServletRequest req) {
 		HttpSession session = req.getSession();
 		session.invalidate();
 	}
 
-	// íšŒì›ê°€ì… ë“±ë¡ì²˜ë¦¬
-	// ì†Œì…œíšŒì›ê°€ì…,ì¼ë°˜íšŒì›ê°€ì… êµ¬ë¶„
-	// íšŒì›ê°€ì… ë“±ë¡ì™„ë£Œì‹œ ë‚´ê´€ë¦¬í…Œì´ë¸” ìƒì„±
+	// È¸¿ø°¡ÀÔ µî·ÏÃ³¸®
+	// ¼Ò¼ÈÈ¸¿ø°¡ÀÔ,ÀÏ¹İÈ¸¿ø°¡ÀÔ ±¸ºĞ
+	// È¸¿ø°¡ÀÔ µî·Ï¿Ï·á½Ã ³»°ü¸®Å×ÀÌºí »ı¼º
 	@Override
 	public void memberInsertOne(Model model, ProfileVo profileVo) {
 		if(profileVo.getProprovide() == 0) {
 			String proidnum = profileVo.getProidnum();
 			StringBuffer sb = new StringBuffer(proidnum);
 			
+			sb.insert(4,"³â");
+			sb.insert(7, "¿ù");
+			proidnum = sb.toString();
+			proidnum +="ÀÏ";
+			
+			profileVo.setProidnum(proidnum);
+			
 			memberDao.memberInsert_nomal(profileVo);
 			profileVo = memberDao.find_pronum(profileVo);
 			memberDao.myadminInsert(profileVo);
+			model.addAttribute("join",profileVo);
 		}else {
 			memberDao.memberInsert_social(profileVo);
 			profileVo = memberDao.find_pronum(profileVo);
@@ -108,7 +116,7 @@ public class MemberServiceImpl implements MemberService {
 
 	}
 
-	// ì•„ì´ë””ì¤‘ë³µì²´í¬
+	// ¾ÆÀÌµğÁßº¹Ã¼Å©
 	@Override
 	public int idCheck(Model model, LoginVo loginVo) {
 		int result = memberDao.idDuplicate(loginVo);
@@ -116,32 +124,32 @@ public class MemberServiceImpl implements MemberService {
 		return result;
 	}
 
-	// ì•„ì´ë””ì°¾ê¸°
+	// ¾ÆÀÌµğÃ£±â
 	@Override
 	public ProfileVo findId(Model model, LoginVo loginVo) {
 		ProfileVo profile = null;
 		if(loginVo.getProidnum().length()==8 && loginVo.getProidnum() != null) {
 			StringBuffer sb = new StringBuffer(loginVo.getProidnum());
-			sb.insert(4,"ë…„");
-			sb.insert(7, "ì›”");
+			sb.insert(4,"³â");
+			sb.insert(7, "¿ù");
 			String proidnum = sb.toString();
-			proidnum +="ì¼";
+			proidnum +="ÀÏ";
 			loginVo.setProidnum(proidnum);
 			profile = memberDao.findId(loginVo);
 		}
 		return profile;
 	}
 
-	// ë¹„ë°€ë²ˆí˜¸ì°¾ê¸°
+	// ºñ¹Ğ¹øÈ£Ã£±â
 	@Override
 	public ProfileVo findPw(Model model, LoginVo loginVo) {
 		ProfileVo profile = null;
 		if(loginVo.getProidnum().length()==8) {
 			StringBuffer sb = new StringBuffer(loginVo.getProidnum());
-			sb.insert(4,"ë…„");
-			sb.insert(7, "ì›”");
+			sb.insert(4,"³â");
+			sb.insert(7, "¿ù");
 			String proidnum = sb.toString();
-			proidnum +="ì¼";
+			proidnum +="ÀÏ";
 			loginVo.setProidnum(proidnum);
 			profile = memberDao.findPw(loginVo);
 //			System.out.println("profile.getproid : "+profile.getProid());
@@ -154,7 +162,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 		return profile;
 	}
-	//ë¹„ë°€ë²ˆí˜¸ ì¬ì„¤ì •
+	//ºñ¹Ğ¹øÈ£ Àç¼³Á¤
 	@Override
 	public String updatePw(Model model,ProfileVo profile) {
 		System.out.println(profile.getPronum());

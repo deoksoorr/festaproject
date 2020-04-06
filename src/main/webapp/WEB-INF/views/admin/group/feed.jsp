@@ -91,9 +91,9 @@
 					}
 					comments.append('<li>'+
 							'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="pf_picture">'+
-								'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일">'+
+								'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
 							'</a><p class="cmt_content">'+
-								'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].gncauthor+'</a>'+
+								'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].gncauthor+'</a>&nbsp;'+
 								data[index].gnccontent+
 								'<span class="cmt_date">'+data[index].gncdate1+'</span>'+
 								'<button class="btn_pop btn_delete btn_cmmt pp" data-layer="delete2" data-value="'+data[index].gncnum+'"><em class="snd_only">삭제하기</em></button></p>'+

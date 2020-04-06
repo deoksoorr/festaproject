@@ -1,5 +1,6 @@
 package com.fin.festa.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,12 +13,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fin.festa.model.FeedDaoImpl;
 import com.fin.festa.model.IndexDaoImpl;
+import com.fin.festa.model.MemberDaoImpl;
 import com.fin.festa.model.entity.FeedVo;
 import com.fin.festa.model.entity.GroupCommentVo;
 import com.fin.festa.model.entity.GroupPostVo;
 import com.fin.festa.model.entity.MyCommentVo;
 import com.fin.festa.model.entity.MyGoodVo;
 import com.fin.festa.model.entity.MyPostVo;
+import com.fin.festa.model.entity.PageSearchVo;
 import com.fin.festa.model.entity.ProfileVo;
 import com.fin.festa.model.entity.ReportListVo;
 import com.fin.festa.util.DateCalculate;
@@ -34,14 +37,20 @@ public class FeedServiceImpl implements FeedService{
 	@Autowired 
 	IndexDaoImpl indexDao;
 	
+	@Autowired
+	MemberDaoImpl memberDao;
+	
 	//인기피드 출력(그룹피드,개인피드 합쳐서)
 	@Override
 	public void hotFeedSelectAll(HttpServletRequest req) {
-
+		
+		PageSearchVo page = new PageSearchVo();
+		page.setPage5(1);
+		
 		DateCalculate cal=new DateCalculate();
 		FeedVo feed = new FeedVo();
-		List<FeedVo> groupFeedList = feedDao.hotGroupFeedSelectAll();
-		List<FeedVo> myFeedList = feedDao.hotMyFeedSelectAll();
+		List<FeedVo> groupFeedList = feedDao.hotGroupFeedSelectAll(page);
+		List<FeedVo> myFeedList = feedDao.hotMyFeedSelectAll(page);
 		
 		//그룹피드댓글뽑음
 		feed.setFeedList(groupFeedList);
@@ -50,7 +59,12 @@ public class FeedServiceImpl implements FeedService{
 		feed.setFeedList(myFeedList);
 		req.setAttribute("myFeedCmmt", feedDao.hotMyCommentSelectAll(feed));
 		//피드 날짜순 정렬
-		req.setAttribute("feedList", cal.VoDateReturn(groupFeedList, myFeedList));
+		List<FeedVo> sortList = cal.VoDateGoodReturn(groupFeedList, myFeedList);
+		List<FeedVo> feedList = new ArrayList<>();
+		for(int i=page.getStartnum()-1; i<page.getEndnum(); i++) {
+			feedList.add(sortList.get(i));
+		}
+		req.setAttribute("feedList", feedList);
 		
 		//우측에떠다니는 인기캠핑장,그룹목록
 		if(req.getSession().getAttribute("login")!=null) {
@@ -60,6 +74,35 @@ public class FeedServiceImpl implements FeedService{
 		}
 		req.setAttribute("camplist", indexDao.veryHotCampSelectAll());
 		
+	}
+
+	//인기피드 스크롤더보기 비동기
+	@Override
+	public List<List<?>> hotFeedScroll(HttpServletRequest req, PageSearchVo pageSearchVo) {
+		
+		DateCalculate cal=new DateCalculate();
+		FeedVo feed = new FeedVo();
+		List<FeedVo> groupFeedList = feedDao.hotGroupFeedSelectAll(pageSearchVo);
+		List<FeedVo> myFeedList = feedDao.hotMyFeedSelectAll(pageSearchVo);
+		List<List<?>> list = new ArrayList<>();
+		//피드 날짜순 정렬
+		List<FeedVo> sortList = cal.VoDateGoodReturn(groupFeedList, myFeedList);
+		List<FeedVo> feedList = new ArrayList<>();
+		for(int i=pageSearchVo.getStartnum()-1; i<pageSearchVo.getEndnum(); i++) {
+			feedList.add(sortList.get(i));
+		}
+		list.add(feedList);
+		//그룹피드댓글뽑음
+		feed.setFeedList(groupFeedList);
+		list.add(feedDao.hotGroupCommentSelectAll(feed));
+		//개인피드댓글뽑음
+		feed.setFeedList(myFeedList);
+		list.add(feedDao.hotMyCommentSelectAll(feed));
+		
+		ProfileVo profile = (ProfileVo)req.getSession().getAttribute("login");
+		list.add(memberDao.myGoodSelectAll(profile));
+		
+		return list;
 	}
 
 	//인기그룹피드 댓글더보기

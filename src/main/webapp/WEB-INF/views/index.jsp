@@ -47,7 +47,7 @@
 							<li><a href="${root}member/login" class="btn_pop">로그인</a></li>
 						</c:if>
 						<c:if test="${login ne null }">
-							<li><a href="${root}user/">마이페이지</a></li>
+							<li><a href="${root}user/?pronum=${login.pronum}">마이페이지</a></li>
 						</c:if>
 					</ul>
 					<c:if test="${login ne null }">

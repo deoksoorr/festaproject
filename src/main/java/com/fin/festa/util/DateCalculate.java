@@ -41,7 +41,7 @@ public class DateCalculate {
 	}
 	
 	//그룹,개인피드 병합해서 날짜 2순위,좋아요 1순위 정렬(인기피드출력에 쓰임)
-	public List<FeedVo> VoDateReturn(List<FeedVo> groupFeedList, List<FeedVo> feedList) {
+	public List<FeedVo> VoDateGoodReturn(List<FeedVo> groupFeedList, List<FeedVo> feedList) {
 		
 		List<FeedVo> list= new ArrayList<>();
 		for(int i=0; i<groupFeedList.size(); i++) {

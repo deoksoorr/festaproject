@@ -13,19 +13,13 @@
 	<script type="text/javascript" src="${root}resources/js/jquery-1.12.4.js"></script>
 	<script type="text/javascript" src="${root}resources/js/util.js"></script>
 	<script type="text/javascript" src="${root}resources/js/site.js"></script>
+	<script type="text/javascript" src="${root }resources/js/jh.js"></script>
 	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<link rel="stylesheet" href="${root}resources/css/site.css">
 	<link rel="shortcut icon" href="${root}resources/favicon.ico">
 	<title>FESTA</title>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			
-			 //첫화면때 2개만 피드출력
-			$('.feed_viewer').each(function(index){
-				if(index>1){
-					$('.feed_viewer').eq(index).hide();
-				}
-			}); 
 			
 			//스크롤 내렸을때 피드 2개씩 출력
 			$(window).scroll(function(){
@@ -36,11 +30,12 @@
 					scroll++;
 					scrollTag.text(scroll);
 					console.log(scroll);
-					var curfeedcnt=$('.feed_viewer').length;
-					var myfeedcnt=$('.cnt_list li b').eq(0).text();
-					myfeedcnt=Number(myfeedcnt);
-					$('.feed_viewer').eq(scroll*2).show();
-					$('.feed_viewer').eq(scroll*2+1).show();
+					$.get('${root}hot/scroll','page5='+scroll,function(){
+						
+					}).done(function(data){
+						//인기피드 스크롤더보기
+						feedList(data,'hot','${login.pronum}','${login.prophoto}','${login.logincheck}');
+					});
 			    }
 			});
 			
@@ -192,7 +187,7 @@
 								'<a href="${root }user/?pronum='+data[index].pronum+'" class="pf_picture">'+
 									'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
 								'</a><p class="cmt_content">'+
-									'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].gcauthor+'</a>'+
+									'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].gcauthor+'</a>&nbsp;'+
 									data[index].gccontent+
 									'<span class="cmt_date">'+data[index].gcdate1+'</span>'+
 									delbtn+
@@ -730,7 +725,7 @@
 			<!-- } 우측 사이드영역 끝 -->
 		</div>
 	</div>
-	<span class="snd_only">0</span>
+	<span class="snd_only">1</span>
 	<!-- } 서브페이지 -->
 	<div id="footer">
 		<div class="container">

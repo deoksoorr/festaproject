@@ -62,7 +62,7 @@
 					</c:if>
 					<c:if test="${login ne null }">
 						<c:if test="${login.proid ne 'admin@festa.com' }">
-							<li><a href="${root}user/">마이페이지</a></li>
+							<li><a href="${root}user/?pronum=${login.pronum}">마이페이지</a></li>
 						</c:if>
 						<c:if test="${login.proid eq 'admin@festa.com' }">
 							<li><a href="${root}admin/">관리자</a></li>

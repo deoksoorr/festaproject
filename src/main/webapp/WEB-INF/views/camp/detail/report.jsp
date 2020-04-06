@@ -5,8 +5,11 @@
 <script type="text/javascript">
 	var url = window.location.href;
 	if (url.indexOf('report') > 0) location.href='${root}empty';
+	
 	$('#reportForm').on('submit', function(e) {
-		e.preventDefault();
+		var wrap = $('.report_wrap'),
+			bg = wrap.prev('.b-modal');
+		
 		var files = new FormData($('#reportForm')[0]);
 		$.ajax({
 			type: 'POST',
@@ -17,14 +20,21 @@
 			contentType: false,
 			cache: false,
 			success: function() {
-				console.log(files);
-				openPop('ok', none, refresh);
+				wrap.hide();
+				bg.hide();
+				alertMsg('신고가 정상적으로 접수되었습니다.');
+				openPop('alert', none, refresh);
 			},
 			error: function() { 
-				//openPop('fail');
+				alertMsg('올바른 방법으로 다시 시도해주세요.');
+				openPop('alert');
 			}
 		});
+		e.preventDefault();
 	});
+	function alertMsg(message) {
+		$('#alert .pop_tit').text(message);
+	}
 </script>
 <!-- #팝업 신고하기 -->
 <div class="report_wrap pop_wrap">
@@ -99,9 +109,9 @@
 		</div>
 	</form>
 </div>
-<div id="ok" class="fstPop">
+<div id="alert" class="fstPop">
 	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">신고가 정상적으로 접수되었습니다.</p>
+		<p class="pop_tit"></p>
 		<ul class="comm_buttons">
 			<li><button type="button" class="btn_close comm_btn cfm">확인</button></li>
 		</ul>

@@ -7,7 +7,6 @@ import com.fin.festa.model.entity.CampVo;
 import com.fin.festa.model.entity.GroupVo;
 import com.fin.festa.model.entity.MyBookMarkVo;
 import com.fin.festa.model.entity.MyGoodVo;
-import com.fin.festa.model.entity.PageSearchVo;
 import com.fin.festa.model.entity.ReportListVo;
 
 public interface CampDao {
@@ -36,23 +35,21 @@ public interface CampDao {
 	
 	int campReviewDelete(CampReviewVo campReviewVo);
 	
-	void campLikeInsert(MyGoodVo good);
+	void campLikeInsert(MyGoodVo myGoodVo);
 	
-	int campLikeDelete(MyGoodVo good);
+	int campLikeDelete(MyGoodVo myGoodVo);
 	
-	int campLikeOnePlus(CampVo camp);
-	
-	int campLikeOneMinus(CampVo camp);
+	int campLikeUpdate(CampVo campVo);
 	
 	void campReport(ReportListVo reportListVo);
 	
-	void campBookMarkInsert(MyBookMarkVo bookMark);
+	void campBookMarkInsert(MyBookMarkVo myBookMarkVo);
 	
-	int campBookMarkDelete(MyBookMarkVo bookMark);
+	int campBookMarkDelete(MyBookMarkVo myBookMarkVo);
 	
-	List<MyGoodVo> myGoodRenewal(MyGoodVo good);
+	List<MyGoodVo> myGoodRenewal(MyGoodVo myGoodVo);
 	
-	List<MyBookMarkVo> myboodRenewal(MyBookMarkVo bookMark);
+	List<MyBookMarkVo> mybookRenewal(MyBookMarkVo myBookMarkVo);
 	
 	int campReportCountUpdate(ReportListVo reportListVo);
 }

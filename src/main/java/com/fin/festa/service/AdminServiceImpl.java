@@ -1,5 +1,6 @@
 package com.fin.festa.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -95,12 +96,25 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public void adminGroupDetail(Model model, GroupVo groupVo) {
 
+		PageSearchVo page = new PageSearchVo();
+		page.setPage5(1);
+		groupVo.setPageSearch(page);
+		
 		model.addAttribute("groupinfo", adminDao.groupInfo(groupVo));
 		model.addAttribute("groupnotice", adminDao.groupNoticeInfo(groupVo));
 		model.addAttribute("groupfeed", adminDao.groupFeedInfoSelectAll(groupVo));
 		model.addAttribute("groupcmmt", adminDao.groupFeedCmmtInfoSelectAll(groupVo));
 	}
 
+	//그룹피드 스크롤더보기 비동기
+	@Override
+	public List<List<?>> adminGroupDetailScroll(Model model, GroupVo groupVo) {
+
+		List<List<?>> list = new ArrayList<>();
+		list.add(adminDao.groupFeedInfoSelectAll(groupVo));
+		list.add(adminDao.groupFeedCmmtInfoSelectAll(groupVo));
+		return list;
+	}
 	//그룹피드댓글 더보기 비동기
 	@Override
 	public List<GroupCommentVo> adminGroupDetailCmmt(Model model, GroupPostVo grouppost) {
@@ -223,6 +237,9 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public void adminUserDetail(HttpServletRequest req, ProfileVo profileVo) {
 		
+		PageSearchVo page = new PageSearchVo();
+		page.setPage5(1);
+		profileVo.setPageSearch(page);
 		
 		req.setAttribute("userdetail", adminDao.userInfo(profileVo));
 		req.setAttribute("userfeed", adminDao.userFeed(profileVo));
@@ -230,6 +247,17 @@ public class AdminServiceImpl implements AdminService{
 		req.setAttribute("userfeedcount", adminDao.userFeedCount(profileVo));
 		req.setAttribute("userfollowing", adminDao.userFollowingCount(profileVo));
 		req.setAttribute("userfollower", adminDao.userFollowerCount(profileVo));
+	}
+
+	//유저피드 스크롤 더보기 비동기
+	@Override
+	public List<List<?>> adminUserDetailScroll(HttpServletRequest req, ProfileVo profileVo) {
+		
+		List<List<?>> list = new ArrayList<>();
+		list.add(adminDao.userFeed(profileVo));
+		list.add(adminDao.userCmmt(profileVo));
+		
+		return list;
 	}
 
 	//유저피드댓글더보기 비동기

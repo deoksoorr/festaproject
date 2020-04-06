@@ -69,10 +69,6 @@ public interface UserService {
 		void campAdmin(HttpServletRequest req);
 		
 		void campUpdateOne(Model model, CampVo campVo);
-		
-		void followerList(Model model, ProfileVo profile);
-		
-		void followList(Model model, ProfileVo profile);
 
 		void feedCmmtInsertOne(HttpServletRequest req, MyCommentVo myCommentVo);
 
@@ -81,4 +77,8 @@ public interface UserService {
 		void feedUpdateOne(HttpServletRequest req, MultipartFile[] filess, MyPostVo myPostVo);
 
 		void feedSelectOne(HttpServletRequest req, ProfileVo profile);
+
+		void followerList(HttpServletRequest req, ProfileVo profile);
+
+		void followList(HttpServletRequest req, ProfileVo profile);
 }

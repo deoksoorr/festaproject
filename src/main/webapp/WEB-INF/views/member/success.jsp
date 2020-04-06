@@ -27,7 +27,7 @@
 					<a href="${root }"><em class="snd_only">FESTA</em></a>
 				</h1>
 				<form class="search_box">
-					<input type="text" placeholder="캠핑장 또는 그룹을 검색해보세요!">
+					<input type="text" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 					<button type="submit"><img src="${root }resources/images/ico/btn_search.png" alt="검색"></button>
 				</form>
 				<ul id="gnb">
@@ -46,7 +46,7 @@
 		<div class="success_wrap container">
 			<h2><span>회원가입이 완료되었습니다!</span></h2>
 			<p>
-				<b>김덕수</b> 님, 페스타 회원이 되신 것을 환영합니다.<br>
+				<b>${join.proname }</b> 님, 페스타 회원이 되신 것을 환영합니다.<br>
 				페스타에서 제공하는 다양한 서비스를 즐겨보세요!
 			</p>
 			<ul class="services">

@@ -140,12 +140,12 @@
 	
 	<!-- 한줄평 등록 -->
 	<insert id="campReviewInsert" parameterType="CampReviewVo">
-		insert into campreview (crauthor,crcontent,crdate,crgood,canum1,pronum5) values (#{crauthor},#{crcontent},now(),#{crgood},#{canum},#{pronum});
+		insert into campreview (crauthor,crcontent,crdate,crgood,canum1,pronum5) values (#{crauthor},#{crcontent},now(),#{crgood},#{canum},#{pronum})
 	</insert>
 	
 	<!-- 한줄평 등록시 캠핑장 별점 업데이트 -->
 	<update id="campAvgUpdate" parameterType="CampReviewVo">
-		update camp set caavg=#{camp.caavg} where canum=#{canum}
+		update camp set caavg=(select avg(crgood) from campreview where canum1=#{canum}) where canum=#{canum}
 	</update>
 	
 	<!-- 한줄평 삭제 -->
@@ -166,14 +166,9 @@
 		delete from mygood where pronum6=#{pronum} and canum3=#{canum}
 	</delete>
 	
-	<!-- 캠핑장 좋아요등록시 캠핑장 좋아요갯수 +1 -->
+	<!-- 캠핑장 좋아요갯수 -->
 	<update id="campLikeUpdate" parameterType="CampVo">
-		update camp set cagood=cagood+1 where canum=#{canum}
-	</update>
-	
-	<!-- 캠핑장 좋아요해제시 캠핑장 좋아요갯수 -1 -->
-	<update id="campDislikeUpdate" parameterType="CampVo">
-		update camp set cagood=cagood-1 where canum=#{canum}
+		update camp set cagood=(select count(*) from mygood where canum3=#{canum}) where canum=#{canum}
 	</update>
 	
 	<!-- 내 좋아요목록 갱신 -->
@@ -210,8 +205,8 @@
 	</delete>
 	
 	<!-- 내 북마크목록 갱신 -->
-	<select id="myboodRenewal" parameterType="MyBookMarkVo" resultMap="mybookmark">
-		select a.pronum16,b.* from mybookmark a inner join camp b on a.canum5=b.canum where pronum16=#{pronum}
+	<select id="mybookRenewal" parameterType="MyBookMarkVo" resultMap="mybookmark">
+		select a.pronum16, b.* from mybookmark a inner join camp b on a.canum5=b.canum where pronum16=#{pronum}
 	</select>
 
 	<!-- 캠핑장 북마크등록,해제 end -->

@@ -16,7 +16,17 @@ function scrX() {
 }
 
 function scrBar() {
-	$('.scrBar').mCustomScrollbar();
+	var target = arguments[0],
+		method = arguments[1];
+	if (target == undefined) {
+		$('.scrBar').mCustomScrollbar();
+	} else {
+		if (method == undefined) {
+			$(target).mCustomScrollbar();
+		} else {
+			$(target).mCustomScrollbar(method);
+		}
+	}
 }
 
 function layerOff() {
@@ -94,14 +104,18 @@ function myListOff() {
 /* } #나의 메뉴 (상단 더보기) */
 /* #썸네일슬라이드 { */
 function commSlider() {
-	var swiper = new Swiper('.thumb_slide', {
-		pagination: {
-			el: '.swiper-pagination',
-			clickable: true,
-		},
-		speed: 600,
-		preventClicks: false,
-		allowTouchMove: false,
+	$('#wrap .thumb_slide').each(function(){
+		var mySlider = $(this),
+			myPagination = $(this).find('.swiper-pagination');
+		new Swiper(mySlider, {
+			pagination: {
+				el: myPagination,
+				clickable: true,
+			},
+			speed: 600,
+			preventClicks: false,
+			allowTouchMove: false,
+		});
 	});
 }
 /* } #썸네일슬라이드 */
@@ -114,7 +128,7 @@ function feedType(target) {
 			$(this).addClass('half');
 		}
 	});
-	commSlider(290);
+	commSlider();
 }
 /* } #피드 */
 
@@ -126,6 +140,7 @@ function refresh() {
 }
 function none() {}
 /* #레이어 팝업 { */
+// 팝업 공통 버튼
 function btnPop(button) {
 	$(document).on('click', '.'+button, function(e) {
 		var url = $(this).attr('href');
@@ -136,6 +151,25 @@ function btnPop(button) {
 		} else {
 			openLayer(e, url);
 		}
+	});
+}
+// 라디오 팝업 버튼
+function rdoPop() {
+	var radio = $('.rdo_pop');
+	var url = radio.data('url'); /* + '.html'*/
+	radio.on('change', function(e) {
+		openLayer(e, url, none, rdoProp)
+	});
+	function rdoProp() {
+		var radio = $('.rdo_pop');
+		radio.prop('checked', false);
+	}
+}
+// 피드 팝업 버튼
+function openFeed() {
+	$('.btn_feed').on('click', function(e) {
+		var url = $(this).attr('href');
+		openLayer(e, url, none, none, imageLoad);
 	});
 }
 function openPop(layer, open, close, content) {
@@ -155,11 +189,11 @@ function openPop(layer, open, close, content) {
 		},
 		onClose: function() {
 			layer.removeClass('pop'+layerCnt);
+			$(this).children('.btn_close').remove();
 			layerCnt--;
 			if (methods3) close();
 		},
 	}, function() {
-		popSquare();
 		$('#fstLoad').remove();
 		if (methods4) content();
 	});
@@ -187,22 +221,38 @@ function openLayer(e, url, open, close, content) {
 			if (methods4) close();
 		},
 	}, function() {
-		popSquare();
 		$('#fstLoad').remove();
+		scrBar('.fstPop .scrBar');
 		if (methods5) content();
 	});
 }
-// 라디오버튼 클릭 시
-function rdoPop() {
-	var radio = $('.rdo_pop');
-	var url = radio.data('url'); /* + '.html'*/
-	radio.on('change', function(e) {
-		openLayer(e, url, none, rdoProp)
-	});
-	function rdoProp() {
-		var radio = $('.rdo_pop');
-		radio.prop('checked', false);
+function imageLoad(seconds) {
+	var seconds = seconds;
+	if (seconds == undefined) {
+		setTimeout(function() {
+			popSquare();
+			popSlider();
+		}, 1000);
+	} else {
+		setTimeout(function() {
+			popSquare();
+			popSlider();
+		}, seconds);
 	}
+}
+// 외부팝업 슬라이더
+function popSlider() {
+	var mySlider = $('.fstPop .thumb_slide'),
+		myPagination = mySlider.find('.swiper-pagination');
+	var swiper = new Swiper(mySlider, {
+		pagination: {
+			el: myPagination,
+			clickable: true,
+		},
+		speed: 600,
+		preventClicks: false,
+		allowTouchMove: false,
+	});
 }
 /* } #레이어 팝업 */
 
@@ -289,8 +339,6 @@ $(document).ready(function() {
 
 	// 하트 CSS
 	btnToggle('btn_liked');
-	// 북마크 CSS
-	btnToggle('btn_bookmark');
 	// 팔로잉 CSS
 	btnFollow();
 });
@@ -300,6 +348,7 @@ function square() {
 		30: [
 			$('.comment_list .pf_picture'),
 			$('.feed_list .pf_picture'),
+			$('.message_form .pf_picture'),
 		],
 		45: [
 			$('.my_list'),
@@ -321,23 +370,27 @@ function square() {
 		120: [
 			$('.profile_area .pf_picture'),
 		],
+		290: [
+			$('.feed_viewer .swiper-slide'),
+		],
 	};
 	squareArrTrim(commSquare);
 }
 function popSquare() {
 	var popSquare = {
 		30: [
-			$('.comment_list .pf_picture'),
+			$('.fstPop .comment_list .pf_picture'),
+			$('.fstPop .message_form .pf_picture'),
 		],
 		50: [
 			$('.follow_wrap .pf_picture'),
 		],
 		55: [
-			$('.feed_maker .pf_picture'),
-			$('.feed_viewer .tit .pf_picture'),
+			$('.fstPop .feed_maker .pf_picture'),
+			$('.fstPop .feed_viewer .tit .pf_picture'),
 		],
-		80: [
-			$('.feed_maker .ft_thumb'),
+		290: [
+			$('.fstPop .feed_viewer .swiper-slide'),
 		],
 	};
 	squareArrTrim(popSquare);
@@ -505,7 +558,6 @@ function reportForm() {
 		var f = file.val(),
 			r = form.find('input[name="'+radioName+'"]:checked').val(),
 			t = textarea.val();
-		console.log('f '+f, '\nr '+r, '\nt '+t);
 		if (f != '' && r != '기타') {
 			submitBtn.attr('type', 'submit');
 		} else if (f != '' && (r == '기타' && t != '')) {
@@ -595,7 +647,6 @@ function formRequired(form) {
 			}
 		});
 	}
-	// $(submit).on('click', function() {});
 }
 
 
@@ -681,13 +732,12 @@ function fileUpload() {
 		imgFile = f.type.match('image.*'),
 		vdoFile = f.type.match('video.*');
 	if ((f.size < limit) && imgFile || vdoFile) {
+		fileThumbnail(f, img);
 		if (feed) {
-			fileThumbnail(f, img, 80);
 			setTimeout(function() {squareTrim(img, 80)}, 150);
 			box.attr('class', 'ft_thumb');
 			fileBoxControll(container);
 		} else {
-			fileThumbnail(f, img, 140);
 			setTimeout(function() {squareTrim(img, 140)}, 150);
 		}
 	} else {
@@ -699,7 +749,7 @@ function fileUpload() {
 		this.value = '';
 	}
 }
-function fileThumbnail(file, img, size) {
+function fileThumbnail(file, img) {
 	var fileReader = new FileReader();
 	fileReader.onload = function(e) {
 		var src = e.target.result;
@@ -709,27 +759,28 @@ function fileThumbnail(file, img, size) {
 }
 function setFile() {
 	var container, file, cancleBtn;
-	var pop = $('.fstPop').is(':visible');
-	if (pop) {
+	if ($('.fstPop').is(':visible')) {
 		container = $('.fstPop').find('.file_thumbnail');
 		file = container.find('input[type=file]');
 		cancleBtn = container.find('.btn_cancle');
+		var img = container.find('.ft_thumb').find('img');
+		setTimeout(function() {squareTrim(img, 80)}, 150);
 	} else {
 		container = $('#wrap').find('.file_thumbnail');
 		file = container.find('input[type=file]');
 		cancleBtn = container.find('.btn_cancle');
 	}
-	fileBoxControll(container);
 	$(file).on('change', fileUpload);
 	$(cancleBtn).on('click', fileRemove);
+	fileBoxControll(container);
 }
 function setOneFile() {
 	var container = $('.set_file1'),
 		file = container.find('input[type=file]'),
 		cancleBtn = container.find('.btn_cancle');
-	var img = container.find('img');
 	$(cancleBtn).on('click', profileRemove);
 	$(file).on('change', fileUpload);
+	var img = container.find('img');
 	squareTrim(img, 140);
 }
 
@@ -795,6 +846,7 @@ function campDetail() {
 	starRating();
 	kakaoMap();
 	commSlider();
+	btnToggle('btn_bookmark');
 }
 function campSlider() {
 	var swiper = new Swiper('.camp_slide > div', {

@@ -30,6 +30,7 @@ public class CampVo {					//캠핑장
 	private int cagood;					//캠핑장 좋아요 수
 	private int mvnum;					//캠핑장 사업자번호
 	private int carn;					//페이지 번호
+	private int catotal;
 	private CampReviewVo campReview;
 	private GroupCommentVo groupComment;
 	private GroupNoticeCommentVo groupNoticeComment;
@@ -58,7 +59,7 @@ public class CampVo {					//캠핑장
 				+ ", caguide3=" + caguide3 + ", caguide4=" + caguide4 + ", caguide5=" + caguide5 + ", caguide6="
 				+ caguide6 + ", caguide7=" + caguide7 + ", httitle1=" + httitle1 + ", httitle2=" + httitle2
 				+ ", httitle3=" + httitle3 + ", cadate=" + cadate + ", cadateup=" + cadateup + ", caavg=" + caavg
-				+ ", cagood=" + cagood + ", mvnum=" + mvnum + ", carn=" + carn + ", campReview=" + campReview
+				+ ", cagood=" + cagood + ", mvnum=" + mvnum + ", carn=" + carn + ", catotal=" + catotal + ", campReview=" + campReview
 				+ ", groupComment=" + groupComment + ", groupNoticeComment=" + groupNoticeComment + ", groupNotice="
 				+ groupNotice + ", groupPost=" + groupPost + ", group=" + group + ", joinGroup=" + joinGroup
 				+ ", myAdmin=" + myAdmin + ", myBookMark=" + myBookMark + ", myComment=" + myComment + ", myFollower="
@@ -74,7 +75,7 @@ public class CampVo {					//캠핑장
 	public CampVo(List<CampVo> campList, int canum, String caname, String caphoto, String caaddr, String caaddrsuv,
 			String caaddrsel, String caintro, String caintroone, String caguide1, String caguide2, String caguide3,
 			String caguide4, String caguide5, String caguide6, String caguide7, String httitle1, String httitle2,
-			String httitle3, Date cadate, Date cadateup, double caavg, int cagood, int mvnum, int carn,
+			String httitle3, Date cadate, Date cadateup, double caavg, int cagood, int mvnum, int carn, int catotal,
 			CampReviewVo campReview, GroupCommentVo groupComment, GroupNoticeCommentVo groupNoticeComment,
 			GroupNoticeVo groupNotice, GroupPostVo groupPost, GroupVo group, JoinGroupVo joinGroup, MyAdminVo myAdmin,
 			MyBookMarkVo myBookMark, MyCommentVo myComment, MyFollowerVo myFollower, MyFollowingVo myFollowing,
@@ -125,6 +126,7 @@ public class CampVo {					//캠핑장
 		this.profile = profile;
 		this.reportList = reportList;
 		this.updateWait = updateWait;
+		this.catotal = catotal;
 	}
 
 	public List<CampVo> getCampList() {
@@ -477,6 +479,14 @@ public class CampVo {					//캠핑장
 
 	public void setUpdateWait(UpdateWaitVo updateWait) {
 		this.updateWait = updateWait;
+	}
+
+	public int getCatotal() {
+		return catotal;
+	}
+
+	public void setCatotal(int catotal) {
+		this.catotal = catotal;
 	}
 	
 	
