@@ -40,6 +40,7 @@
 	
 	<!-- 내 북마크목록 조인 시에 참조되는데이터 -->
 	<resultMap type="MyBookMarkVo" id="mybookmark">
+		<id column="dummy_column_for_unique"/>
 		<result column="pronum16" property="pronum"/>
 		<association property="camp" resultMap="camp1"/>
 	</resultMap>
@@ -81,6 +82,16 @@
 	<resultMap type="ProfileVo" id="profile1">
 		<result column="prophoto" property="prophoto"/>
 	</resultMap>
+	
+	<!-- 내 좋아요목록 -->
+	<resultMap type="MyGoodVo" id="good">
+		<result column="pronum6" property="pronum"/>
+		<result column="canum3" property="canum"/>
+		<result column="gpnum3" property="gpnum"/>
+		<result column="mpnum2" property="mpnum"/>
+	</resultMap>
+	
+	
 	
 	<!-- 캠핑정보 화면출력 start -->
 	
@@ -172,7 +183,7 @@
 	</update>
 	
 	<!-- 내 좋아요목록 갱신 -->
-	<select id="myGoodRenewal" parameterType="MyGoodVo" resultType="MyGoodVo">
+	<select id="myGoodRenewal" parameterType="MyGoodVo" resultMap="good">
 		select * from mygood where pronum6=#{pronum}
 	</select>
 	

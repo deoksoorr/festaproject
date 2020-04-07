@@ -25,7 +25,7 @@ if(url.indexOf('follower')>0){
 				<li>
 					<a href="${root }admin/user/detail?pronum=${myfollower.profile.pronum}">
 						<span class="pf_picture">
-							<img src="${upload }/${myfollower.profile.prophoto}" alt="${myfollower.profile.proname }님의 프로필 썸네일">
+							<img src="${upload }/${myfollower.profile.prophoto}" alt="${myfollower.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 50)">
 						</span>
 						<b class="fw_name">${myfollower.profile.proname }</b>
 						<span class="fw_intro">${myfollower.profile.prointro }</span>

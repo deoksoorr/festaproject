@@ -41,6 +41,32 @@ public class DateCalculate {
 	}
 	
 	//그룹,개인피드 병합해서 날짜 2순위,좋아요 1순위 정렬(인기피드출력에 쓰임)
+	public List<FeedVo> VoDateReturn(List<FeedVo> groupFeedList, List<FeedVo> feedList) {
+		
+		List<FeedVo> list= new ArrayList<>();
+		for(int i=0; i<groupFeedList.size(); i++) {
+			list.add(groupFeedList.get(i));
+		}
+		
+		for(int i=0; i<feedList.size(); i++) {
+			list.add(feedList.get(i));
+		}
+		
+		Collections.sort(list,new Comparator<FeedVo>() {
+			
+			@Override
+			public int compare(FeedVo o1, FeedVo o2) {
+				Timestamp v1 = o1.getDate();
+				Timestamp v2 = o2.getDate();
+				
+				return v2.compareTo(v1);
+			}
+		});
+		
+		return list;
+	}
+	
+	//그룹,개인피드 병합해서 날짜 정렬(뉴스피드출력에 쓰임)
 	public List<FeedVo> VoDateGoodReturn(List<FeedVo> groupFeedList, List<FeedVo> feedList) {
 		
 		List<FeedVo> list= new ArrayList<>();

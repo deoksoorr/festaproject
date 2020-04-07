@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:if test="${sessionScope.login ne null }">
 	<c:if test="${sessionScope.login.proid eq 'admin@festa.com' }">
 		<c:redirect url="/empty" />
@@ -81,7 +82,7 @@
 						<li><a href="${root}member/login" class="btn_pop">로그인</a></li>
 					</c:if>
 					<c:if test="${login ne null }">
-						<li><a href="${root}user/">마이페이지</a></li>
+						<li><a href="${root}user/?pronum=${login.pronum}">마이페이지</a></li>
 					</c:if>
 				</ul>
 				<c:if test="${login ne null }">
@@ -135,12 +136,19 @@
 								<span class="btn_mylist">나의 캠핑장</span>
 								<div class="my_list">
 									<ul>
-										<c:forEach items="${bookMark }" var="bookMark">
-											<li><a href="${root }camp?canum=${bookMark.camp.canum}">
-													<span><img src="${upload }/${image}"
-														alt="${bookMark.camp.caname } 캠핑장 썸네일"></span> <b>${bookMark.camp.caname }</b>
-											</a></li>
-										</c:forEach>
+									<c:forEach items="${bookMark}" var="bookMark">
+										<li>
+											<a href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
+												<span>
+													<c:set var="image" value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
+													<c:if test="${!empty bookMark.camp.caphoto && empty image}"><img src="${upload}/${bookMark.camp.caphoto}" alt="${bookMark.camp.caname}"></c:if>
+													<c:if test="${!empty bookMark.camp.caphoto && !empty image}"><img src="${upload}/${image}" alt="${bookMark.camp.caname}"></c:if>
+													<c:if test="${empty bookMark.camp.caphoto && empty image}"><img src="${root}resources/images/thumb/no_profile.png" alt="${bookMark.camp.caname}"></c:if>
+												</span>
+												<b>${bookMark.camp.caname}</b>
+											</a>
+										</li>
+									</c:forEach>
 									</ul>
 								</div>
 							</dd>

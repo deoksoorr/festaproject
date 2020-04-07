@@ -106,6 +106,7 @@ public class CampServiceImpl implements CampService{
 	public void bookInsertOne(HttpServletRequest req, MyBookMarkVo myBookMarkVo) {
 		campDao.campBookMarkInsert(myBookMarkVo);
 		req.getSession().setAttribute("bookMark", campDao.mybookRenewal(myBookMarkVo));
+		System.out.println(myBookMarkVo);
 	}
 
 	//캠핑장 북마크해제
@@ -114,6 +115,7 @@ public class CampServiceImpl implements CampService{
 	public void bookDeleteOne(HttpServletRequest req, MyBookMarkVo myBookMarkVo) {
 		campDao.campBookMarkDelete(myBookMarkVo);
 		req.getSession().setAttribute("bookMark", campDao.mybookRenewal(myBookMarkVo));
+		System.out.println(myBookMarkVo);
 	}
 
 	//한줄평 등록

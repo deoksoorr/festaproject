@@ -156,15 +156,15 @@ function btnPop(button) {
 // 라디오 팝업 버튼
 function rdoPop() {
 	var radio = $('.rdo_pop');
-	var url = radio.data('url'); /* + '.html'*/
 	radio.on('change', function(e) {
-		openLayer(e, url, none, rdoProp)
+	   var url = $(this).data('url'); /* + '.html'*/
+	   openLayer(e, url, none, rdoProp);
 	});
 	function rdoProp() {
-		var radio = $('.rdo_pop');
-		radio.prop('checked', false);
+	   var radio = $('.rdo_pop');
+	   radio.prop('checked', false);
 	}
-}
+ }
 // 피드 팝업 버튼
 function openFeed() {
 	$('.btn_feed').on('click', function(e) {
@@ -201,7 +201,9 @@ function openPop(layer, open, close, content) {
 function openLayer(e, url, open, close, content) {
 	var methods4 = arguments.length == 4;
 	var methods5 = arguments.length == 5;
-	e.preventDefault();
+	if (e != 'none') {
+		e.preventDefault();
+	}
 	layerCnt++;
 	var url = url;
 	// var url = url + '.html';
@@ -240,6 +242,19 @@ function imageLoad(seconds) {
 		}, seconds);
 	}
 }
+function sliderLoad(target) {
+	var mySlider = target,
+	myPagination = target.find('.swiper-pagination');
+	new Swiper(mySlider, {
+	   pagination: {
+		  el: myPagination,
+		  clickable: true,
+	   },
+	   speed: 600,
+	   preventClicks: false,
+	   allowTouchMove: false,
+	});
+ }
 // 외부팝업 슬라이더
 function popSlider() {
 	var mySlider = $('.fstPop .thumb_slide'),

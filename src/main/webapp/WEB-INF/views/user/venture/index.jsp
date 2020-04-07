@@ -15,6 +15,23 @@
 	<link rel="stylesheet" href="${root }resources/css/site.css">
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
 	<title>FESTA</title>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#rst').on('submit',function(e){
+				e.preventDefault();
+				var mvnum = $('#mvnum').val();
+				var mvname = $('#mvname').val();
+				var mvaddr = $('#mvaddr').val();
+				var mvaddrsuv = $('#mvaddrsuv').val();
+				$.post('${root}user/venture/edit','mvnum='+mvnum+'&mvname='+mvname+'&mvaddr='+mvaddr+'&mvaddrsuv='+mvaddrsuv,function(){
+					openPop("ok");
+					$('#btn_ok').on('click',function(){
+						window.location.reload();
+					});
+				});
+			});
+		});
+	</script>
 </head>
 <body>
 <c:if test="${sessionScope.login eq null}">
@@ -197,7 +214,13 @@
 							<a href="">${sessionScope.profile.proaddr }</a>
 						</dd>
 						<dd class="pf_picture">
-							<img src="http://placehold.it/120x120" alt="${profile.proname }님의 프로필 썸네일">
+							<c:if test="${profile.prophoto ne '' }">
+								<img src="${upload }/${profile.prophoto}"
+										alt="${profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${profile.prophoto eq '' }">
+									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
+							</c:if>
 						</dd>
 					</dl>
 				</div>
@@ -253,7 +276,7 @@
 			<!-- 컨텐츠영역 시작 { -->
 			<section class="content_area">
 				<h2 class="set_tit">사업자 계정 관리</h2>
-				<form action="${root }user/venture/edit" method="post" class="set_form">
+				<form  id="rst" class="set_form">
 					<input type="hidden" id="mvnum" name="mvnum" value="${myVenture.mvnum }"/>
 					<ul class="input_list">
 						<li class="box">
@@ -301,7 +324,7 @@
 					</ul>
 					<ul class="comm_buttons">
 						<li><button type="reset" class="btn_close comm_btn cnc">취소</button></li>
-						<li><button type="submit" class="comm_btn sbm">저장</button></li>
+						<li><button type="submit" id="save" class="comm_btn sbm">저장</button></li>
 					</ul>
 				</form>
 			</section>
@@ -331,10 +354,18 @@
 		</div>
 	</div>
 </div>
-
 <script type="text/javascript" src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script type="text/javascript">
 	kakaoAddr();
 </script>
 </body>
+<!-- #팝업 처리완료 { -->
+<div id="ok" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">처리가 완료되었습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" id="btn_ok" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
 </html>

@@ -20,6 +20,7 @@
 	
 	<!-- 내 북마크목록 조인 시에 참조되는데이터 -->
 	<resultMap type="MyBookMarkVo" id="mybookmark">
+		<id column="dummy_column_for_unique"/>
 		<result column="pronum16" property="pronum"/>
 		<association property="camp" resultMap="camp"/>
 	</resultMap>

@@ -44,18 +44,12 @@ public interface UserService {
 		
 		void myProfile(HttpServletRequest req, ProfileVo profileVo);
 		
-		int myProfileUpdateOne(HttpServletRequest req, ProfileVo profileVo);
-		
 		void myAdmin(Model model, ProfileVo prifileVo);
 		
 		int myAdminCheck(Model model, LoginVo loginVo);
 		
 		void myAdminUpdateOne(HttpServletRequest req, ProfileVo profileVo);
 		
-		void myAdminInactive(Model model, MyAdminVo myAdminVo);
-		
-		void myAdminGoodbye(Model model, ProfileVo profileVo);
-
 		GroupVo groupInsertOne(HttpServletRequest req, GroupVo groupVo);
 		
 		void ventureInsertOne(HttpServletRequest req, UpdateWaitVo updateWaitVo);
@@ -67,8 +61,6 @@ public interface UserService {
 		void campInsertOne(Model model, CampVo campVo);
 		
 		void campAdmin(HttpServletRequest req);
-		
-		void campUpdateOne(Model model, CampVo campVo);
 
 		void feedCmmtInsertOne(HttpServletRequest req, MyCommentVo myCommentVo);
 
@@ -81,4 +73,12 @@ public interface UserService {
 		void followerList(HttpServletRequest req, ProfileVo profile);
 
 		void followList(HttpServletRequest req, ProfileVo profile);
+
+		int myProfileUpdateOne(HttpServletRequest req, MultipartFile[] files, ProfileVo profileVo);
+
+		int myAdminInactive(HttpServletRequest req, MyAdminVo myAdminVo);
+
+		int myAdminGoodbye(HttpServletRequest req, ProfileVo profileVo);
+
+		void campUpdateOne(HttpServletRequest req, MultipartFile[] files, CampVo campVo);
 }

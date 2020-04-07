@@ -383,9 +383,9 @@
 								</div>
 								<div class="file_thumbnail mk_thumb box">
 									<ul>
-										<li class="ft_btn"><input type="file" id="file1"
-											name="files" accept="video/*, image/*"> <img src=""
-											alt="">
+										<li class="ft_btn">
+											<input type="file" id="file1" name="files" accept="video/*, image/*"> 
+											<img src=""	alt="">
 											<button class="btn_cancle" type="button">
 												<em class="snd_only">업로드 취소하기</em>
 											</button> <label for="file1" class="btn_file"><em

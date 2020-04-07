@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:url value="/" var="root"></c:url>
+<c:url value="/upload" var="upload"></c:url>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -16,12 +18,30 @@
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
 	<title>FESTA</title>
  	 <script type="text/javascript">
- 	 $('#btn_submit').on('click',function(){
-				$.post('${root}user/profile', 'prophoto='+$('#prophoto').val()+'&prointro='+$('#prointro').val()+'&pronum='+$('#pronum').val(), function() {
-					location.reload();
-				});
-				return false;
-	}); 
+ 	 $(document).ready(function(){
+	 	$('#fileForm').on('submit',function(e){
+	 		e.preventDefault();
+
+			var formData = new FormData($('#fileForm')[0]);
+			$.ajax({
+				type:"POST",
+				enctype: 'multipart.form-data',
+				data: formData ,
+				processData: false,
+				contentType: false,
+				cache: false,
+				success: function(data){
+					openPop('ok');
+				},
+				error: function(e){
+				}
+			});
+		});
+
+		$('#btn_ok').on('click', function() {
+			location.reload();
+		});
+ 	});
 </script>
 </head>
 <body>
@@ -51,8 +71,14 @@
 						<c:if test="${login eq null }">
 							<li><a href="${root}member/login" id="btn_pop" class="btn_pop">로그인</a></li>
 						</c:if>
+						<c:if test="${login eq null }">
+							<%
+								out.println("<script>alert('로그인 후 이용이 가능합니다.')</script>");
+							%>
+							<li><a href="${root}member/login" class="btn_pop">로그인</a></li>
+						</c:if>
 						<c:if test="${login ne null }">
-							<li><a href="${root}user/index">마이페이지</a></li>
+							<li><a href="${root}user/?pronum=${login.pronum}">마이페이지</a></li>
 						</c:if>
 					</ul>
 					<c:if test="${login ne null }">
@@ -138,7 +164,7 @@
 				<div class="info_box">
 					<dl>
 						<dt class="pf_tit">
-							<a class="pf_name" href=""><b>${login.proname }</b></a>
+							<a class="pf_name" href="${root }user/?pronum=${login.pronum}"><b>${login.proname }</b></a>
 							<!-- 마이페이지일 경우 톱니바퀴 버튼 {  -->
 							<a class="pf_opt go_settings" href="${root }user/profile"><em class="snd_only">설정</em></a>
 							<!-- } 마이페이지일 경우 톱니바퀴 버튼 -->
@@ -147,10 +173,16 @@
 						<dd class="pf_hashtag">
 							<a href="">${sessionScope.profile.proaddr }</a>
 						</dd>
-						<dd class="pf_picture">
-							<img src="http://placehold.it/120x120" alt="${login.proname }님의 프로필 썸네일">
-						</dd>
-					</dl>
+							<dd class="pf_picture">
+								<c:if test="${profile.prophoto ne '' }">
+									<img src="${upload }/${profile.prophoto}"
+										alt="${profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${profile.prophoto eq '' }">
+									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
+								</c:if>
+							</dd>
+						</dl>
 				</div>
 				<div class="cnt_list">
 					<ul>
@@ -204,18 +236,25 @@
 			<!-- 컨텐츠영역 시작 { -->
 			<section class="content_area">
 				<h2 class="set_tit">프로필 관리</h2>
-				<form action="${root }user/profile" method="post" class="set_form">
+				<form id="fileForm" class="set_form" enctype="multipart/form-data">
 					<ul class="input_list">
 						<li class="set_file1 box">
 							<p>프로필 사진</p>
 							<div>
-								<p class="pf_picture">
-									<img src="${root }resources/images/thumb/no_profile.png"  alt="${login.proname }님의 프로필 썸네일">
-								</p>
-								<ul class="comm_buttons_s">
+									<p class="pf_picture">
+								 		<input type="hidden" id="prophoto" name="prophoto" value="${profile.prophoto }" />
+										<input type="file" id="file1" name="files" accept="image/*">
+										<c:if test="${profile.prophoto ne '' }">
+											<img src="${upload }/${profile.prophoto}"
+												alt="${profile.proname }님의 프로필 썸네일">
+										</c:if>
+										<c:if test="${profile.prophoto eq '' }">
+											<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일">
+										</c:if>
+									</p>
+									<ul class="comm_buttons_s">
 									<li>
-										<input type="file" id="prophoto" name="prophoto" accept="image/*">
-										<label for="festa1" class="comm_btn cfm">등록</label>
+										<label for="file1" class="comm_btn cfm">등록</label>	
 									</li>
 									<li>
 										<button type="button" class="comm_btn btn_cancle">삭제</button>
@@ -233,7 +272,7 @@
 					</ul>
 					<ul class="comm_buttons">
 						<li><button type="reset" class="btn_close comm_btn cnc">취소</button></li>
-						<li><button type="button" id="btn_submit" name="btn_submit" class="comm_btn btn_pop sbm" data-layer="ok" >저장</button></li>
+						<li><button type="submit" id="btn_submit" name="btn_submit" class="comm_btn btn_pop sbm">저장</button></li>
 					</ul>
 				</form>
 			</section>

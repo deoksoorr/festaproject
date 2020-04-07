@@ -22,87 +22,87 @@ public class NewsDaoImpl implements NewsDao{
 	SqlSession sqlSession;
 	
 	//////////////////////////////////////////////////////////////////////
-	///////////////////////////í™”ë©´ì¶œë ¥///////////////////////////////////
+	///////////////////////////È­¸éÃâ·Â///////////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	
-	//ë‚´íŒ”ë¡œìš°ì˜ í”¼ë“œê¸€ì¶œë ¥
+	//³»ÆÈ·Î¿ìÀÇ ÇÇµå±ÛÃâ·Â
 	@Override
 	public List<MyPostVo> followFeedSelectAll(MyFollowingVo following) {
 		return sqlSession.selectList("news.followingFeed", following);
 	}
 	
-	//ë‚´íŒ”ë¡œìš°ì˜ í”¼ë“œê¸€ëŒ“ê¸€ì¶œë ¥
+	//³»ÆÈ·Î¿ìÀÇ ÇÇµå±Û´ñ±ÛÃâ·Â
 	@Override
 	public List<MyCommentVo> followCommentSelectAll(MyFollowingVo following) {
 		return sqlSession.selectList("news.followingCmmt", following);
 	}
 
-	//ë‚´ê°€ì…ê·¸ë£¹ì˜ í”¼ë“œê¸€ì¶œë ¥
+	//³»°¡ÀÔ±×·ìÀÇ ÇÇµå±ÛÃâ·Â
 	@Override
 	public List<GroupPostVo> joinGroupFeedSelectAll(MyFollowingVo following) {
 		return sqlSession.selectList("news.joingroupFeed", following);
 	}
 
-	//ë‚´ê°€ì…ê·¸ë£¹ì˜ í”¼ë“œê¸€ëŒ“ê¸€ì¶œë ¥
+	//³»°¡ÀÔ±×·ìÀÇ ÇÇµå±Û´ñ±ÛÃâ·Â
 	@Override
 	public List<GroupCommentVo> joinGroupCommentSelectAll(MyFollowingVo following) {
 		return sqlSession.selectList("news.joingroupCmmt", following);
 	}
 	
 	//////////////////////////////////////////////////////////////////////
-	/////////////////////í”¼ë“œ,ëŒ“ê¸€ ìˆ˜ì •,ë“±ë¡,ì‚­ì œ/////////////////////////
+	/////////////////////ÇÇµå,´ñ±Û ¼öÁ¤,µî·Ï,»èÁ¦/////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	
-	//ë‰´ìŠ¤í”¼ë“œ(ìœ ì €í”¼ë“œ) ëŒ“ê¸€ë“±ë¡
+	//´º½ºÇÇµå(À¯ÀúÇÇµå) ´ñ±Ûµî·Ï
 	@Override
 	public void myFeedCmmtInsertOne(MyCommentVo cmmt) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ê·¸ë£¹í”¼ë“œ) ëŒ“ê¸€ë“±ë¡
+	//´º½ºÇÇµå(±×·ìÇÇµå) ´ñ±Ûµî·Ï
 	@Override
 	public void groupFeedCmmtInsertOne(GroupCommentVo groupcmmt) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ìœ ì €í”¼ë“œ) ëŒ“ê¸€ì‚­ì œ
+	//´º½ºÇÇµå(À¯ÀúÇÇµå) ´ñ±Û»èÁ¦
 	@Override
 	public int myFeedCmmtDeleteOne(MyCommentVo cmmt) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ê·¸ë£¹í”¼ë“œ) ëŒ“ê¸€ì‚­ì œ
+	//´º½ºÇÇµå(±×·ìÇÇµå) ´ñ±Û»èÁ¦
 	@Override
 	public int groupFeedCmmtDeleteOne(GroupCommentVo groupcmmt) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 	
-	//ë‰´ìŠ¤í”¼ë“œ(ìœ ì €í”¼ë“œ) ì‚­ì œ
+	//´º½ºÇÇµå(À¯ÀúÇÇµå) »èÁ¦
 	@Override
 	public int myFeedDeleteOne(MyPostVo post) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ê·¸ë£¹í”¼ë“œ) ì‚­ì œ
+	//´º½ºÇÇµå(±×·ìÇÇµå) »èÁ¦
 	@Override
 	public int groupFeedDeleteOne(GroupPostVo grouppost) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ìœ ì €í”¼ë“œ) ìˆ˜ì •
+	//´º½ºÇÇµå(À¯ÀúÇÇµå) ¼öÁ¤
 	@Override
 	public int myFeedUpdateOne(MyPostVo post) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ê·¸ë£¹í”¼ë“œ) ì‚­ì œ
+	//´º½ºÇÇµå(±×·ìÇÇµå) »èÁ¦
 	@Override
 	public int groupFeedUpdateOne(GroupPostVo grouppost) {
 		// TODO Auto-generated method stub
@@ -110,66 +110,66 @@ public class NewsDaoImpl implements NewsDao{
 	}
 	
 	//////////////////////////////////////////////////////////////////////
-	/////////////////////í”¼ë“œ,ëŒ“ê¸€ ì¢‹ì•„ìš”ë“±ë¡,í•´ì œ////////////////////////
+	/////////////////////ÇÇµå,´ñ±Û ÁÁ¾Æ¿äµî·Ï,ÇØÁ¦////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	
-	//ë‰´ìŠ¤í”¼ë“œ(ìœ ì €í”¼ë“œ) ì¢‹ì•„ìš”ë“±ë¡
+	//´º½ºÇÇµå(À¯ÀúÇÇµå) ÁÁ¾Æ¿äµî·Ï
 	@Override
 	public void myFeedLikeInsertOne(MyGoodVo good) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ê·¸ë£¹í”¼ë“œ) ì¢‹ì•„ìš”ë“±ë¡
+	//´º½ºÇÇµå(±×·ìÇÇµå) ÁÁ¾Æ¿äµî·Ï
 	@Override
 	public void groupFeedLikeInsertOne(MyGoodVo good) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ìœ ì €í”¼ë“œ) ì¢‹ì•„ìš”í•´ì œ
+	//´º½ºÇÇµå(À¯ÀúÇÇµå) ÁÁ¾Æ¿äÇØÁ¦
 	@Override
 	public int myFeedLikeDeleteOne(MyGoodVo good) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ê·¸ë£¹í”¼ë“œ) ì¢‹ì•„ìš”í•´ì œ
+	//´º½ºÇÇµå(±×·ìÇÇµå) ÁÁ¾Æ¿äÇØÁ¦
 	@Override
 	public int groupFeedLikeDeleteOne(MyGoodVo good) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ê°œì¸í”¼ë“œ) ì¢‹ì•„ìš”ë“±ë¡ì‹œ ê°œì¸í”¼ë“œì¢‹ì•„ìš” ê°¯ìˆ˜ +1
+	//´º½ºÇÇµå(°³ÀÎÇÇµå) ÁÁ¾Æ¿äµî·Ï½Ã °³ÀÎÇÇµåÁÁ¾Æ¿ä °¹¼ö +1
 	@Override
 	public int myFeedLikeOnePlus(MyPostVo post) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ê·¸ë£¹í”¼ë“œ) ì¢‹ì•„ìš”ë“±ë¡ì‹œ ê·¸ë£¹í”¼ë“œì¢‹ì•„ìš” ê°¯ìˆ˜+1
+	//´º½ºÇÇµå(±×·ìÇÇµå) ÁÁ¾Æ¿äµî·Ï½Ã ±×·ìÇÇµåÁÁ¾Æ¿ä °¹¼ö+1
 	@Override
 	public int groupFeedLikeOnePlus(GroupPostVo grouppost) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ê°œì¸í”¼ë“œ) ì¢‹ì•„ìš”í•´ì œì‹œ ê°œì¸í”¼ë“œì¢‹ì•„ìš” ê°¯ìˆ˜ -1
+	//´º½ºÇÇµå(°³ÀÎÇÇµå) ÁÁ¾Æ¿äÇØÁ¦½Ã °³ÀÎÇÇµåÁÁ¾Æ¿ä °¹¼ö -1
 	@Override
 	public int myFeedLikeOneMinus(MyPostVo post) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ê·¸ë£¹í”¼ë“œ) ì¢‹ì•„ìš”í•´ì œì‹œ ê·¸ë£¹í”¼ë“œì¢‹ì•„ìš” ê°¯ìˆ˜ -1
+	//´º½ºÇÇµå(±×·ìÇÇµå) ÁÁ¾Æ¿äÇØÁ¦½Ã ±×·ìÇÇµåÁÁ¾Æ¿ä °¹¼ö -1
 	@Override
 	public int groupFeedLikeOneMinus(GroupPostVo grouppost) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	//ë‚´ ì¢‹ì•„ìš”ëª©ë¡ ê°±ì‹ 
+	//³» ÁÁ¾Æ¿ä¸ñ·Ï °»½Å
 	@Override
 	public List<MyGoodVo> myGoodRenewal(MyGoodVo good) {
 		// TODO Auto-generated method stub
@@ -177,24 +177,24 @@ public class NewsDaoImpl implements NewsDao{
 	}
 	
 	//////////////////////////////////////////////////////////////////////
-	/////////////////////í”¼ë“œ,ëŒ“ê¸€ ì‹ ê³ ë“±ë¡///////////////////////////////
+	/////////////////////ÇÇµå,´ñ±Û ½Å°íµî·Ï///////////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	
-	//ë‰´ìŠ¤í”¼ë“œ(ìœ ì €í”¼ë“œ) ì‹ ê³ ë“±ë¡
+	//´º½ºÇÇµå(À¯ÀúÇÇµå) ½Å°íµî·Ï
 	@Override
 	public void myFeedReportInsertOne(ReportListVo report) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ(ê·¸ë£¹í”¼ë“œ) ì‹ ê³ ë“±ë¡
+	//´º½ºÇÇµå(±×·ìÇÇµå) ½Å°íµî·Ï
 	@Override
 	public void groupFeedReportInsertOne(ReportListVo report) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ì‹ ê³ ë‹¹í•œìœ ì € ì‹ ê³ ë‹¹í•œíšŸìˆ˜ +1
+	//½Å°í´çÇÑÀ¯Àú ½Å°í´çÇÑÈ½¼ö +1
 	@Override
 	public int feedReportCountUpdate(ReportListVo report) {
 		// TODO Auto-generated method stub

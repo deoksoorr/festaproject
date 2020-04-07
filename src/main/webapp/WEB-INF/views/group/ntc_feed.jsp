@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <jsp:useBean id="now" class="java.util.Date" />
-<c:url value="/upload" var="upload"></c:url>
+<c:url value="/resources/upload" var="upload"></c:url>
 <c:url value="/" var="root" />
 <!doctype html>
 <!-- #팝업 피드 -->
@@ -152,7 +152,7 @@
 					if(del==data[index].pronum || del==del2){
 						comments.append('<li>'+
 								'<a href="" class="pf_picture">'+
-									'<img src="${root }resources/upload/thumb/no_profile.png" alt="'+data[index].gncauthor+'님의 프로필 썸네일">'+
+									'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].gncauthor+'님의 프로필 썸네일"  onload="squareTrim($(this), 30)" >'+
 								'</a><p class="cmt_content">'+
 									'<a href="" class="cmt_name">'+data[index].gncauthor+'</a>&nbsp;&nbsp;'+data[index].gnccontent+
 									'<span class="cmt_date">'+data[index].gncdate1+'</span>'+
@@ -161,7 +161,7 @@
 					} else{
 						comments.append('<li>'+
 								'<a href="" class="pf_picture">'+
-									'<img src="${root }resources/upload/thumb/no_profile.png" alt="'+data[index].gncauthor+'님의 프로필 썸네일">'+
+									'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].gncauthor+'님의 프로필 썸네일"  onload="squareTrim($(this), 30)" >'+
 								'</a><p class="cmt_content">'+
 									'<a href="" class="cmt_name">'+data[index].gncauthor+'</a>&nbsp;&nbsp;'+data[index].gnccontent+
 									'<span class="cmt_date">'+data[index].gncdate1+'</span></li>'

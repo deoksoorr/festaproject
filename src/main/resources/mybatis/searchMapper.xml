@@ -111,12 +111,12 @@
 	
 	<!-- 개인피드 상세페이지출력 -->
 	<select id="myFeedDetail" parameterType="MyPostVo" resultMap="mypost">
-		select a.*,c.proid,c.prophoto,c.proname from mypost a inner join profile c on a.pronum12=c.pronum where mpnum=#{mpnum}
+		select a.*,c.proid,c.prophoto,c.proname,(select count(*) from mycomment where mpnum1=a.mpnum) as mptotal from mypost a inner join profile c on a.pronum12=c.pronum where mpnum=#{mpnum}
 	</select>
 	
 	<!-- 그룹피드 상세페이지출력 -->
 	<select id="groupFeedDetail" parameterType="GroupPostVo" resultMap="grouppost">
-		select a.*,c.grname,d.proid,d.prophoto,d.proname from grouppost a inner join group1 c on a.grnum1=c.grnum inner join profile d on a.pronum3=d.pronum where gpnum=#{gpnum}
+		select a.*,c.grname,d.proid,d.prophoto,d.proname,(select count(*) from groupcomment where gpnum1=a.gpnum) as gptotal from grouppost a inner join group1 c on a.grnum1=c.grnum inner join profile d on a.pronum3=d.pronum where gpnum=#{gpnum}
 	</select>
 	
 	<!-- 개인피드 댓글출력 -->

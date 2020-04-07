@@ -111,13 +111,13 @@
 	<c:redirect url="/empty"/>
 </c:if>
 <div class="adm">
-	<div class="feed_viewer">
+	<div class="feed_viewer<c:if test="${noticedetail.gnphoto ne '' }"> half</c:if>">
 		<div class="tit box">
 			<dl class="feed_inform">
 				<dt>
 					<a href="${root }admin/user/detail?pronum=${noticedetail.profile.pronum}">
 						<input type="hidden" value="${noticedetail.gnnum }">
-						<span class="pf_picture"><img src="${upload }/${noticedetail.profile.prophoto}" alt="${noticedatail.profile.proname }님의 프로필 썸네일"></span>
+						<span class="pf_picture"><img src="${upload }/${noticedetail.profile.prophoto}" alt="${noticedatail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
 						<span class="fd_name">${noticedetail.gnauthor }</span>
 					</a>
 					<a href="${root }admin/group/detail?grnum=${noticedetail.grnum}">
@@ -145,7 +145,7 @@
 						<li>
 							<!-- # 프로필 이미지 없음 { -->
 							<a href="${root }admin/user/detail?pronum=${noticecmmt.pronum}" class="pf_picture">
-								<img src="${upload }/${noticecmmt.profile.prophoto}" alt="${noticecmmt.profile.proname }님의 프로필 썸네일">
+								<img src="${upload }/${noticecmmt.profile.prophoto}" alt="${noticecmmt.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
 							</a>
 							<!-- } # 프로필 이미지 없음 -->
 							<p class="cmt_content">
@@ -213,8 +213,6 @@
 <!-- } #텍스트+썸네일 피드 끝 -->
 <script type="text/javascript">
 	scrBar();
-	feedType('feed_viewer');
-	btnToggle('btn_liked');
 	btnPop('btn_pop2');
 </script>
 </body>

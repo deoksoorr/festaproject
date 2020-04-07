@@ -18,12 +18,12 @@ import com.fin.festa.model.entity.ReportListVo;
 @Service
 public class NewsServiceImpl implements NewsService{
 
-	//ë“±ë¡,ìˆ˜ì •,ì‚­ì œê°€ ìµœì†Œ2ê°œì´ìƒ ë“¤ì–´ê°€ëŠ” ë©”ì†Œë“œëŠ” ê¼­ íŠ¸ëœì­ì…˜ ì ìš©í• ê²ƒ!!
+	//µî·Ï,¼öÁ¤,»èÁ¦°¡ ÃÖ¼Ò2°³ÀÌ»ó µé¾î°¡´Â ¸Ş¼Òµå´Â ²À Æ®·£Àè¼Ç Àû¿ëÇÒ°Í!!
 	
 	@Autowired
 	NewsDaoImpl newsDao;
 	
-	//ë‰´ìŠ¤í”¼ë“œ ì¶œë ¥(ê·¸ë£¹í”¼ë“œ,ê°œì¸í”¼ë“œ í•©ì³ì„œ)
+	//´º½ºÇÇµå Ãâ·Â(±×·ìÇÇµå,°³ÀÎÇÇµå ÇÕÃÄ¼­)
 	@Override
 	public void newsFeedSelectAll(Model model, MyFollowingVo myFollowingVo) {
 		model.addAttribute("fwFeedList", newsDao.followFeedSelectAll(myFollowingVo));
@@ -32,54 +32,54 @@ public class NewsServiceImpl implements NewsService{
 		model.addAttribute("gpCmmtList", newsDao.joinGroupCommentSelectAll(myFollowingVo));
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ ëŒ“ê¸€ë“±ë¡(ê·¸ë£¹í”¼ë“œ,ê°œì¸í”¼ë“œ êµ¬ë³„í•´ì„œ ë“±ë¡)
+	//´º½ºÇÇµå ´ñ±Ûµî·Ï(±×·ìÇÇµå,°³ÀÎÇÇµå ±¸º°ÇØ¼­ µî·Ï)
 	@Override
 	public void newsFeedCmmtInsertOne(Model model, GroupCommentVo groupCommentVo, MyCommentVo myCommentVo) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ ëŒ“ê¸€ì‚­ì œ(ê·¸ë£¹í”¼ë“œ,ê°œì¸í”¼ë“œ êµ¬ë³„í•´ì„œ ì‚­ì œ)
+	//´º½ºÇÇµå ´ñ±Û»èÁ¦(±×·ìÇÇµå,°³ÀÎÇÇµå ±¸º°ÇØ¼­ »èÁ¦)
 	@Override
 	public void newsFeedCmmtDeleteOne(Model model, GroupCommentVo groupCommentVo, MyCommentVo myCommentVo) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ ì¢‹ì•„ìš”ë“±ë¡(ê·¸ë£¹í”¼ë“œ,ê°œì¸í”¼ë“œ êµ¬ë³„í•´ì„œ ì¢‹ì•„ìš”ë“±ë¡)
-	//ë‰´ìŠ¤í”¼ë“œ ì¢‹ì•„ìš”ê°¯ìˆ˜ +1
-	//ë‚´ ì¢‹ì•„ìš”ëª©ë¡ ê°±ì‹ 
+	//´º½ºÇÇµå ÁÁ¾Æ¿äµî·Ï(±×·ìÇÇµå,°³ÀÎÇÇµå ±¸º°ÇØ¼­ ÁÁ¾Æ¿äµî·Ï)
+	//´º½ºÇÇµå ÁÁ¾Æ¿ä°¹¼ö +1
+	//³» ÁÁ¾Æ¿ä¸ñ·Ï °»½Å
 	@Override
 	public void newsLikeInsertOne(HttpServletRequest req, MyGoodVo myGoodVo) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ ì¢‹ì•„ìš”í•´ì œ(ê·¸ë£¹í”¼ë“œ,ê°œì¸í”¼ë“œ êµ¬ë³„í•´ì„œ ì¢‹ì•„ìš”í•´ì œ)
-	//ë‰´ìŠ¤í”¼ë“œ ì¢‹ì•„ìš”ê°¯ìˆ˜ -1
-	//ë‚´ ì¢‹ì•„ìš”ëª©ë¡ ê°±ì‹ 
+	//´º½ºÇÇµå ÁÁ¾Æ¿äÇØÁ¦(±×·ìÇÇµå,°³ÀÎÇÇµå ±¸º°ÇØ¼­ ÁÁ¾Æ¿äÇØÁ¦)
+	//´º½ºÇÇµå ÁÁ¾Æ¿ä°¹¼ö -1
+	//³» ÁÁ¾Æ¿ä¸ñ·Ï °»½Å
 	@Override
 	public void newsLikeDeleteOne(HttpServletRequest req, MyGoodVo myGoodVo) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ ì‹ ê³ ë“±ë¡(ê·¸ë£¹í”¼ë“œ,ê°œì¸í”¼ë“œ êµ¬ë³„í•´ì„œ ì‹ ê³ ë“±ë¡)
-	//ì‹ ê³ ë‹¹í•œìœ ì € ì‹ ê³ ë‹¹í•œíšŸìˆ˜ +1
+	//´º½ºÇÇµå ½Å°íµî·Ï(±×·ìÇÇµå,°³ÀÎÇÇµå ±¸º°ÇØ¼­ ½Å°íµî·Ï)
+	//½Å°í´çÇÑÀ¯Àú ½Å°í´çÇÑÈ½¼ö +1
 	@Override
 	public void newsFeedReport(Model model, ReportListVo reportListVo) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ ìˆ˜ì •(ê·¸ë£¹í”¼ë“œ,ê°œì¸í”¼ë“œ êµ¬ë³„í•´ì„œ ìˆ˜ì •)
+	//´º½ºÇÇµå ¼öÁ¤(±×·ìÇÇµå,°³ÀÎÇÇµå ±¸º°ÇØ¼­ ¼öÁ¤)
 	@Override
 	public void newsFeedUpdateOne(Model model, GroupPostVo groupPostVo, MyPostVo myPostVo) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	//ë‰´ìŠ¤í”¼ë“œ ì‚­ì œ(ê·¸ë£¹í”¼ë“œ,ê°œì¸í”¼ë“œ êµ¬ë³„í•´ì„œ ì‚­ì œ)
+	//´º½ºÇÇµå »èÁ¦(±×·ìÇÇµå,°³ÀÎÇÇµå ±¸º°ÇØ¼­ »èÁ¦)
 	@Override
 	public void newsFeedDeleteOne(Model model, GroupPostVo groupPostVo, MyPostVo myPostVo) {
 		// TODO Auto-generated method stub

@@ -26,6 +26,21 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			
+			//로그인하기 내부팝업->로그인버튼 클릭시 로그인외부팝업생성
+			$('#btnLogin').on('click', function() {
+				$('#login').bPopup().close();
+				openLayer('none', '${root}member/login');
+			});
+			var loginCheck = '${login.logincheck}';
+			
+			//로그인이아닐때 프로필사진,이름,뉴스피드 눌렀을경우
+			$(document).on('click','.pf_picture, .fd_name, #gnb li a:eq(2), .cmt_name',function(){
+				if(loginCheck==''){
+					openPop('login');
+					return false;
+				}
+			});
+			
 			//스크롤 내렸을때 피드 2개씩 출력
 			$(window).scroll(function(){
 			    var scrolltop = parseInt ( $(window).scrollTop() );
@@ -139,19 +154,25 @@
                            </div>
                         </dd>
                         <dd>
-                           <span class="btn_mylist">나의 캠핑장</span>
-                           <div class="my_list">
-                              <ul>
-                                 <c:forEach items="${bookMark }" var="bookMark">
-                                 <c:set var="image" value="${fn:substringBefore(bookMark.camp.caphoto,',') }"/>
-                                    <li><a href="${root }camp/detail?canum=${bookMark.camp.canum}">
-                                          <span><img src="${upload }/${image}"
-                                             alt="${bookMark.camp.caname } 캠핑장 썸네일"></span> <b>${bookMark.camp.caname }</b>
-                                    </a></li>
-                                 </c:forEach>
-                              </ul>
-                           </div>
-                        </dd>
+							<span class="btn_mylist">나의 캠핑장</span>
+							<div class="my_list">
+								<ul>
+								<c:forEach items="${bookMark}" var="bookMark">
+									<li>
+										<a href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
+											<span>
+												<c:set var="image" value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
+												<c:if test="${!empty bookMark.camp.caphoto && empty image}"><img src="${upload}/${bookMark.camp.caphoto}" alt="${bookMark.camp.caname}"></c:if>
+												<c:if test="${!empty bookMark.camp.caphoto && !empty image}"><img src="${upload}/${image}" alt="${bookMark.camp.caname}"></c:if>
+												<c:if test="${empty bookMark.camp.caphoto && empty image}"><img src="${root}resources/images/thumb/no_profile.png" alt="${bookMark.camp.caname}"></c:if>
+											</span>
+											<b>${bookMark.camp.caname}</b>
+										</a>
+									</li>
+								</c:forEach>
+								</ul>
+							</div>
+						</dd>
                         <dd class="btn_logout">
                            <form>
                               <a href="${root}member/logout" class="btn_pop">로그아웃</a>
@@ -289,8 +310,8 @@
 					<c:forEach items="${searchFeed }" var="searchFeed">
 						<c:choose>
 							<c:when test="${searchFeed.gpnum eq 0 }">
-								<li>
-									<a class="text box btn_pop" href="${root }search/feed?mpnum=${searchFeed.mpnum}">
+								<li<c:if test="${searchFeed.mpphoto ne '' }"> class="half"</c:if>>
+									<a class="text box btn_feed" href="${root }search/feed?mpnum=${searchFeed.mpnum}">
 										<c:choose>
 												<c:when
 													test="${empty searchFeed.httitle1 && empty searchFeed.httitle2 && empty searchFeed.httitle3}">
@@ -323,8 +344,15 @@
 										<span class="fd_content">${searchFeed.mpcontent }</span>
 									</a>
 									<c:if test="${searchFeed.mpphoto ne '' }">
-										<a class="thumb box btn_pop" href="${root }search/feed?mpnum=${searchFeed.mpnum}">
-										 <c:set var="mpphoto" value="${fn:substringBefore(searchFeed.mpphoto,',') }"/>
+										<a class="thumb box btn_feed" href="${root }search/feed?mpnum=${searchFeed.mpnum}">
+										
+										 <c:set var="mpphoto1" value="${fn:split(searchFeed.mpphoto,',') }"/>
+										 <c:if test="${fn:length(mpphoto1) gt 1 }">
+										 	<c:set var="mpphoto" value="${fn:substringBefore(searchFeed.mpphoto,',') }"/>
+										 </c:if>
+										 <c:if test="${fn:length(mpphoto1) eq 1 }">
+										 	<c:set var="mpphoto" value="${searchFeed.mpphoto }"/>
+										 </c:if>
 											<span class="fd_thumb"><img src="${upload }/${mpphoto}" alt="피드 썸네일"></span>
 										</a>
 									</c:if>
@@ -337,11 +365,11 @@
 										<span class="fd_comment">${searchFeed.mptotal }</span>
 										<span class="fd_date">${searchFeed.date1 }</span>
 									</p>
-								</li>
+								
 							</c:when>
 							<c:otherwise>
-								<li>
-									<a class="text box btn_pop" href="${root }search/feed?gpnum=${searchFeed.gpnum}">
+								<li<c:if test="${searchFeed.gpphoto ne '' }"> class="half"</c:if>>
+									<a class="text box btn_feed" href="${root }search/feed?gpnum=${searchFeed.gpnum}">
 										<c:choose>
 												<c:when
 													test="${empty searchFeed.httitle1 && empty searchFeed.httitle2 && empty searchFeed.httitle3}">
@@ -374,8 +402,14 @@
 										<span class="fd_content">${searchFeed.gpcontent }</span>
 									</a>
 									<c:if test="${searchFeed.gpphoto ne '' }">
-										<a class="thumb box btn_pop" href="${root }search/feed?gpnum=${searchFeed.gpnum}">
-										 <c:set var="gpphoto" value="${fn:substringBefore(searchFeed.gpphoto,',') }"/>
+										<a class="thumb box btn_feed" href="${root }search/feed?gpnum=${searchFeed.gpnum}">
+										<c:set var="gpphoto1" value="${fn:split(searchFeed.gpphoto,',') }"/>
+										 <c:if test="${fn:length(gpphoto1) gt 1 }">
+										 	<c:set var="gpphoto" value="${fn:substringBefore(searchFeed.gpphoto,',') }"/>
+										 </c:if>
+										 <c:if test="${fn:length(mpphoto1) eq 1 }">
+										 	<c:set var="gpphoto" value="${searchFeed.gpphoto }"/>
+										 </c:if>
 											<span class="fd_thumb"><img src="${upload }/${gpphoto}" alt="피드 썸네일"></span>
 										</a>
 									</c:if>
@@ -407,7 +441,7 @@
 		</section>
 		<!-- } 컨텐츠영역 끝 -->
 	</div>
-	<span class="snd_only">0</span>
+	<span class="snd_only">1</span>
 	<!-- } 서브페이지 -->
 	<div id="footer">
 		<div class="container">
@@ -431,9 +465,19 @@
 		</div>
 	</div>
 </div>
+<!-- #팝업 처리완료 { -->
+<div id="login" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">로그인이 필요한 서비스입니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+			<li><button type="button" id="btnLogin" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
+	</div>
+</div>
 <script type="text/javascript">
 	campSlider();
-	feedType('feed_list li');
+	openFeed();
 </script>
 </body>
 </html>

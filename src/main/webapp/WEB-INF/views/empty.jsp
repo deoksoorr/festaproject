@@ -20,10 +20,18 @@
 	<title>FESTA</title>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			$('#gnb li a').eq(2).on('click',function(e){
-				var loginCheck = '${login.logincheck}';
+			
+			//로그인하기 내부팝업->로그인버튼 클릭시 로그인외부팝업생성
+			$('#btnLogin').on('click', function() {
+				$('#login').bPopup().close();
+				openLayer('none', '${root}member/login');
+			});
+			var loginCheck = '${login.logincheck}';
+			
+			//로그인이아닐때 프로필사진,이름,뉴스피드 눌렀을경우
+			$(document).on('click','#gnb li a:eq(2)',function(){
 				if(loginCheck==''){
-					openLayer(e,'${root}member/login');
+					openPop('login');
 					return false;
 				}
 			});
@@ -55,7 +63,7 @@
 				<c:if test="${login.proid ne 'admin@festa.com' }">
 					<li><a href="${root }camp/">캠핑정보</a></li>
 					<li><a href="${root }hot/">인기피드</a></li>
-					<li><a href="${root }news/">뉴스피드</a></li>
+					<li><a href="${root }news/?pronum=${login.pronum}">뉴스피드</a></li>
 				</c:if>
 					<c:if test="${login eq null }">
 						<li><a href="${root }member/login" class="btn_pop">로그인</a></li>
@@ -107,19 +115,25 @@
 		                           </div>
 		                        </dd>
 		                        <dd>
-		                           <span class="btn_mylist">나의 캠핑장</span>
-		                           <div class="my_list">
-		                              <ul>
-		                                 <c:forEach items="${bookMark }" var="bookMark">
-		                                 <c:set var="image" value="${fn:substringBefore(bookMark.camp.caphoto,',') }"/>
-		                                    <li><a href="${root }camp/detail?canum=${bookMark.camp.canum}">
-		                                          <span><img src="${upload }/${image}"
-		                                             alt="${bookMark.camp.caname } 캠핑장 썸네일"></span> <b>${bookMark.camp.caname }</b>
-		                                    </a></li>
-		                                 </c:forEach>
-		                              </ul>
-		                           </div>
-		                        </dd>
+									<span class="btn_mylist">나의 캠핑장</span>
+									<div class="my_list">
+										<ul>
+										<c:forEach items="${bookMark}" var="bookMark">
+											<li>
+												<a href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
+													<span>
+														<c:set var="image" value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
+														<c:if test="${!empty bookMark.camp.caphoto && empty image}"><img src="${upload}/${bookMark.camp.caphoto}" alt="${bookMark.camp.caname}"></c:if>
+														<c:if test="${!empty bookMark.camp.caphoto && !empty image}"><img src="${upload}/${image}" alt="${bookMark.camp.caname}"></c:if>
+														<c:if test="${empty bookMark.camp.caphoto && empty image}"><img src="${root}resources/images/thumb/no_profile.png" alt="${bookMark.camp.caname}"></c:if>
+													</span>
+													<b>${bookMark.camp.caname}</b>
+												</a>
+											</li>
+										</c:forEach>
+										</ul>
+									</div>
+								</dd>
 								<dd class="btn_logout">
 									<form>
 										<a href="${root}member/logout" class="btn_pop">로그아웃</a>
@@ -168,10 +182,15 @@
 		</div>
 	</div>
 </div>
-
-<script type="text/javascript">
-	feedType('feed_viewer');
-	fileThumbnail();
-</script>
+<!-- #팝업 처리완료 { -->
+<div id="login" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">로그인이 필요한 서비스입니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+			<li><button type="button" id="btnLogin" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
+	</div>
+</div>
 </body>
 </html>

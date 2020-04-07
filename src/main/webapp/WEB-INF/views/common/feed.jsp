@@ -17,67 +17,60 @@
 		window.location.href='${root}empty';
 	}
 	
-	$(document).ready(function(){
+	$('.fstPop .btn_report').on('click',function(e){
+		var url=$(this).attr('href');
+		openLayer(e,url);
+	});
+	
+	function liked(button) {
+		var container = $('.fstPop .feed_inform');
+		var pronum = $('#pronum').val();
+		var num;
+		var checking = !button.hasClass('act');
+		var heart = container.find('.fd_liked');
 		
-		//좋아요 버튼클릭시
-		$(document).on('click','.btn_liked',function(){
-			var pronum = $('#pronum').val();
-			var num;
-			var checking = $(this).hasClass('act');
-			var heart = $(this).parent().parent().siblings('.feed_inform').find('.fd_liked');
-			
-			//좋아요 등록
-			if(checking){
-				//그 피드가 개인피드일때
-				if($(this).parent().parent().siblings('.feed_inform').find('.fd_group').length==0){
-					num = $(this).parent().parent().siblings('.feed_inform').find('input[type=hidden]').eq(1).val();
-					$.post('${root}search/feed/likeadd','pronum='+pronum+'&mpnum='+num,function(){
-						console.log('개인',heart.text());
-						heart.html(Number(heart.text())+1);
-					});
-				//그 피드가 그룹피드일때
-				}else{
-					num = $(this).parent().parent().siblings('.feed_inform').find('input[type=hidden]').eq(1).val();
-					$.post('${root}search/feed/likeadd','pronum='+pronum+'&gpnum='+num,function(){
-						console.log('그룹',heart.text());
-						heart.html(Number(heart.text())+1);
-					});
-				}
-				
-			//좋아요 해제
+		//좋아요 등록
+		if(checking){
+			//그 피드가 개인피드일때
+			if(container.find('.fd_group').length==0){
+				num = container.find('input[type=hidden]').eq(1).val();
+				$.post('${root}search/feed/likeadd','pronum='+pronum+'&mpnum='+num,function(){
+					console.log('개인',heart.text());
+					heart.html(Number(heart.text())+1);
+				});
+			//그 피드가 그룹피드일때
 			}else{
-				//그 피드가 개인피드일때
-				if($(this).parent().parent().siblings('.feed_inform').find('.fd_group').length==0){
-					num = $(this).parent().parent().siblings('.feed_inform').find('input[type=hidden]').eq(1).val();
-					$.post('${root}search/feed/likedel','pronum='+pronum+'&mpnum='+num,function(){
-						console.log('개인',heart.text());
-						heart.html(Number(heart.text())-1);
-					});
-				//그 피드가 그룹피드일때
-				}else{
-					num = $(this).parent().parent().siblings('.feed_inform').find('input[type=hidden]').eq(1).val();
-					$.post('${root}search/feed/likedel','pronum='+pronum+'&gpnum='+num,function(){
-						console.log('그룹',heart.text());
-						heart.html(Number(heart.text())-1);
-					});
-				}
+				num = container.find('input[type=hidden]').eq(1).val();
+				$.post('${root}search/feed/likeadd','pronum='+pronum+'&gpnum='+num,function(){
+					console.log('그룹',heart.text());
+					heart.html(Number(heart.text())+1);
+				});
 			}
-		});
-		
-		//좋아요버튼 갯수조절
-	    var good = $('.feed_viewer .feed_options');
-		//로그인상태일때
-		if($('#pronum').val()!=''){
-			//빨간하트(이미 좋아요누름)을 가지고있지 않을때
-	    	if(good.find('.btn_liked').hasClass('act')==false){
-	         	good.prepend('<li><button class="btn_liked"><em class="snd_only">하트</em></button></li>');
-	        }
+			
+		//좋아요 해제
+		}else{
+			//그 피드가 개인피드일때
+			if(container.find('.fd_group').length==0){
+				num = container.find('input[type=hidden]').eq(1).val();
+				$.post('${root}search/feed/likedel','pronum='+pronum+'&mpnum='+num,function(){
+					console.log('개인',heart.text());
+					heart.html(Number(heart.text())-1);
+				});
+			//그 피드가 그룹피드일때
+			}else{
+				num = container.find('input[type=hidden]').eq(1).val();
+				$.post('${root}search/feed/likedel','pronum='+pronum+'&gpnum='+num,function(){
+					console.log('그룹',heart.text());
+					heart.html(Number(heart.text())-1);
+				});
+			}
 		}
-		
-		//그룹피드댓글 더보기버튼
-		$(document).on('click', '.cmt_btn_more.gc', function() {
-			var btn = $(this);
-			var pageTag = $(this).find('span');
+	}
+	
+	function mored(button){
+		if(button.hasClass('gc')){
+			var btn = button;
+			var pageTag = button.find('span');
 			var myPage = pageTag.text();
 			myPage++;
 			pageTag.text(myPage);
@@ -96,18 +89,16 @@
 							'<a href="${root }user/?pronum='+data[index].pronum+'" class="pf_picture">'+
 								'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
 							'</a><p class="cmt_content">'+
-								'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].gcauthor+'</a>'+
+								'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].gcauthor+'</a>&nbsp;'+
 								data[index].gccontent+
 								'<span class="cmt_date">'+data[index].gcdate1+'</span>'+
 						'</li>');
 				});//each문 end  
 			});//ajax통신 end
-		});//댓글더보기 end
-		
-		//개인피드댓글 더보기버튼
-		$(document).on('click', '.cmt_btn_more.mc', function() {
-			var btn = $(this);
-			var pageTag = $(this).find('span');
+			
+		}else{
+			var btn = button;
+			var pageTag = button.find('span');
 			var myPage = pageTag.text();
 			myPage++;
 			pageTag.text(myPage);
@@ -126,13 +117,27 @@
 							'<a href="${root }user/?pronum='+data[index].pronum+'" class="pf_picture">'+
 								'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
 							'</a><p class="cmt_content">'+
-								'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].mcauthor+'</a>'+
+								'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].mcauthor+'</a>&nbsp;'+
 								data[index].mccontent+
 								'<span class="cmt_date">'+data[index].mcdate1+'</span>'+
 						'</li>');
 				});//each문 end  
 			});//ajax통신 end
-		});//댓글더보기 end
+			
+		}
+	}
+	
+	$(document).ready(function(){
+
+		//좋아요버튼 갯수조절
+	    var good = $('.feed_viewer .feed_options');
+		//로그인상태일때
+		if($('#pronum').val()!=''){
+			//빨간하트(이미 좋아요누름)을 가지고있지 않을때
+	    	if(good.find('.btn_liked').hasClass('act')==false){
+	         	good.prepend('<li><button class="btn_liked" onclick="liked($(this))"><em class="snd_only">하트</em></button></li>');
+	        }
+		}
 		
 		//댓글등록
 		$('.btn_send').on('click',function(){
@@ -171,14 +176,14 @@
 <input type="hidden" id="pronum" value="${login.pronum }">
 <c:choose>
 	<c:when test="${feedDetail.gpnum eq 0 }">
-		<div class="feed_viewer">
+		<div class="feed_viewer<c:if test="${feedDetail.mpphoto ne '' }"> half</c:if>">
 			<div class="tit box">
 				<dl class="feed_inform">
 					<dt>
 						<a href="${root }user/?pronum${feedDetail.pronum}">
 							<input type="hidden" name="pronum" value="${feedDetail.pronum }">
 							<input type="hidden" name="mpnum" value="${feedDetail.mpnum }">
-							<span class="pf_picture"><img src="${upload }/${feedDetail.profile.prophoto}" alt="${feedDetail.profile.proname }님의 프로필 썸네일"></span>
+							<span class="pf_picture"><img src="${upload }/${feedDetail.profile.prophoto}" alt="${feedDetail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
 							<span class="fd_name">${feedDetail.profile.proname }</span>
 						</a>
 					</dt>
@@ -191,11 +196,11 @@
 					<c:if test="${login ne null }">
 						<c:forEach items="${goodlist }" var="goodlist">
 							<c:if test="${goodlist.mpnum eq feedDetail.mpnum }">
-								<li><button class="btn_liked act"><em class="snd_only">하트</em></button></li>
+								<li><button class="btn_liked act" onclick="liked($(this))"><em class="snd_only">하트</em></button></li>
 							</c:if>
 						</c:forEach>
 						<c:if test="${login.pronum ne feedDetail.pronum }">
-							<li><a href="${root }search/feed/report?mpnum=${feedDetail.mpnum}&profile.pronum=${feedDetail.pronum}&profile.proname=${feedDetail.profile.proname}&profile.proid=${feedDetail.profile.proid}" class="btn_pop2 btn_report"><em class="snd_only">신고하기</em></a></li>
+							<li><a href="${root }search/feed/report?mpnum=${feedDetail.mpnum}&profile.pronum=${feedDetail.pronum}&profile.proname=${feedDetail.profile.proname}&profile.proid=${feedDetail.profile.proid}" class="btn_report"><em class="snd_only">신고하기</em></a></li>
 						</c:if>
 					</c:if>
 				</ul>
@@ -248,12 +253,12 @@
 							<c:if test="${not doneLoop }">
 							<li>
 								<!-- # 프로필 이미지 없음 { -->
-								<a href="" class="pf_picture">
-									<img src="${upload }/${feedCmmt.profile.prophoto}" alt="${feedCmmt.profile.proname }님의 프로필 썸네일">
+								<a href="${root }user/?pronum=${feedCmmt.pronum}" class="pf_picture">
+									<img src="${upload }/${feedCmmt.profile.prophoto}" alt="${feedCmmt.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
 								</a>
 								<!-- } # 프로필 이미지 없음 -->
 								<p class="cmt_content">
-									<a href="" class="cmt_name">${feedCmmt.profile.proname }</a>
+									<a href="${root }user/?pronum=${feedCmmt.pronum}" class="cmt_name" onclick="loginPop()">${feedCmmt.profile.proname }</a>
 									${feedCmmt.mccontent }
 									<span class="cmt_date">${feedCmmt.mcdate1 }</span>
 									<button class="cmt_btn_option"><em class="snd_only">댓글 옵션</em></button>
@@ -267,13 +272,13 @@
 						</c:forEach>
 					</ul>
 					<c:if test="${feedDetail.mptotal gt 3 }">
-						<button class="cmt_btn_more mc"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
+						<button class="cmt_btn_more mc" onclick="mored($(this))"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
 					</c:if>
 				</div>
 				<c:if test="${login ne null }">
 					<form class="message_form">
 						<a class="pf_picture" href="${root }user/?pronum=${login.pronum}">
-							<img src="${upload }/${login.prophoto}" alt="나의 프로필 썸네일">
+							<img src="${upload }/${login.prophoto}" alt="나의 프로필 썸네일" onload="squareTrim($(this), 30)">
 						</a>
 						<p class="msg_input">
 							<textarea id="" name="mccontent" placeholder="메세지를 입력해주세요"></textarea>
@@ -305,7 +310,7 @@
 		</div>
 	</c:when>
 	<c:otherwise>
-		<div class="feed_viewer">
+		<div class="feed_viewer<c:if test="${feedDetail.gpphoto ne '' }"> half</c:if>">
 			<div class="tit box">
 				<dl class="feed_inform">
 					<dt>
@@ -313,7 +318,7 @@
 							<input type="hidden" name="pronum" value="${feedDetail.pronum }">
 							<input type="hidden" name="gpnum" value="${feedDetail.gpnum }">
 							<input type="hidden" name="grnum" value="${feedDetail.grnum }">
-							<span class="pf_picture"><img src="${upload }/${feedDetail.profile.prophoto}" alt="${feedDetail.profile.proname }님의 프로필 썸네일"></span>
+							<span class="pf_picture"><img src="${upload }/${feedDetail.profile.prophoto}" alt="${feedDetail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
 							<span class="fd_name">${feedDetail.profile.proname }</span>
 						</a>
 						<c:if test="${login ne null }">
@@ -335,12 +340,12 @@
 				<ul class="feed_options">
 					<c:if test="${login ne null }">
 						<c:forEach items="${goodlist }" var="goodlist">
-							<c:if test="${goodlist.mpnum eq feedDetail.gpnum }">
-								<li><button class="btn_liked act"><em class="snd_only">하트</em></button></li>
+							<c:if test="${goodlist.gpnum eq feedDetail.gpnum }">
+								<li><button class="btn_liked act" onclick="liked($(this))"><em class="snd_only">하트</em></button></li>
 							</c:if>
 						</c:forEach>
 						<c:if test="${login.pronum ne feedDetail.pronum }">
-							<li><a href="${root }search/feed/report?gpnum=${feedDetail.gpnum}&profile.pronum=${feedDetail.pronum}&profile.proname=${feedDetail.profile.proname}&profile.proid=${feedDetail.profile.proid}" class="btn_pop2 btn_report"><em class="snd_only">신고하기</em></a></li>
+							<li><a href="${root }search/feed/report?gpnum=${feedDetail.gpnum}&profile.pronum=${feedDetail.pronum}&profile.proname=${feedDetail.profile.proname}&profile.proid=${feedDetail.profile.proid}" class="btn_report"><em class="snd_only">신고하기</em></a></li>
 						</c:if>
 					</c:if>
 				</ul>
@@ -393,12 +398,12 @@
 							<c:if test="${not doneLoop }">
 							<li>
 								<!-- # 프로필 이미지 없음 { -->
-								<a href="" class="pf_picture">
-									<img src="${upload }/${feedCmmt.profile.prophoto}" alt="${feedCmmt.profile.proname }님의 프로필 썸네일">
+								<a href="${root }user/?pronum=${feedCmmt.pronum}" class="pf_picture">
+									<img src="${upload }/${feedCmmt.profile.prophoto}" alt="${feedCmmt.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
 								</a>
 								<!-- } # 프로필 이미지 없음 -->
 								<p class="cmt_content">
-									<a href="" class="cmt_name">${feedCmmt.profile.proname }</a>
+									<a href="${root }user/?pronum=${feedCmmt.pronum}" class="cmt_name" onclick="loginPop()">${feedCmmt.profile.proname }</a>
 									${feedCmmt.gccontent }
 									<span class="cmt_date">${feedCmmt.gcdate1 }</span>
 									<button class="cmt_btn_option"><em class="snd_only">댓글 옵션</em></button>
@@ -412,13 +417,13 @@
 						</c:forEach>
 					</ul>
 					<c:if test="${feedDetail.gptotal gt 3 }">
-						<button class="cmt_btn_more gc"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
+						<button class="cmt_btn_more gc" onclick="mored($(this))"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
 					</c:if>
 				</div>
 				<c:if test="${login ne null }">
 					<form class="message_form">
 						<a class="pf_picture" href="${root }user/?pronum=${login.pronum}">
-							<img src="${upload }/${login.prophoto}" alt="나의 프로필 썸네일">
+							<img src="${upload }/${login.prophoto}" alt="나의 프로필 썸네일" onload="squareTrim($(this), 30)">
 						</a>
 						<p class="msg_input">
 							<textarea id="" name="gccontent" placeholder="메세지를 입력해주세요"></textarea>
@@ -452,9 +457,14 @@
 </c:choose>
 <!-- } #텍스트+썸네일 피드 끝 -->
 <button type="button" class="btn_close"><em class="snd_only">창 닫기</em></button>
-<script type="text/javascript">
-	scrBar();
-	feedType('feed_viewer');
-	btnPop('btn_pop2');
-</script>
+<!-- #팝업 처리완료 { -->
+<div id="login1" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">로그인이 필요한 서비스입니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+			<li><button type="button" id="btnLogin1" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
+	</div>
+</div>
 </html>

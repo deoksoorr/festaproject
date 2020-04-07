@@ -304,8 +304,8 @@ public class UserDaoImpl implements UserDao{
 	
 	//계정 비활성화처리
 	@Override
-	public int inactiveUpdate(ProfileVo profile) {
-		return sqlSession.update("user.inactiveUpdate",profile);
+	public int inactiveUpdate(MyAdminVo myAdminVo) {
+		return sqlSession.update("user.inactiveUpdate",myAdminVo);
 	}
 
 	//계정탈퇴처리

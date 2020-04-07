@@ -27,7 +27,7 @@
 						<li>
 							<a href="${root }admin/user/detail?pronum=${joingroup.profile.pronum}">
 								<span class="pf_picture">
-									<img src="${upload }/${joingroup.profile.prophoto}" alt="${joingroup.profile.proname }님의 프로필 썸네일">
+									<img src="${upload }/${joingroup.profile.prophoto}" alt="${joingroup.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 50)">
 								</span>
 								<b class="fw_name">${joingroup.profile.proname }</b>
 								<span class="fw_intro">${joingroup.profile.prointro }</span>

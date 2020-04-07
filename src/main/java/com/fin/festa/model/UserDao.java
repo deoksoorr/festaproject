@@ -73,8 +73,6 @@ public interface UserDao {
 	
 	int joinInfoUpdate(ProfileVo profile);
 	
-	int inactiveUpdate(ProfileVo profile);
-	
 	int userGoodBye(ProfileVo profile);
 	
 	void groupInsert(GroupVo group);
@@ -126,5 +124,7 @@ public interface UserDao {
 	MyPostVo myFeedDetail(MyPostVo post);
 
 	List<MyCommentVo> FeedDetailCmmt(Model model, MyPostVo mypost);
+
+	int inactiveUpdate(MyAdminVo myAdminVo);
 	
 }

@@ -1,6 +1,8 @@
 <%@ page pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <c:url value="/" var="root"></c:url>
+<c:url value="/upload" var="upload"></c:url>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -14,8 +16,19 @@
 	<link rel="stylesheet" href="${root}resources/css/site.css">
 	<link rel="shortcut icon" href="${root}resources/favicon.ico">
 	<title>FESTA</title>
+	<script type="text/javascript">
+	var login = '${login ne null}';
+	if (login == 'false') {
+		location.href='${root}empty';
+	}
+	</script>
 </head>
 <body>
+<c:if test="${sessionScope.login ne null }">
+   <c:if test="${sessionScope.login.proid eq 'admin@festa.com' }">
+      <c:redirect url="${root}empty"/>
+   </c:if>
+</c:if>
 <div id="wrap">
 	<div id="header">
 		<div class="scrX">
@@ -24,20 +37,20 @@
 					<a href="${root}"><em class="snd_only">FESTA</em></a>
 				</h1>
 				<form class="search_box" action="${root }search">
-					<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!">
+					<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 					<button type="submit">
 						<img src="${root }resources/images/ico/btn_search.png" alt="검색">
 					</button>
 				</form>
 				<ul id="gnb">
-					<li><a href="${root}camp/?caaddrsel=">캠핑정보</a></li>
+					<li><a href="${root}camp/">캠핑정보</a></li>
 					<li><a href="${root}hot/">인기피드</a></li>
 					<li><a href="${root}news/?pronum=${login.pronum}">뉴스피드</a></li>
 					<c:if test="${login eq null }">
 					<li><a href="${root}member/login" class="btn_pop">로그인</a></li>
 					</c:if>
 					<c:if test="${login ne null }">
-					<li><a href="${root}user/">마이페이지</a></li>
+					<li><a href="${root}user/?pronum=${login.pronum}">마이페이지</a></li>
 					</c:if>
 				</ul>
 				<c:if test="${login ne null }">
@@ -53,11 +66,26 @@
 							<span class="btn_mylist">나의 그룹</span>
 							<div class="my_list">
 								<ul>
-								<c:forEach items="${joinGroup }" var="joinGroup">
-									<li><a href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}"> <span><img
-												src="http://placehold.it/45x45" alt="입돌아간다 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
-									</a></li>
-								</c:forEach>
+									<c:forEach items="${joinGroup }" var="joinGroup">
+									<c:choose>
+										<c:when test="${joinGroup.group.grphoto eq null }">
+										<li>
+											<a href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
+												<span><img src="${root }resources/upload/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+												<b>${joinGroup.group.grname }</b>
+											</a>
+										</li>
+										</c:when>
+										<c:otherwise>
+										<li>
+											<a href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
+												<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+												<b>${joinGroup.group.grname }</b>
+											</a>
+										</li>
+										</c:otherwise>
+									</c:choose>
+									</c:forEach>
 								</ul>
 							</div>
 						</dd>
@@ -107,57 +135,49 @@
 			<!-- 컨텐츠영역 시작 { -->
 			<section class="content_area">
 				<!-- #텍스트+썸네일 피드 시작 { -->
-				<c:forEach items="${fwFeedList}" var="feedList">
 				<div class="feed_viewer">
 					<div class="tit box">
 						<dl class="feed_inform">
 							<dt>
 								<a href="">
-									<span class="pf_picture"><img src="http://placehold.it/55x55" alt="${feedList.mpauthor}님의 프로필 썸네일"></span>
-									<span class="fd_name">${feedList.mpauthor}</span>
+									<span class="pf_picture"><img src="http://placehold.it/55x55" alt="김덕수님의 프로필 썸네일"></span>
+									<span class="fd_name">김덕수</span>
+								</a>
+								<a href="">
+									<span class="fd_group">입돌아간다</span>
 								</a>
 							</dt>
 							<dd>
-								<span class="fd_date">${feedList.mpdate}</span>
-								<b class="fd_liked">${feedList.mpgood}</b>
+								<span class="fd_date">2020년 01월 01일 12시 59분</span>
+								<b class="fd_liked">550</b>
 							</dd>
 						</dl>
 						<ul class="feed_options">
 							<li><button class="btn_liked act"><em class="snd_only">하트</em></button></li>
-							<c:choose>
-								<c:when test="${login.pronum eq feedList.pronum}">
-								<li><a href="${root}news/maker" class="btn_pop btn_edit"><em class="snd_only">수정하기</em></a></li>
-								<li><button class="btn_delete"><em class="snd_only">삭제하기</em></button></li>
-								</c:when>
-								<c:otherwise>
-								<li><a href="${root}news/report" class="btn_pop btn_report"><em class="snd_only">신고하기</em></a></li>
-								</c:otherwise>
-							</c:choose>
+							<li><a href="/common/report" class="btn_pop btn_report"><em class="snd_only">신고하기</em></a></li>
+							<li><a href="/common/maker" class="btn_pop btn_edit"><em class="snd_only">수정하기</em></a></li>
+							<li><button class="btn_delete"><em class="snd_only">삭제하기</em></button></li>
 						</ul>
 					</div>
 					<div class="text box">
 						<div class="scrBar">
 							<div class="feed_content">
 								<ul class="fd_hashtag">
-									<li><a href="">${feedList.httitle1}</a></li>
-									<li><a href="">${feedList.httitle2}</a></li>
-									<li><a href="">${feedList.httitle3}</a></li>
+									<li><a href="">동계캠핑</a></li>
+									<li><a href="">눈밭</a></li>
 								</ul>
-								<p class="fd_content">${feedList.mpcontent}</p>
+								<p class="fd_content">내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요.</p>
 							</div>
 							<ul class="comment_list">
-								
 								<li>
-									<!-- # 프로필 이미지 없음 { -->
 									<a href="" class="pf_picture">
-										<img src="${root}resources/images/thumb/no_profile.png" alt="김진혁님의 프로필 썸네일">
+										<img src="/images/thumb/no_profile.png" alt="김진혁님의 프로필 썸네일">
 									</a>
-									<!-- } # 프로필 이미지 없음 -->
 									<p class="cmt_content">
 										<a href="" class="cmt_name">김진혁</a>
 										댓글을 입력해주세요.
 										<span class="cmt_date">2020년 01월 01일 12시 59분</span>
-										<button class="btn_delete"><em class="snd_only">삭제하기</em></button>
+										<button class="cmt_btn_option"><em class="snd_only">댓글 옵션</em></button>
 									</p>
 								</li>
 							</ul>
@@ -192,96 +212,6 @@
 					</div>
 					<!--  } # 썸네일 영역 -->
 				</div>
-				</c:forEach>
-				<c:forEach items="${gpFeedList}" var="feedList">
-				<div class="feed_viewer">
-					<div class="tit box">
-						<dl class="feed_inform">
-							<dt>
-								<a href="">
-									<span class="pf_picture"><img src="http://placehold.it/55x55" alt="${feedList.gpauthor}님의 프로필 썸네일"></span>
-									<span class="fd_name">${feedList.gpauthor}</span>
-								</a>
-								<a href="">
-									<span class="fd_group">${feedList.group.grname}</span>
-								</a>
-							</dt>
-							<dd>
-								<span class="fd_date">${feedList.gpdate}</span>
-								<b class="fd_liked">${feedList.gpgood}</b>
-							</dd>
-						</dl>
-						<ul class="feed_options">
-							<li><button class="btn_liked act"><em class="snd_only">하트</em></button></li>
-							<c:choose>
-								<c:when test="${login.pronum eq feedList.pronum or login.pronum eq feedList.group.pronum}">
-								<li><a href="${root}news/maker" class="btn_pop btn_edit"><em class="snd_only">수정하기</em></a></li>
-								<li><button class="btn_delete"><em class="snd_only">삭제하기</em></button></li>
-								</c:when>
-								<c:otherwise>
-								<li><a href="${root}news/report" class="btn_pop btn_report"><em class="snd_only">신고하기</em></a></li>
-								</c:otherwise>
-							</c:choose>
-						</ul>
-					</div>
-					<div class="text box">
-						<div class="scrBar">
-							<div class="feed_content">
-								<ul class="fd_hashtag">
-									<li><a href="">${feedList.httitle1}</a></li>
-									<li><a href="">${feedList.httitle2}</a></li>
-									<li><a href="">${feedList.httitle3}</a></li>
-								</ul>
-								<p class="fd_content">${feedList.gpcontent}</p>
-							</div>
-							<ul class="comment_list">
-								<%-- <c:forEach items="${gpCmmtList}" var="cmmtList"></c:forEach> --%>
-								<li>
-									<!-- # 프로필 이미지 없음 { -->
-									<a href="" class="pf_picture">
-										<img src="${root}resources/images/thumb/no_profile.png" alt="김진혁님의 프로필 썸네일">
-									</a>
-									<!-- } # 프로필 이미지 없음 -->
-									<p class="cmt_content">
-										<a href="" class="cmt_name">김진혁</a>
-										댓글을 입력해주세요.
-										<span class="cmt_date">2020년 01월 01일 12시 59분</span>
-										<button class="btn_delete"><em class="snd_only">삭제하기</em></button>
-									</p>
-								</li>
-							</ul>
-							<button class="cmt_btn_more">3개의 댓글 더 보기</button>
-						</div>
-						<form class="message_form">
-							<a class="pf_picture" href="">
-								<img src="http://placehold.it/30x30" alt="나의 프로필 썸네일">
-							</a>
-							<p class="msg_input">
-								<textarea id="" name="" placeholder="메세지를 입력해주세요"></textarea>
-								<button type="submit" class="btn_send"><em class="snd_only">전송</em></button>
-							</p>
-						</form>
-					</div>
-					<!-- # 썸네일 영역 { -->
-					<div class="img box">
-						<div class="thumb_slide">
-							<div class="swiper-wrapper">
-								<div class="swiper-slide">
-									<img src="http://placehold.it/290x290" alt="">
-								</div>
-								<div class="swiper-slide">
-									<img src="http://placehold.it/290x290" alt="">
-								</div>
-								<div class="swiper-slide">
-									<img src="http://placehold.it/290x290" alt="">
-								</div>
-							</div>
-							<div class="swiper-pagination"></div>
-						</div>
-					</div>
-					<!--  } # 썸네일 영역 -->
-				</div>
-				</c:forEach>
 				<!-- } #텍스트+썸네일 피드 끝 -->
 			</section>
 			<!-- } 컨텐츠영역 끝 -->
@@ -290,65 +220,47 @@
 				<div class="rcmm_list">
 					<h3><em class="snd_only">추천그룹 목록</em>나홀로 캠핑이 심심하신가요?</h3>
 					<ul>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="입돌아간다 그룹 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">입돌아간다</b>
-								<span class="rc_intro">안녕하세요 ㅇㅇㅇ입니다. 안녕하세요</span>
-							</a>
-						</li>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="그룹 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">그룹</b>
-								<span class="rc_intro">그룹 소개글을 작성해주세요.</span>
-							</a>
-						</li>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="그룹 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">그룹</b>
-								<span class="rc_intro">그룹 소개글을 작성해주세요.</span>
-							</a>
-						</li>
+						<c:forEach items="${grouplist }" begin="0" end="2" var="grouplist">
+							<c:if test="${login ne null }">
+								<li>
+									<a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+										<img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
+									</a>
+									<a class="rc_text" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+										<b class="rc_name">${grouplist.grname }</b>
+										<span class="rc_intro">${grouplist.grintro }</span>
+									</a>
+								</li>
+							</c:if>
+							<c:if test="${login eq null }">
+								<li>
+									<a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}">
+										<img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
+									</a>
+									<a class="rc_text" href="${root }group/?grnum=${grouplist.grnum}">
+										<b class="rc_name">${grouplist.grname }</b>
+										<span class="rc_intro">${grouplist.grintro }</span>
+									</a>
+								</li>
+							</c:if>
+						</c:forEach>
 					</ul>
 				</div>
 				<div class="rcmm_list">
 					<h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
 					<ul>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="바다애캠핑장 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">바다애캠핑장</b>
-								<span class="rc_hashtag">경기도</span>
-							</a>
-						</li>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="캠핑장 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">캠핑장</b>
-								<span class="rc_hashtag">경기도</span>
-							</a>
-						</li>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="캠핑장 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">캠핑장</b>
-								<span class="rc_hashtag">경기도</span>
-							</a>
-						</li>
+						<c:forEach items="${camplist }" begin="0" end="2" var="camplist">
+							<c:set var="image" value="${fn:substringBefore(camplist.caphoto,',') }"/>
+							<li>
+								<a class="rc_thumb" href="${root }camp/detail?canum=${camplist.canum}">
+									<img src="${upload }/${image}" alt="${camplist.caname } 썸네일">
+								</a>
+								<a class="rc_text" href="${root }camp/detail?canum=${camplist.canum}">
+									<b class="rc_name">${camplist.caname }</b>
+									<span class="rc_hashtag">${camplist.caaddrsel }</span>
+								</a>
+							</li>
+						</c:forEach>
 					</ul>
 				</div>
 			</section>

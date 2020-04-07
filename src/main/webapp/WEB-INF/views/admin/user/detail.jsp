@@ -271,31 +271,31 @@
 							</c:if>
 						</div>
 					</div>
+					<c:if test="${userfeed.mpphoto ne '' }">
+					<!-- # 썸네일 영역 { -->
+						<div class="img box">
+							<div class="thumb_slide">
+								<div class="swiper-wrapper">
+									<c:set var="feedphoto" value="${userfeed.mpphoto }" />
+									<c:forTokens items="${feedphoto }" delims="," var="item">
+										<div class="swiper-slide">
+											<img src="${upload }/${item }" alt="">
+										</div>
+									</c:forTokens>
+								</div>
+								<div class="swiper-pagination"></div>
+							</div>
+						</div>
+						<!--  } # 썸네일 영역 -->
+					</c:if>
 				</div>
 				<!-- } #텍스트 피드 끝 -->
-				<c:if test="${userfeed.mpphoto ne '' }">
-				<!-- # 썸네일 영역 { -->
-					<div class="img box">
-						<div class="thumb_slide">
-							<div class="swiper-wrapper">
-								<c:set var="feedphoto" value="${userfeed.mpphoto }" />
-								<c:forTokens items="${feedphoto }" delims="," var="item">
-									<div class="swiper-slide">
-										<img src="${upload }/${item }" alt="">
-									</div>
-								</c:forTokens>
-							</div>
-							<div class="swiper-pagination"></div>
-						</div>
-					</div>
-					<!--  } # 썸네일 영역 -->
-				</c:if>
 				</c:forEach>
 			</section>
 			<!-- } 컨텐츠영역 끝 -->
 		</div>
 	</div>
-	<span class="snd_only">0</span>
+	<span class="snd_only">1</span>
 	<!-- } 서브페이지 -->
 	<div id="footer">
 		<div class="container">

@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:url value="/" var="root"></c:url>
+<c:url value="/upload" var="upload"></c:url>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -18,6 +20,76 @@
 <link rel="stylesheet" href="${root }resources/css/site.css">
 <link rel="shortcut icon" href="${root }resources/favicon.ico">
 <title>FESTA</title>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var myVenture = "${myVenture}";
+		var campCheck = "${campCheck}";
+		var tmp = "${myCamp.caphoto}";
+		tmp = tmp.split(',');
+		$('#caphoto').val(tmp[tmp.length-1]);
+		$('#imgCaphoto').attr('src','${upload }/'+tmp[tmp.length-1]);
+		if(myVenture != null){
+			if(campCheck == 1){
+				$('#save').show();
+			}
+			else if(campCheck == 0){
+				$('#cancel').show();
+			}
+		}
+		
+		$('#save').on('click',function(e){
+			e.preventDefault();
+			var canum = $('#canum').val();
+			var caphoto = $('#caphoto').val();
+			var caintroone = $('#caintroone').val();
+			var httitle1 = $('#httitle1').val();
+			var httitle2 = $('#httitle2').val();
+			var httitle3 = $('#httitle3').val();
+			var caguide1 = $('#caguide1').val();
+			var caguide2 = $('#caguide2').val();
+			var caguide3 = $('#caguide3').val();
+			var caguide4 = $('#caguide4').val();
+			var caguide5 = $('#caguide5').val();
+			var caguide6 = $('#caguide6').val();
+			var caguide7 = $('#caguide7').val();
+			
+			var files = new FormData($('#rst')[0]);
+			$.ajax({
+				type:"POST",
+				enctype:'multipart/form-data',
+				url:'${root}/user/camp/edit',
+				data: files,
+				processData: false,
+				contentType: false,
+				cache: false,
+				success:function(data){
+					openPop('updateOk');
+					$('#finish_update').on('click',function(){
+						window.location.reload();
+					});
+				},
+				error:function(e){
+					e.preventDefault();
+				}
+			});
+		});
+		
+		$('#btn_cancle').on('click',function(){
+			var size = $("input[name='caphoto']").length;
+			var mainPhoto = $("input[name='caphoto']").eq(0).val();
+			console.log(mainPhoto);
+			for(var i = 1;i<size;i++){
+				if(mainPhoto==$("input[name='caphoto']").eq(i).val()){
+					alert(i);
+					$("input[name='caphoto']").eq(i).attr("value");
+				}
+			}
+		});
+	});
+/* action="${root }user/camp/edit" method="post" */ 
+
+	
+</script>
 </head>
 <body>
 <c:if test="${sessionScope.login eq null}">
@@ -149,8 +221,13 @@
 								<a href="">${sessionScope.profile.proaddr }</a>
 							</dd>
 							<dd class="pf_picture">
-								<img src="http://placehold.it/120x120"
-									alt="${login.proname }님의 프로필 썸네일">
+								<c:if test="${profile.prophoto ne '' }">
+									<img src="${upload }/${profile.prophoto}"
+										alt="${profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${profile.prophoto eq '' }">
+									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
+								</c:if>
 							</dd>
 						</dl>
 					</div>
@@ -206,7 +283,7 @@
 				<!-- 컨텐츠영역 시작 { -->
 				<section class="content_area">
 					<h2 class="set_tit">캠핑장 관리</h2>
-					<form action="${root }user/camp/edit" method="post" class="set_form">
+					<form id="rst" class="set_form" enctype="multipart/form-data">
 						<input type="hidden" id="canum" name="canum" value="${myCamp.canum }"/>
 						<ul class="input_list">
 							<li class="set_file1 box">
@@ -215,15 +292,24 @@
 								</p>
 								<div>
 									<p class="pf_picture">
-										<img src="${root }resources/images/thumb/no_profile.png"
-											alt="캠핑장 그룹의 프로필 썸네일">
+										<input type="hidden" id="caphoto" name="caphoto"
+											 /> <input type="file"
+											id="festa3" name="files" accept="image/*">
+										<c:if test="${myCamp.caphoto ne '' }">
+											<img id="imgCaphoto" src=""
+												alt="${myCamp.caname }님의 프로필 썸네일">
+										</c:if>
+										<c:if test="${myCamp.caphoto eq '' }">
+											<img src="${root }resources/upload/thumb/no_profile.png"
+												alt="${myCamp.caname }님의 프로필 썸네일">
+										</c:if>
 									</p>
 									<ul class="comm_buttons_s">
-										<li><input type="file" id="caphoto" name="caphoto"
-											accept="image/*"> <label for="festa3"
+										<li>
+											<label for="festa3"
 											class="comm_btn cfm">등록</label></li>
 										<li>
-											<button type="button" class="comm_btn btn_cancle">삭제</button>
+											<button type="button" id="btn_cancle" class="comm_btn btn_cancle">삭제</button>
 										</li>
 									</ul>
 								</div>
@@ -315,18 +401,32 @@
 							</li>
 							<li class="box">
 								<p>캠핑장 사진</p>
-								<div class="file_thumbnail">
+								<div class="file_thumbnail mk_thumb" style="display: block">
 									<ul>
-										<!-- <li>
-										<input type="file" id="festaFl3" name="festaFiles" accept="video/*, image/*" multiple="multiple">
-										<label for="festaFl3" class="btn_file"><em class="snd_only">사진/동영상 업로드하기</em></label>
-										<img src="http://placehold.it/80x80" alt="">
-										<button class="btn_cancle" type="button"><em class="snd_only">업로드 취소하기</em></button>
-									</li> -->
-										<li><input type="file" id="festaFl2" name="festaFiles"
-											accept="video/*, image/*" multiple="multiple"> <label
-											for="festaFl2" class="btn_file"><em class="snd_only">사진/동영상
-													업로드하기</em></label></li>
+										<c:set var="count" value="0" />
+										<c:forTokens items="${myCamp.caphoto }" delims="," var="item">
+											<c:set var="count" value="${count+1 }" />
+											<li class="ft_thumb">
+												<input type="hidden" id="caphoto${count }" name="caphoto" value="${item }" />
+												<input type="file" id="file${count }" name="files" accept="video/*, image/*" value="${item }" /> 
+												<img src="${upload }/${item}" alt="" onload="squareTrim($(this), 80)">
+												<button class="btn_cancle" id="btn_caphoto${count }" type="button">
+													<em class="snd_only">업로드 취소하기</em>
+												</button> <label for="file${count }" class="btn_file">
+													<em	class="snd_only">사진/동영상 업로드하기</em>
+												</label>
+											</li>
+										</c:forTokens>
+										<c:forEach begin="${count }" end="4">
+										<c:set var="count" value="${count+1 }" />
+											<li class="ft_btn"><input type="file"
+												id="file${count }" name="files" accept="video/*, image/*" /> <img
+												src="" alt="">
+												<button class="btn_cancle" type="button">
+													<em class="snd_only">업로드 취소하기</em>
+												</button> <label for="file${count }" class="btn_file"><em
+													class="snd_only">사진/동영상 업로드하기</em></label></li>
+										</c:forEach>
 									</ul>
 									<p class="txt_explan">파일 크기 00MB 이하, 최대 5개까지 업로드 가능합니다.</p>
 								</div>
@@ -359,7 +459,8 @@
 						</ul>
 						<ul class="comm_buttons">
 							<li><button type="reset" class="btn_close comm_btn cnc">취소</button></li>
-							<li><button type="submit" class="comm_btn sbm">신청</button></li>
+							<li id="cancel" hidden="hidden"><button type="submit" id="request" class="comm_btn sbm">신청</button></li>
+							<li id="save" hidden="hidden"><button type="submit" id="apply" class="comm_btn sbm">저장</button></li>
 						</ul>
 					</form>
 				</section>
@@ -393,4 +494,12 @@
 		setFile();
 	</script>
 </body>
+<div id="updateOk" class="fstPop pop2">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">수정이 완료되었습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" id="finish_update" name="finish_update" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
 </html>

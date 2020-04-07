@@ -226,7 +226,7 @@
 					<c:choose>
 						<c:when test="${!empty groupnotice }">
 							<c:forEach items="${groupnotice }" begin="0" end="4" var="groupnotice">
-								<li><a class="btn_pop" href="${root }admin/group/detail/ntc_feed?gnnum=${groupnotice.gnnum}">${groupnotice.gncontent }</a></li>
+								<li><a class="btn_feed" href="${root }admin/group/detail/ntc_feed?gnnum=${groupnotice.gnnum}">${groupnotice.gncontent }</a></li>
 							</c:forEach>
 						</c:when>
 						<c:otherwise>
@@ -334,7 +334,6 @@
 								</c:if>
 							</div>
 						</div>
-					</div>
 					<c:if test="${groupfeed.gpphoto ne '' }">
 						<!-- # 썸네일 영역 { -->
 						<div class="img box">
@@ -351,6 +350,7 @@
 							</div>
 						</div>
 					</c:if>
+					</div>
 				</c:forEach>
 				<!-- } #텍스트 피드 끝 -->
 			</section>
@@ -358,7 +358,7 @@
 		</div>
 	</div>
 	<!-- } 서브페이지 -->
-	<span class="snd_only">0</span>
+	<span class="snd_only">1</span>
 	<div id="footer">
 		<div class="container">
 			<div class="img_box">
@@ -408,6 +408,7 @@
 </div>
 <script type="text/javascript">
 	feedType('feed_viewer');
+	openFeed();
 </script>
 </body>
 </html>

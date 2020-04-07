@@ -116,5 +116,6 @@
 <button type="button" class="btn_close"><em class="snd_only">창 닫기</em></button>
 <script type="text/javascript">
 	btnPop('btn_pop2');
-	setFile();
+	setTimeout(setFile, 500);
+	imageLoad(500);
 </script>

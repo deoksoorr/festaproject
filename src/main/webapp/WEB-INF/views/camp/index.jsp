@@ -57,7 +57,7 @@
 <body>
 <c:if test="${sessionScope.login ne null }">
    <c:if test="${sessionScope.login.proid eq 'admin@festa.com' }">
-      <c:redirect url="/empty"/>
+      <c:redirect url="${root}empty"/>
    </c:if>
 </c:if>
 <div id="wrap">
@@ -68,7 +68,7 @@
 					<a href="${root}"><em class="snd_only">FESTA</em></a>
 				</h1>
 				<form class="search_box" action="${root }search">
-					<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!">
+					<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 					<button type="submit">
 						<img src="${root }resources/images/ico/btn_search.png" alt="검색">
 					</button>
@@ -81,7 +81,7 @@
 					<li><a href="${root}member/login" class="btn_pop">로그인</a></li>
 					</c:if>
 					<c:if test="${login ne null }">
-					<li><a href="${root}user/">마이페이지</a></li>
+					<li><a href="${root}user/?pronum=${login.pronum}">마이페이지</a></li>
 					</c:if>
 				</ul>
 				<c:if test="${login ne null }">

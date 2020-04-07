@@ -14,6 +14,7 @@
 <script type="text/javascript" src="${root }resources/js/util.js"></script>
 <script type="text/javascript" src="${root }resources/js/site.js"></script>
 <link rel="stylesheet"
+
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <link rel="stylesheet" href="${root }resources/css/site.css">
 <link rel="shortcut icon" href="${root }resources/favicon.ico">
@@ -222,8 +223,13 @@
 								<a href="">${sessionScope.profile.proaddr }</a>
 							</dd>
 							<dd class="pf_picture">
-								<img src="http://placehold.it/120x120"
-									alt="${login.proname }님의 프로필 썸네일">
+								<c:if test="${profile.prophoto ne '' }">
+									<img src="${upload }/${profile.prophoto}"
+										alt="${profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${profile.prophoto eq '' }">
+									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
+								</c:if>
 							</dd>
 						</dl>
 					</div>
@@ -405,8 +411,8 @@
 								<p>계정 설정</p>
 								<div>
 									<input type="checkbox" class="comm_rdo rdo_pop" id="festa9"
-										name="festa9" data-url="${root }user/inactive"> <label
-										for="festa9">계정 비활성화</label>
+										name="festa9" data-url="${root }user/inactive" > 
+									<label for="festa9">계정 비활성화</label>
 									<p class="txt_explan">
 										계정 비활성화 시 프로필 및 공유한 피드를 볼 수 없습니다.<br> 로그인 시 비활성화가 자동으로
 										해제됩니다.

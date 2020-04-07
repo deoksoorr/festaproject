@@ -11,6 +11,7 @@
 <script type="text/javascript" src="${root }resources/js/jquery-1.12.4.js"></script>
 <script type="text/javascript" src="${root }resources/js/util.js"></script>
 <script type="text/javascript" src="${root }resources/js/site.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.js"></script>
 <link rel="stylesheet"
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 <link rel="stylesheet" href="${root }resources/css/site.css">
@@ -18,36 +19,84 @@
 <title>FESTA</title>
 <script type="text/javascript">
 	$(document).ready(function(){
-		var grnum=$('#grnum').val();
-		var pronum=$('#pronum').val();
-		var ws = new WebSocket('ws://localhost:8080/replyEcho');
-
-		ws.onopen = function () {
-		    console.log('Info: connection opened.');
-		    setTimeout( function(){ connect(); }, 1000); // retry connection!!
 		
-		    ws.onmessage = function (event) {
-			    console.log('ReceiveMessage:', event.data+'\n');
-			};
-		};
-
-
-		ws.onclose = function (event) {
-			console.log('Info: connection closed.');
-		};
+		connect();
 		
-		ws.onerror = function(err) {
-			console.log(err);
-		};
-
-		$('.btnSend').on('click', function(evt) {
-			evt.preventDefault();
-			if (socket.readyState !== 1) return;
-				  let msg = $('input#msg').val();
-				  ws.send(msg);
+		$('.btn_send').on('click', function(){
+			if(socket.readyState !== 1){
+				return;
+			}
+			let msg=$('#chstmsg').val();
+			socket.send(msg);
+			$('#chstmsg').val('');
 		});
 	});
 
+</script>
+<script type="text/javascript">
+	var socket = null;
+	function connect(){
+		var ws=new WebSocket("ws://localhost:8080/festa/chat/echo?grnum=${detail.grnum}")
+		socket=ws;
+		ws.onopen=function(){
+			console.log('connection open');
+		};
+		
+		ws.onmessage=function(event){
+			
+			console.log(event.data+'\n');
+			
+			var myid=$('#proid').val();
+			console.log(myid);
+			
+			var chat = event.data.split('|');
+			
+			var chatid=chat[0];
+			console.log(chatid);
+			console.log(chat[1]);	//이름
+			console.log(chat[2]);	//사진 
+			console.log(chat[3]);	//메세지 
+			console.log(chat[4]);	//시간 
+			
+			if(myid==chatid){
+				$('.chatarea').append(
+						'<li>'+
+							'<div class="ch_msg me">'+
+							'<p>'+ chat[3] +
+							'<span>'+chat[4]+'</span>'+
+							'</p>'+
+							'</div>'+
+						'</li>'
+				);
+				console.log('내메세지');
+			}else{
+				$('.chatarea').append(
+						'<li>'+
+							'<div class="ch_msg ots">'+
+								'<ul class="ch_user">'+
+									'<li>'+
+										'<a class="pf_picture" href="" target="_blank">'+
+											'<img src="http://placehold.it/24x24" alt="'+chat[1]+'님의 프로필 썸네일">'+
+										'</a>'+
+										'<a class="pf_name" href="" target="_blank">'+chat[1]+'('+chat[0]+')</a>'+
+									'</li>'+
+								'</ul>'+
+								'<p>'+chat[3]+'<span>'+chat[4]+'</span></p>'+
+							'</div>'+
+						'</li>'
+						);
+				console.log('상대메세지');
+			}
+			
+		}
+		ws.onclose=function(event){
+			console.log('closed');
+			setTimeout(function(){connect();}, 1000);
+		}
+		ws.onerror=function(err){
+			console.log('error:', err)
+		}
+	}
 </script>
 </head>
 <body>
@@ -64,36 +113,24 @@
 				<li><span class="gp_official"></span></li>
 			</ul>
 		</section>
+		
 		<section class="talk_area">
 			<div class="chat_content box">
 				<div class="scrBar">
-					<div class="ch_msg ots">
-						<ul class="ch_user">
-							<li><a class="pf_picture" href="" target="_blank"> <img
-									src="http://placehold.it/24x24" alt="김덕수님의 프로필 썸네일">
-							</a> <a class="pf_name" href="" target="_blank">김덕수(user01@email.com)</a>
-							</li>
-						</ul>
-						<p>
-							손흥민 대단합니다 ㅠㅠㅠㅠ대한민국의 자랑!! <span>23:50</span>
-						</p>
-					</div>
-					<p class="ch_msg">김덕수(dsx2____@nate.com) 님이 퇴장하셨습니다.</p>
-					<div class="ch_msg me">
-						<p>
-							손흥민 대단합니다 ㅠㅠㅠㅠ대한민국의 자랑!! 손흥민 대단합니다 ㅠㅠㅠㅠ대한민국의 자랑!! 손흥민 대단합니다
-							ㅠㅠㅠㅠ대한민국의 자랑!! 손흥민 대단합니다 ㅠㅠㅠㅠ대한민국의 자랑!! 손흥민 대단합니다 ㅠㅠㅠㅠ대한민국의 자랑!!
-							손흥민 대단합니다 ㅠㅠㅠㅠ대한민국의 자랑!! <span>23:50</span>
-						</p>
-					</div>
+					<ul class="chatarea">
+						<li>
+							<p class="ch_msg">김덕수(dsx2____@nate.com) 님이 퇴장하셨습니다.</p>
+						</li>
+					</ul>
 				</div>
 			</div>
 			<form class="message_form">
+				<input type="hidden" id="proid" value="${login.proid }" />
 				<a class="pf_picture" href="" target="_blank"> <img
-					src="http://placehold.it/30x30" alt="나의 프로필 썸네일">
+					src="${login.prophoto }" alt="나의 프로필 썸네일">
 				</a>
 				<p class="msg_input">
-					<textarea id="" name="" placeholder="메세지를 입력해주세요"></textarea>
+					<textarea id="chstmsg" name="" placeholder="메세지를 입력해주세요"></textarea>
 					<button type="button" class="btn_send">
 						<em class="snd_only">전송</em>
 					</button>

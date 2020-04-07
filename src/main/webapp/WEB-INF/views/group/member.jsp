@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:url value="/" var="root" />
+<c:url value="/resources/upload" var="upload"></c:url>
 <!doctype html>
 <html>
 <head>
@@ -56,8 +58,8 @@
 			<c:choose>
 				<c:when test="${detail.grtotal ne 0}">
 					<c:forEach items="${member }" var="member">
-						<li><a href=""> <span class="pf_picture"> <img
-									src="http://placehold.it/50x50" alt="김덕수님의 프로필 썸네일">
+						<li><a href="${root }user/?pronum=${member.profile.pronum}"> <span class="pf_picture"> <img
+									src="${upload }/${member.profile.prophoto}" alt="김덕수님의 프로필 썸네일" onload="squareTrim($(this), 50)">
 							</span> <input type="hidden" value="${member.profile.pronum }">
 								<b class="fw_name">${member.profile.proname }</b> <span
 								class="fw_intro">${member.profile.prointro }</span>

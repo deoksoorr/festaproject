@@ -1469,16 +1469,26 @@ form .f_message.ok {
           box-sizing: border-box;
 }
 
-#userMenu .my_list a span {
+#userMenu .my_list span {
   position: absolute;
   top: 0;
   left: 25px;
   width: 45px;
+  height: 45px;
   border-radius: 10px;
   overflow: hidden;
 }
 
-#userMenu .my_list a b {
+#userMenu .my_list img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  max-width: none;
+}
+
+#userMenu .my_list b {
   display: block;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -3576,6 +3586,8 @@ form .f_message.ok {
 .camp_wrap.detail .info_area .cp_options li {
   position: relative;
   float: left;
+  min-width: 30px;
+  min-height: 30px;
   margin-left: 10px;
 }
 

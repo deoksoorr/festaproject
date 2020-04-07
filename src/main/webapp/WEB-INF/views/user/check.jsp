@@ -151,8 +151,13 @@
 								<a href="">${profile.proaddr }</a>
 							</dd>
 							<dd class="pf_picture">
-								<img src="http://placehold.it/120x120"
-									alt="${profile.proname }님의 프로필 썸네일">
+								<c:if test="${profile.prophoto ne '' }">
+									<img src="${upload }/${profile.prophoto}"
+										alt="${profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${profile.prophoto eq '' }">
+									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
+								</c:if>
 							</dd>
 						</dl>
 					</div>
