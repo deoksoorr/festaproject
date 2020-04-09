@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fin.festa.model.entity.CampVo;
-import com.fin.festa.model.entity.GroupCommentVo;
-import com.fin.festa.model.entity.GroupPostVo;
+import com.fin.festa.model.entity.FeedVo;
 import com.fin.festa.model.entity.GroupVo;
 import com.fin.festa.model.entity.LoginVo;
 import com.fin.festa.model.entity.MyAdminVo;
@@ -39,64 +38,64 @@ public class UserController {
 	@Autowired
 	private UserService userSerivce;
 	
-	//�� �ǵ�
+	//내 피드
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String feedSelectOne(HttpServletRequest req, ProfileVo profile) {
 		userSerivce.feedSelectOne(req,profile);
 		return "user/index";
 	}
 	
-	//�Խñ� �Է�
+	//게시글 입력
 	@RequestMapping(value = "add", method = RequestMethod.POST)
 	public String feedInsertOne(HttpServletRequest req, MultipartFile[] files, MyPostVo myPostVo,ProfileVo profile) {
 		userSerivce.feedInsertOne(req, files, myPostVo);
-		userSerivce.feedSelectOne(req,profile);
-		return "redirect:/user/";
+
+		return "redirect:/user/?pronum="+myPostVo.getPronum();
 	}
 
 
-	//�Խñ� ���� (�˾�)
+	//게시글 수정 (팝업)
 	@RequestMapping(value = "maker", method = RequestMethod.GET)
 	public String feedDetail(Model model,MyPostVo myPostVo) {
 		userSerivce.myFeedDetail(model, myPostVo);
 		return "user/maker";
 	}
 
-	//�Խñ� ���� (�˾�>�˾� �� ���)
+	//게시글 수정 (팝업>팝업 내 기능)
 	@RequestMapping(value = "maker", method = RequestMethod.POST)
 	public String feedUpdateOne(HttpServletRequest req,MultipartFile[] filess,  MyPostVo myPostVo) {
 		userSerivce.feedUpdateOne(req, filess, myPostVo);
 		return "user/index";
 	}
 
-	//�Խñ� ���� (�����˾� ���)
+	//게시글 삭제 (내부팝업 기능)
 	@RequestMapping(value = "del", method = RequestMethod.POST)
 	public String feedDeleteOne(Model model, MyPostVo myPostVo) {
 		userSerivce.feedDeleteOne(model, myPostVo);
 		return "user/index";
 	}
 
-	//�ǵ� ��� �Է�
+	//피드 댓글 입력
 	@RequestMapping(value = "cmmtadd", method = RequestMethod.POST)
 	public String feedCmmtInsertOne(HttpServletRequest req, MyCommentVo myCommentVo) {
 		userSerivce.feedCmmtInsertOne(req, myCommentVo);
 		return "user/index";
 	}
 
-	//�ǵ� ��� ���� (�����˾� ����)
+	//피드 댓글 삭제 (내부팝업 생성)
 	@RequestMapping(value = "cmmtdel", method = RequestMethod.POST)
 	public String feedCmmtDeleteOne(Model model, MyCommentVo myCommentVo) {
 		userSerivce.feedCmmtDeleteOne(model, myCommentVo);
 		return "user/index";
 	}
 	
-	//�ǵ��� ������ �񵿱�
+	//댓글 더보기
 	@RequestMapping(value = "cmmt", method = RequestMethod.GET)
 	public @ResponseBody List<MyCommentVo> GroupDetailCmmt(Model model, MyPostVo mypost){
 		return userSerivce.userDetailCmmt(model, mypost);
 	}
 
-	//���ƿ� üũ
+	//좋아요 체크
 	@RequestMapping(value = "likeadd", method = RequestMethod.POST)
 	public String likeInsertOne(HttpServletRequest req, MyGoodVo myGoodVo) {
 		System.out.println("���ϱ�");
@@ -104,98 +103,103 @@ public class UserController {
 		return "user/index";
 	}
 
-	//���ƿ� ���
+	//좋아요 취소
 	@RequestMapping(value = "likedel", method = RequestMethod.POST)
 	public String likeDeleteOne(HttpServletRequest req, MyGoodVo myGoodVo) {
-		System.out.println("����");
 		userSerivce.likeDeleteOne(req, myGoodVo);
 		return "user/index";
 	}
 
-	//�ȷο� ��� (�˾�)
+	//팔로워 목록 (팝업)
 	@RequestMapping(value = "follower", method = RequestMethod.GET)
 	public String followerList(HttpServletRequest req, ProfileVo profile){
 		userSerivce.followerList(req, profile);
 		return "user/follower";
 	}
 
-	//�ȷο� ��� (�˾�)
+	//팔로우 목록 (팝업)
 	@RequestMapping(value = "following", method = RequestMethod.GET)
 	public String followList(HttpServletRequest req, ProfileVo profile){
+		System.out.println("팔로우 접속");
+		System.out.println(profile);
 		userSerivce.followList(req, profile);
 		return "user/following";
 	}
 	
-	//�ȷο� (�˾�>�˾� �� ���)
-	@RequestMapping(value = "foll", method = RequestMethod.POST)
+	//팔로우 (팝업>팝업 내 기능)
+	@RequestMapping(value = "follow", method = RequestMethod.POST)
 	public String followInsertOne(HttpServletRequest req, MyFollowingVo myFollowingVo) {
-		//return "user/follower";
-		return "user/follow";
+		System.out.println(myFollowingVo);
+		userSerivce.followInsertOne(req, myFollowingVo);
+		return "user/following";
 	}
 	
-	//�ȷο� ��� (�˾�>�˾� �� ���)
+	//팔로우 취소 (팝업>팝업 내 기능)
 	@RequestMapping(value = "unfollow", method = RequestMethod.POST)
 	public String followDeleteOne(HttpServletRequest req, MyFollowingVo myFollowingVo) {
+		System.out.println(myFollowingVo);
 		userSerivce.followDeleteOne(req, myFollowingVo);
-		//return "user/follower";
-		return "user/follow";
+		return "user/following";
 	}
 
-	//���� �Ű� (�˾�)
+	//유저 신고 (팝업)
 	@RequestMapping(value = "us_report", method = RequestMethod.GET)
 	public String userReport(){
 		return "user/us_report";
 	}
 	
-	//���� �Ű� (�˾�>�˾� �� ���)
+	//유저 신고 (팝업>팝업 내 기능)
 	@RequestMapping(value = "us_report", method = RequestMethod.POST)
-	public String userReport(Model model, ReportListVo reportListVo){
-		return "user/index";
+	public String userReport(HttpServletRequest req, MultipartFile[] files, ReportListVo reportListVo){
+		userSerivce.userReport(req,files, reportListVo);
+		return "redirect:/user/?pronum="+reportListVo.getPronum();
 	}
 
-	//�ǵ� �Ű� (�˾�)
+	//피드 신고 (팝업)
 	@RequestMapping(value = "report", method = RequestMethod.GET)
-	public String feedReport(){
+	public String feedReport(Model model ,FeedVo feed){
+		model.addAttribute("feedReport",feed);
 		return "user/report";
 	}
 	
-	//�ǵ� �Ű� (�˾�>�˾� �� ���)
+	//피드 신고 (팝업>팝업 내 기능)
 	@RequestMapping(value = "report", method = RequestMethod.POST)
-	public String feedReport(Model model, ReportListVo reportListVo){
-		return "user/index";
+	public String feedReport(HttpServletRequest req,MultipartFile[] files, ReportListVo reportListVo){
+		userSerivce.feedReport(req, files, reportListVo);
+		return "redirect:/user/?pronum="+reportListVo.getPronum();
 	}
 	
 //////////////////////////////////////////////////////////////////////
 ///////////////////////////////���� ����///////////////////////////////
 //////////////////////////////////////////////////////////////////////	
 	
-	//�� ������ ����
+	//내 프로필 관리
 	@RequestMapping(value = "profile", method = RequestMethod.GET)
 	public String myProfile(HttpServletRequest req, ProfileVo profileVo) {
 		userSerivce.myProfile(req, profileVo);
 		return "user/profile";
 	}
 	
-	//�� ������ ����
+	//내 프로필 수정
 	@RequestMapping(value = "profile", method = RequestMethod.POST)
 	public String myProfileUpdateOne(HttpServletRequest req,MultipartFile[] files, ProfileVo profileVo) {
 		int result = userSerivce.myProfileUpdateOne(req,files, profileVo);
 		return "user/profile";
 	}
 	
-	//�� ���� ����
+	//내 계정 관리
 	@RequestMapping(value = "adm", method = RequestMethod.GET)
 	public String myAdmin(Model model, ProfileVo prifileVo) {
 		return "user/adm";
 	}
 	
-	//�� ���� ����(��й�ȣ Ȯ��)
+	//내 계정 관리(비밀번호 확인)
 	@RequestMapping(value = "check", method = RequestMethod.GET)
 	public String myAdminCheck() {
 		return "user/check";
 	}
 	
-	//�� ���� ����(��й�ȣ Ȯ��)
+	//내 계정 관리(비밀번호 확인)
 	@RequestMapping(value = "check", method = RequestMethod.POST)
 	public String myAdminCheck(Model model, LoginVo loginVo) {
 		int result = userSerivce.myAdminCheck(model, loginVo);
@@ -207,7 +211,7 @@ public class UserController {
 		}
 	}
 	
-	//�� ���� ���� ����
+	//내 계정 정보 수정
 	@RequestMapping(value = "adm", method = RequestMethod.POST)
 	public String myAdminUpdateOne(HttpServletRequest req, ProfileVo profileVo) {
 		userSerivce.myAdminUpdateOne(req, profileVo);
@@ -245,33 +249,33 @@ public class UserController {
 		return result;
 	}
 
-	//�׷� ����
+	//그룹 생성
 	@RequestMapping(value = "group", method = RequestMethod.GET)
 	public String groupInsertOne() {
 		return "user/group";
 	}
 	
-	//�׷� ���� �Ϸ�
+	//그룹 생성 완료
 	@RequestMapping(value = "group", method = RequestMethod.POST)
-	public String groupInsertOne(HttpServletRequest req, GroupVo groupVo) {
-		groupVo = userSerivce.groupInsertOne(req, groupVo);
+	public String groupInsertOne(HttpServletRequest req,MultipartFile[] files, GroupVo groupVo) {
+		groupVo = userSerivce.groupInsertOne(req, files,groupVo);
 		return "redirect:../group/?grnum=" + groupVo.getGrnum() + "&pronum=" + groupVo.getPronum();
 	}
 	   
-	//����� ���� ��û
+	//사업자 계정 신청
 	@RequestMapping(value = "venture/add", method = RequestMethod.GET)
 	public String ventureInsertOne(Model model) {
 		return "user/venture/add";
 	}
 	
-	//����� ���� ��û �Ϸ�
+	//사업자 계정 신청 완료
 	@RequestMapping(value = "venture/add", method = RequestMethod.POST)
-	public String ventureInsertOne(HttpServletRequest req, UpdateWaitVo updateWaitVo) {
-		userSerivce.ventureInsertOne(req, updateWaitVo);
+	public String ventureInsertOne(HttpServletRequest req,MultipartFile[] files, UpdateWaitVo updateWaitVo) {
+		userSerivce.ventureInsertOne(req,files, updateWaitVo);
 		return "user/venture/standby";
 	}
 
-	//����� ���� ��û ���� ���
+	//사업자 계정 신청 승인 대기
 	@RequestMapping(value = "venture/standby", method = RequestMethod.GET)
 	public String ventureInsertOne() {
 		return "user/venture/standby";
@@ -298,14 +302,15 @@ public class UserController {
 	
 	//캠핑장 정보 등록
 	@RequestMapping(value = "camp/add", method = RequestMethod.GET)
-	public String campInsertOne() {
+	public String campInsertOne(HttpServletRequest req) {
 		return "user/camp/add";
 	}
 
 	//캠핑장 정보 등록 완료
 	@RequestMapping(value = "camp/add", method = RequestMethod.POST)
-	public String campInsertOne(Model model, CampVo campVo) {
-		return "camp/detail";
+	@ResponseBody
+	public CampVo campInsertOne(HttpServletRequest req,MultipartFile[] files, CampVo campVo) {
+		return userSerivce.campInsertOne(req,files, campVo);
 	}
 	
 	//캠핑장 정보 관리

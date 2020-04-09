@@ -149,7 +149,12 @@ public class MemberDaoImpl implements MemberDao{
 	}
 
 
-
+	//로그인유지
+		@Override
+		public ProfileVo loginCookie(LoginVo login) {
+			
+			return sqlSession.selectOne("member.loginCookie", login);
+		}
 
 
 

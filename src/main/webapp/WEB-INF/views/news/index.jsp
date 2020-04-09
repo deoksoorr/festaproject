@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <c:url value="/" var="root"></c:url>
-<c:url value="/upload" var="upload"></c:url>
+<c:url value="/resources/upload" var="upload" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -12,14 +12,82 @@
 	<script type="text/javascript" src="${root}resources/js/jquery-1.12.4.js"></script>
 	<script type="text/javascript" src="${root}resources/js/util.js"></script>
 	<script type="text/javascript" src="${root}resources/js/site.js"></script>
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-	<link rel="stylesheet" href="${root}resources/css/site.css">
+	<link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<link type="text/css" rel="stylesheet" href="${root}resources/css/site.css">
 	<link rel="shortcut icon" href="${root}resources/favicon.ico">
 	<title>FESTA</title>
 	<script type="text/javascript">
-	var login = '${login ne null}';
-	if (login == 'false') {
-		location.href='${root}empty';
+	$(function(){
+		var login = '${login ne null}';
+		/*
+		if (login == 'false') {
+			location.href='${root}empty';
+		}
+		var cookie = '${cookie.loginCookie.value}';
+		var login = '${login}';
+	    
+		if(cookie!=''&&login==''&&loginValue==true){
+			openPop('loginCookie');
+		}
+	    
+		$('#btnCookie').on('click',function(){
+			$.post('${root}member/loginCookie','id='+cookie,function(data){
+				if (data.prorn == '0') {
+					location.reload();
+				} else if (data.prorn == '1') {
+					location.href = "${root}member/stop";
+				} else if (data.prorn == '2') {
+					location.href = "${root}member/kick";
+				} else if (data.prorn == '3') {
+					location.reload();
+				} else if (data.prorn == '4') {
+					location.href = "${root}";
+				}
+			});
+		});
+		*/
+		
+		var test = '<c:set var="test" value="${login.pronum}" />';
+		
+		$('.feed_viewer').on('click', function() {
+			console.log('test');
+			send();
+		});
+	});
+	function send() {
+		var param = {
+				'pronum': '${login.pronum}',
+		};
+		$.get('${root}news/more', param)
+			.done(function(data) {
+				container.append(data);
+				console.log(data);
+			});
+	}
+	function fn_ajax_more_video(start, end, sca){
+		var container = $('.content_area');
+		/* 하단 더 보기 버튼 클릭 시 더 많은 영상을 ajax로 처리하여 불러오는 자바 스크립트 함수 */
+		var start = start;	// 불러올 때 몇 개의 동영상을 불러올 지 정하는 변수
+		var video_end = end;
+		var sca = sca;
+		
+		$.ajax({ 
+			type : "post",
+			url : "http://jmnc.co.kr/bbs/ajax_more_video.php",
+			data : {   // 전달 데이터
+				"video_start" : video_start,
+				"video_end" : video_end,
+				"sca" : sca,
+			},
+			cache : false,
+			async : false,
+			success : function(result){
+				container.append(result);
+			},
+			error : function(result){
+				console.log("failed. (" + result + ")");
+			}
+		});
 	}
 	</script>
 </head>
@@ -93,11 +161,14 @@
 							<span class="btn_mylist">나의 채팅</span>
 							<div class="my_list">
 								<ul>
-								<c:forEach items="${joinGroup }" var="joinGroup">
-									<li><a href=""> <span><img
-												src="http://placehold.it/45x45" alt="입돌아간다 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
-									</a></li>
-								</c:forEach>
+									<c:forEach items="${joinGroup }" var="joinGroup">
+									<li>
+										<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+										<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+										<b>${joinGroup.group.grname }</b>
+										</a>
+									</li>
+									</c:forEach>
 								</ul>
 							</div>
 						</dd>
@@ -105,10 +176,18 @@
 							<span class="btn_mylist">나의 캠핑장</span>
 							<div class="my_list">
 								<ul>
-								<c:forEach items="${bookMark }" var="bookMark">
-									<li><a href="${root }camp?canum=${bookMark.camp.canum}"> <span><img
-												src="http://placehold.it/45x45" alt="캠핑장 썸네일"></span> <b>${bookMark.camp.caname }</b>
-									</a></li>
+								<c:forEach items="${bookMark}" var="bookMark">
+									<li>
+										<a href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
+											<span>
+												<c:set var="image" value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
+												<c:if test="${!empty bookMark.camp.caphoto && empty image}"><img src="${upload}/${bookMark.camp.caphoto}" alt="${bookMark.camp.caname}"></c:if>
+												<c:if test="${!empty bookMark.camp.caphoto && !empty image}"><img src="${upload}/${image}" alt="${bookMark.camp.caname}"></c:if>
+												<c:if test="${empty bookMark.camp.caphoto && empty image}"><img src="${root}resources/images/thumb/no_profile.png" alt="${bookMark.camp.caname}"></c:if>
+											</span>
+											<b>${bookMark.camp.caname}</b>
+										</a>
+									</li>
 								</c:forEach>
 								</ul>
 							</div>
@@ -135,21 +214,38 @@
 			<!-- 컨텐츠영역 시작 { -->
 			<section class="content_area">
 				<!-- #텍스트+썸네일 피드 시작 { -->
-				<div class="feed_viewer">
+				<c:forEach items="${feedList}" var="feed" begin="0" end="4">
+				<c:set var="group" value="${feed.gpnum ne 0}" />
+				<c:choose>
+					<c:when test="${!group}">
+						<c:set var="feedContent" value="${feed.mpcontent}" />
+						<c:set var="feedImages" value="${feed.mpphoto}" />
+					</c:when>
+					<c:otherwise>
+						<c:set var="feedContent" value="${feed.gpcontent}" />
+						<c:set var="feedImages" value="${feed.gpphoto}" />
+					</c:otherwise>
+				</c:choose>
+				<div class="feed_viewer<c:if test="${!empty feedImages}"> half</c:if>">
 					<div class="tit box">
 						<dl class="feed_inform">
 							<dt>
-								<a href="">
-									<span class="pf_picture"><img src="http://placehold.it/55x55" alt="김덕수님의 프로필 썸네일"></span>
-									<span class="fd_name">김덕수</span>
+								<a href="${root}user/?pronum=${feed.pronum}">
+									<span class="pf_picture">
+									<c:choose>
+										<c:when test="${!empty feed.profile.prophoto}"><img src="${upload}/${feed.profile.prophoto}" alt="${feed.profile.proname}님의 프로필 썸네일"></c:when>
+										<c:otherwise><img src="${root}resources/images/thumb/no_profile.png" alt="${feed.profile.proname}님의 프로필 썸네일"></c:otherwise>
+									</c:choose>
+									</span>
+									<span class="fd_name">${feed.profile.proname}</span>
 								</a>
-								<a href="">
-									<span class="fd_group">입돌아간다</span>
-								</a>
+								<c:if test="${group}">
+								<a href="${root}group/?grnum=${feed.grnum}&pronum=${login.pronum}"><span class="fd_group">${feed.group.grname}</span></a>
+								</c:if>
 							</dt>
 							<dd>
-								<span class="fd_date">2020년 01월 01일 12시 59분</span>
-								<b class="fd_liked">550</b>
+								<span class="fd_date">${feed.date1}</span>
+								<b class="fd_liked">${feed.good}</b>
 							</dd>
 						</dl>
 						<ul class="feed_options">
@@ -163,10 +259,11 @@
 						<div class="scrBar">
 							<div class="feed_content">
 								<ul class="fd_hashtag">
-									<li><a href="">동계캠핑</a></li>
-									<li><a href="">눈밭</a></li>
+									<c:if test="${!empty feed.httitle1}"><li><a href="${root}search/?keyword=${feed.httitle1}">${feed.httitle1}</a></li></c:if>
+									<c:if test="${!empty feed.httitle2}"><li><a href="${root}search/?keyword=${feed.httitle2}">${feed.httitle2}</a></li></c:if>
+									<c:if test="${!empty feed.httitle3}"><li><a href="${root}search/?keyword=${feed.httitle3}">${feed.httitle3}</a></li></c:if>
 								</ul>
-								<p class="fd_content">내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요. 내용을 입력해주세요.</p>
+								<pre class="fd_content">${feedContent}</pre>
 							</div>
 							<ul class="comment_list">
 								<li>
@@ -194,24 +291,21 @@
 						</form>
 					</div>
 					<!-- # 썸네일 영역 { -->
+					<c:if test="${!empty feedImages}">
 					<div class="img box">
 						<div class="thumb_slide">
 							<div class="swiper-wrapper">
-								<div class="swiper-slide">
-									<img src="http://placehold.it/290x290" alt="">
-								</div>
-								<div class="swiper-slide">
-									<img src="http://placehold.it/290x290" alt="">
-								</div>
-								<div class="swiper-slide">
-									<img src="http://placehold.it/290x290" alt="">
-								</div>
+							<c:forTokens items="${feedImages}" var="images" delims=",">
+								<div class="swiper-slide"><img src="${upload}/${images}" alt=""></div>
+							</c:forTokens>
 							</div>
 							<div class="swiper-pagination"></div>
 						</div>
 					</div>
+					</c:if>
 					<!--  } # 썸네일 영역 -->
 				</div>
+				</c:forEach>
 				<!-- } #텍스트+썸네일 피드 끝 -->
 			</section>
 			<!-- } 컨텐츠영역 끝 -->
@@ -290,9 +384,19 @@
 		</div>
 	</div>
 </div>
-
+<!-- #팝업 { -->
+<div id="loginCookie" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">로그인을 유지하시겠습니까?</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cnc">로그아웃</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
+<!-- } #팝업 -->
 <script type="text/javascript">
-	feedType('feed_viewer');
+	commSlider();
 </script>
 </body>
 </html>

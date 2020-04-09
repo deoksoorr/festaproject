@@ -13,9 +13,8 @@
 <script type="text/javascript" src="${root }resources/js/jquery-1.12.4.js"></script>
 <script type="text/javascript" src="${root }resources/js/util.js"></script>
 <script type="text/javascript" src="${root }resources/js/site.js"></script>
-<link rel="stylesheet"
-	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-<link rel="stylesheet" href="${root }resources/css/site.css">
+<link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<link type="text/css" rel="stylesheet" href="${root}resources/css/site.css">
 <link rel="shortcut icon" href="${root }resources/favicon.ico">
 <title>FESTA</title>
 <script type="text/javascript">
@@ -35,7 +34,31 @@
 				return false;
 			}
 		});
-	});
+		
+		var cookie = '${cookie.loginCookie.value}';
+		var login = '${login}';
+		
+		if(cookie!=''&&login==''&&loginValue==true){
+			openPop('loginCookie');
+		}
+		
+		$('#btnCookie').on('click',function(){
+			$.post('${root}member/loginCookie','id='+cookie,function(data){
+				if (data.prorn == '0') {
+					location.reload();
+				} else if (data.prorn == '1') {
+					location.href = "${root}member/stop";
+				} else if (data.prorn == '2') {
+					location.href = "${root}member/kick";
+				} else if (data.prorn == '3') {
+					location.reload();
+				} else if (data.prorn == '4') {
+					location.href = "${root}";
+				}
+			});
+		});
+	}); 
+	
 </script>
 </head>
 <body>
@@ -92,19 +115,21 @@
 		                              </ul>
 		                           </div>
 		                        </dd>
-		                        <dd>
-		                           <span class="btn_mylist">나의 채팅</span>
-		                           <div class="my_list">
-		                              <ul>
-		                                 <c:forEach items="${joinGroup }" var="joinGroup">
-		                                    <li><a href=""> <span><img
-		                                             src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
-		                                          <b>${joinGroup.group.grname }</b>
-		                                    </a></li>
-		                                 </c:forEach>
-		                              </ul>
-		                           </div>
-		                        </dd>
+		                       <dd>
+									<span class="btn_mylist">나의 채팅</span>
+									<div class="my_list">
+										<ul>
+											<c:forEach items="${joinGroup }" var="joinGroup">
+												<li>
+													<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+														<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+														<b>${joinGroup.group.grname }</b>
+													</a>
+												</li>
+											</c:forEach>
+										</ul>
+									</div>
+								</dd>
 		                        <dd>
 									<span class="btn_mylist">나의 캠핑장</span>
 									<div class="my_list">
@@ -193,7 +218,7 @@
 												value="${fn:substringBefore(camplist.caphoto,',') }" />
 										</c:if>
 										<c:if test="${fn:length(image1) eq 1 }">
-											<c:set var="image" value="${camplist.caphoto.caphoto }" />
+											<c:set var="image" value="${camplist.caphoto }" />
 										</c:if>
 										<span><img src="${upload }/${image}"
 											alt="${camplist.caname } 썸네일"></span>
@@ -239,6 +264,16 @@
 		<ul class="comm_buttons">
 			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
 			<li><button type="button" id="btnLogin" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
+	</div>
+</div>
+<!-- #팝업 처리완료 { -->
+<div id="loginCookie" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
 		</ul>
 	</div>
 </div>

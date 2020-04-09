@@ -5,6 +5,11 @@
 
 <mapper namespace="member">
 
+<!-- 로그인유지 비번값출력 -->
+	<select id="loginCookie" parameterType="LoginVo" resultType="ProfileVo">
+		select propw from profile where proid=#{id}
+	</select>
+
 	<!-- 내 가입그룹목록 조인 시에 참조되는데이터 -->
    <resultMap type="JoinGroupVo" id="joingroup">
       <result column="jgnum" property="jgnum"/>

@@ -1,7 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:url value="/" var="root"></c:url>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<c:url value="/" var="root" />
+<c:url value="/resources/upload" var="upload" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -13,15 +15,38 @@
 	src="${root }resources/js/jquery-1.12.4.js"></script>
 <script type="text/javascript" src="${root }resources/js/util.js"></script>
 <script type="text/javascript" src="${root }resources/js/site.js"></script>
-<link rel="stylesheet"
-
-	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<link type="text/css" rel="stylesheet" href="${root}resources/css/site.css">
 <link rel="stylesheet" href="${root }resources/css/site.css">
 <link rel="shortcut icon" href="${root }resources/favicon.ico">
 <title>FESTA</title>
 <script type="text/javascript">
 	$(document).ready(
 			function() {
+				var cookie = '${cookie.loginCookie.value}';
+			      var login = '${login}';
+			      
+			      if(cookie!=''&&login==''&&loginValue==true){
+			         openPop('loginCookie');
+			      }
+			      
+			      $('#btnCookie').on('click',function(){
+			         $.post('${root}member/loginCookie','id='+cookie,function(data){
+			            if (data.prorn == '0') {
+			               location.href = "${root}user/?pronum="+data.pronum;
+			            } else if (data.prorn == '1') {
+			               location.href = "${root}member/stop";
+			            } else if (data.prorn == '2') {
+			               location.href = "${root}member/kick";
+			            } else if (data.prorn == '3') {
+			               location.href = "${root}admin/";
+			            } else if (data.prorn == '4') {
+			               location.href = "${root}";
+			            }
+			         });
+			      });
+			      
 				$("#propwCheck").focusout(
 						function() {
 							var regExp = /^[A-Za-z0-9+]{8,13}$/;
@@ -119,7 +144,7 @@
 					<ul id="gnb">
 						<li><a href="${root}camp/">캠핑정보</a></li>
 						<li><a href="${root}hot/">인기피드</a></li>
-						<li><a href="${root}news/">뉴스피드</a></li>
+						<li><a href="${root}news/?pronum=${login.pronum}">뉴스피드</a></li>
 						<c:if test="${login eq null }">
 							<li><a href="${root}member/login" id="btn_pop" class="btn_pop">로그인</a></li>
 						</c:if>
@@ -145,16 +170,14 @@
 													<c:when test="${joinGroup.group.grphoto eq null }">
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-																<span><img
-																	src="${root }resources/upload/thumb/no_profile.png"
+																<span><img src="${root }resources/upload/thumb/no_profile.png"
 																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
 														</a></li>
 													</c:when>
 													<c:otherwise>
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-																<span><img
-																	src="${upload }/${joinGroup.group.grphoto}"
+																<span><img src="${upload }/${joinGroup.group.grphoto}"
 																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
 														</a></li>
 													</c:otherwise>
@@ -168,10 +191,24 @@
 									<div class="my_list">
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
-												<li><a href=""> <span><img
-															src="http://placehold.it/45x45" alt="입돌아간다 그룹 썸네일"></span>
-														<b>${joinGroup.group.grname }</b>
-												</a></li>
+												<c:choose>
+													<c:when test="${joinGroup.group.grphoto eq null }"> 
+														<li>
+															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+																<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+																<b>${joinGroup.group.grname }</b>
+															</a>
+														</li>
+													</c:when>
+													<c:otherwise>
+														<li>
+															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+																<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+																<b>${joinGroup.group.grname }</b>
+															</a>
+														</li>
+													</c:otherwise>
+												</c:choose>
 											</c:forEach>
 										</ul>
 									</div>
@@ -180,10 +217,25 @@
 									<span class="btn_mylist">나의 캠핑장</span>
 									<div class="my_list">
 										<ul>
-											<c:forEach items="${bookMark }" var="bookMark">
-												<li><a href="${root }camp?canum=${bookMark.camp.canum}">
-														<span><img src="http://placehold.it/45x45"
-															alt="캠핑장 썸네일"></span> <b>${bookMark.camp.caname }</b>
+											<c:forEach items="${bookMark}" var="bookMark">
+												<li><a
+													href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
+														<span> <c:set var="image"
+																value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
+															<c:if
+																test="${!empty bookMark.camp.caphoto && empty image}">
+																<img src="${upload}/${bookMark.camp.caphoto}"
+																	alt="${bookMark.camp.caname}">
+															</c:if> <c:if
+																test="${!empty bookMark.camp.caphoto && !empty image}">
+																<img src="${upload}/${image}"
+																	alt="${bookMark.camp.caname}">
+															</c:if> <c:if
+																test="${empty bookMark.camp.caphoto && empty image}">
+																<img src="${root}resources/images/thumb/no_profile.png"
+																	alt="${bookMark.camp.caname}">
+															</c:if>
+													</span> <b>${bookMark.camp.caname}</b>
 												</a></li>
 											</c:forEach>
 										</ul>
@@ -465,4 +517,14 @@
 		rdoPop();
 	</script>
 </body>
+<!-- #팝업 처리완료 { -->
+<div id="loginCookie" class="fstPop">
+   <div class="confirm_wrap pop_wrap">
+      <p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+      <ul class="comm_buttons">
+         <li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+         <li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+      </ul>
+   </div>
+</div>
 </html>

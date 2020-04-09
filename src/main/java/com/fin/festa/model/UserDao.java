@@ -126,5 +126,7 @@ public interface UserDao {
 	List<MyCommentVo> FeedDetailCmmt(Model model, MyPostVo mypost);
 
 	int inactiveUpdate(MyAdminVo myAdminVo);
+
+	CampVo myCampPage(MyVentureVo myVenture);
 	
 }

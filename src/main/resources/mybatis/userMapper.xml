@@ -216,23 +216,28 @@
    </insert>
    
    <!-- 상대 팔로워 등록 -->
-   <insert id="yourFollowerInsert" parameterType="MyFollowerVo">
-      insert into myfollower (pronum10,mfrname,pronum_sync) values (#{pronum},#{mfrname},#{pronum_sync})
+   <insert id="yourFollowerInsert" parameterType="MyFollowingVo">
+      insert into myfollower (pronum10,mfrname,pronum_sync) values (#{pronum},#{myFollower.mfrname},#{pronum_sync})
    </insert>
    
    <!-- 내 팔로잉 해제 -->
    <delete id="myFollowingDelete" parameterType="MyFollowingVo">
-      delete from myfollowing where mfgnum=#{mfgnum}
+      delete from myfollowing where pronum11=#{pronum} and pronum_sync=#{pronum_sync}
    </delete>
    
    <!-- 상대 팔로워 해제 -->
-   <delete id="yourFollowerDelete" parameterType="MyFollowerVo">
-      delete from myfollower where mfrnum=#{mfrnum}
+   <delete id="yourFollowerDelete" parameterType="MyFollowingVo">
+      delete from myfollower where pronum10=#{pronum} and pronum_sync=#{pronum_sync}
    </delete>
       
    <!-- 내 팔로잉목록 갱신 -->
    <select id="myFollowingRenewal" parameterType="MyFollowingVo" resultMap="following">
       select a.mfgnum,b.* from myfollowing a inner join profile b on a.pronum_sync=b.pronum where pronum11=#{pronum}
+   </select>
+   
+   <!-- 팔로우 하고있는지 확인 -->
+   <select id="isFollow" parameterType="MyFollowingVo" resultType="int">
+   	select count(*) from myfollowing where pronum_sync=#{pronum_sync} and pronum11=#{pronum};
    </select>
    
    <!-- 팔로우 등록,해제 end -->
@@ -282,7 +287,7 @@
       
    <!-- 신고당한유저 신고당한횟수+1 -->
    <update id="userReportCountUpdate" parameterType="ReportListVo">
-      update myadmin set reporttotal=reporttotal+1 where pronum=#{pronum}
+      update myadmin set reporttotal=reporttotal+1 where pronum7=#{pronum}
    </update>
    
    <!-- 유저,피드 신고등록 end -->
@@ -422,7 +427,11 @@
       update camp set caphoto=#{caphoto},caintro=#{caintro},caguide1=#{caguide1},caguide2=#{caguide2},caguide3=#{caguide3},caguide4=#{caguide4},caguide5=#{caguide5},caguide6=#{caguide6}
       , caguide7=#{caguide7},cadateup=now(),caintroone=#{caintroone},httitle1=#{httitle1},httitle2=#{httitle2},httitle3=#{httitle3} where canum=#{canum}
    </update>
-
+	
+	<!-- 캠핑장 페이지 접속 -->
+	<select id="myCampPage" parameterType="MyVentureVo" resultMap="camp">
+		select a.*,d.pronum,d.proid,d.proname from camp a inner join myventure c on a.mvnum1=c.mvnum inner join profile d on c.pronum2=d.pronum where mvnum=#{mvnum}
+	</select>
 
    <!-- 캠핑장관리 end -->
 

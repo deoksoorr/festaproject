@@ -17,6 +17,7 @@ public class ProfileVo {					//내 정보 (프로필)
 	private String prophoto;				//내 사진
 	private String prointro;				//내 소개
 	private Date prodate;
+	private String chatgrnum;
 	private int prorn;			//페이지 번호
 	private int logincheck;		//로그인상태체크
 	private int proprovide;		//소셜로그인체크
@@ -51,7 +52,7 @@ public class ProfileVo {					//내 정보 (프로필)
 				+ groupPost + ", group=" + group + ", joinGroup=" + joinGroup + ", myAdmin=" + myAdmin + ", myBookMark="
 				+ myBookMark + ", myComment=" + myComment + ", myFollower=" + myFollower + ", myFollowing="
 				+ myFollowing + ", myGood=" + myGood + ", myPost=" + myPost + ", myVenture=" + myVenture
-				+ ", pageSearch=" + pageSearch + ", reportList=" + reportList + ", updateWait=" + updateWait + "]";
+				+ ", pageSearch=" + pageSearch + ", reportList=" + reportList + ", updateWait=" + updateWait + ", chatgrnum=" + chatgrnum + "]";
 	}
 	
 	public ProfileVo() {
@@ -60,7 +61,7 @@ public class ProfileVo {					//내 정보 (프로필)
 	
 	
 
-	public ProfileVo(List<ProfileVo> profileList, int pronum, String proname, String proid, String propw,
+	public ProfileVo(List<ProfileVo> profileList, int pronum, String proname, String proid, String propw, String chatgrnum,
 			String proaddr, String projob, String projender, String proidnum, String prophoto, String prointro,
 			Date prodate, int prorn, int logincheck, int proprovide, CampVo camp, CampReviewVo campReview,
 			GroupCommentVo groupComment, GroupNoticeCommentVo groupNoticeComment, GroupNoticeVo groupNotice,
@@ -102,6 +103,7 @@ public class ProfileVo {					//내 정보 (프로필)
 		this.pageSearch = pageSearch;
 		this.reportList = reportList;
 		this.updateWait = updateWait;
+		this.chatgrnum = chatgrnum;
 	}
 
 	public List<ProfileVo> getProfileList() {
@@ -374,6 +376,14 @@ public class ProfileVo {					//내 정보 (프로필)
 
 	public void setUpdateWait(UpdateWaitVo updateWait) {
 		this.updateWait = updateWait;
+	}
+
+	public String getChatgrnum() {
+		return chatgrnum;
+	}
+
+	public void setChatgrnum(String chatgrnum) {
+		this.chatgrnum = chatgrnum;
 	}
 	
 	

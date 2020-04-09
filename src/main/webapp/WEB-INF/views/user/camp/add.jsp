@@ -1,22 +1,119 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:url value="/" var="root"></c:url>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<c:url value="/" var="root" />
+<c:url value="/resources/upload" var="upload" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta property="og:image" content="${root}resources/images/ico/logo.png">
+<meta property="og:image"
+	content="${root }resources/images/ico/logo.png">
 <script type="text/javascript"
-	src="${root}resources/js/jquery-1.12.4.js"></script>
-<script type="text/javascript" src="${root}resources/js/util.js"></script>
-<script type="text/javascript" src="${root}resources/js/site.js"></script>
+	src="${root }resources/js/jquery-1.12.4.js"></script>
+<script type="text/javascript" src="${root }resources/js/util.js"></script>
+<script type="text/javascript" src="${root }resources/js/site.js"></script>
+<link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<link type="text/css" rel="stylesheet" href="${root}resources/css/site.css">
 <link rel="stylesheet"
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-<link rel="stylesheet" href="${root}resources/css/site.css">
-<link rel="shortcut icon" href="${root}resources/favicon.ico">
+<link rel="stylesheet" href="${root }resources/css/site.css">
+<link rel="shortcut icon" href="${root }resources/favicon.ico">
 <title>FESTA</title>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var cookie = '${cookie.loginCookie.value}';
+	      var login = '${login}';
+	      
+	      if(cookie!=''&&login==''&&loginValue==true){
+	         openPop('loginCookie');
+	      }
+	      
+	      $('#btnCookie').on('click',function(){
+	         $.post('${root}member/loginCookie','id='+cookie,function(data){
+	            if (data.prorn == '0') {
+	               location.href = "${root}user/?pronum="+data.pronum;
+	            } else if (data.prorn == '1') {
+	               location.href = "${root}member/stop";
+	            } else if (data.prorn == '2') {
+	               location.href = "${root}member/kick";
+	            } else if (data.prorn == '3') {
+	               location.href = "${root}admin/";
+	            } else if (data.prorn == '4') {
+	               location.href = "${root}";
+	            }
+	         });
+	      });
+		
+		var myVenture = "${myVenture}";
+		var campCheck = "${campCheck}";
+		var tmp = "${myCamp.caphoto}";
+		tmp = tmp.split(',');
+		if(tmp.length==1){
+			$('#caphoto').val(tmp[0]);
+			$('#imgCaphoto').attr('src','${upload }/'+tmp[0]);
+		}
+		else if(tmp.length>1){
+			$('#caphoto').val(tmp[tmp.length-1]);
+			$('#imgCaphoto').attr('src','${upload }/'+tmp[tmp.length-1]);
+		}
+		
+		$('#save').on('click',function(e){
+			e.preventDefault();
+			var canum = $('#canum').val();
+			var caphoto = $('#caphoto').val();
+			var caintroone = $('#caintroone').val();
+			var httitle1 = $('#httitle1').val();
+			var httitle2 = $('#httitle2').val();
+			var httitle3 = $('#httitle3').val();
+			var caguide1 = $('#caguide1').val();
+			var caguide2 = $('#caguide2').val();
+			var caguide3 = $('#caguide3').val();
+			var caguide4 = $('#caguide4').val();
+			var caguide5 = $('#caguide5').val();
+			var caguide6 = $('#caguide6').val();
+			var caguide7 = $('#caguide7').val();
+			
+			var files = new FormData($('#rst')[0]);
+			$.ajax({
+				type:"POST",
+				enctype:'multipart/form-data',
+				url:'${root}/user/camp/add',
+				data: files,
+				processData: false,
+				contentType: false,
+				cache: false,
+				success:function(data){
+					openPop('updateOk');
+					$('#finish_update').on('click',function(){
+						location.href="${root}camp/detail?canum="+data.canum+"&caaddrsel="+data.caaddrsel;
+					});
+				},
+				error:function(e){
+					e.preventDefault();
+				}
+			});
+		});
+		
+		$('#btn_cancle').on('click',function(){
+			var size = $("input[name='caphoto']").length;
+			var mainPhoto = $("input[name='caphoto']").eq(size-1).val();
+			for(var i = 1;i<size;i++){
+				console.log(mainPhoto);
+				console.log(i);
+				if(mainPhoto==$("input[name='caphoto']").eq(i).val()){
+					alert(i);
+					$("input[name='caphoto']").eq(i).val();
+				}
+			}
+		});;
+	});
+/* action="${root }user/camp/edit" method="post" */ 
+
+	
+</script>
 </head>
 <body>
 <c:if test="${sessionScope.login eq null}">
@@ -37,19 +134,19 @@
 					<form class="search_box">
 						<input type="text" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 						<button type="submit">
-							<img src="${root}resources/images/ico/btn_search.png" alt="검색">
+							<img src="${root }resources/images/ico/btn_search.png" alt="검색">
 						</button>
 					</form>
 					<ul id="gnb">
 						<li><a href="${root}camp/">캠핑정보</a></li>
 						<li><a href="${root}hot/">인기피드</a></li>
-						<li><a href="${root}news/">뉴스피드</a></li>
+						<li><a href="${root}news/?pronum=${login.pronum}">뉴스피드</a></li>
 						<c:if test="${login eq null }">
 							<li><a href="${root}member/login" id="btn_pop"
 								class="btn_pop">로그인</a></li>
 						</c:if>
 						<c:if test="${login ne null }">
-							<li><a href="${root}user/index">마이페이지</a></li>
+							<li><a href="${root}user/?pronum=${login.pronum}">마이페이지</a></li>
 						</c:if>
 					</ul>
 					<c:if test="${login ne null }">
@@ -70,16 +167,14 @@
 													<c:when test="${joinGroup.group.grphoto eq null }">
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-																<span><img
-																	src="${root }resources/upload/thumb/no_profile.png"
+																<span><img src="${root }resources/upload/thumb/no_profile.png"
 																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
 														</a></li>
 													</c:when>
 													<c:otherwise>
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-																<span><img
-																	src="${upload }/${joinGroup.group.grphoto}"
+																<span><img src="${upload }/${joinGroup.group.grphoto}"
 																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
 														</a></li>
 													</c:otherwise>
@@ -93,10 +188,24 @@
 									<div class="my_list">
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
-												<li><a href=""> <span><img
-															src="http://placehold.it/45x45" alt="입돌아간다 그룹 썸네일"></span>
-														<b>${joinGroup.group.grname }</b>
-												</a></li>
+												<c:choose>
+													<c:when test="${joinGroup.group.grphoto eq null }"> 
+														<li>
+															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+																<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+																<b>${joinGroup.group.grname }</b>
+															</a>
+														</li>
+													</c:when>
+													<c:otherwise>
+														<li>
+															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+																<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+																<b>${joinGroup.group.grname }</b>
+															</a>
+														</li>
+													</c:otherwise>
+												</c:choose>
 											</c:forEach>
 										</ul>
 									</div>
@@ -105,10 +214,25 @@
 									<span class="btn_mylist">나의 캠핑장</span>
 									<div class="my_list">
 										<ul>
-											<c:forEach items="${bookMark }" var="bookMark">
-												<li><a href="${root }camp?canum=${bookMark.camp.canum}">
-														<span><img src="http://placehold.it/45x45"
-															alt="캠핑장 썸네일"></span> <b>${bookMark.camp.caname }</b>
+											<c:forEach items="${bookMark}" var="bookMark">
+												<li><a
+													href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
+														<span> <c:set var="image"
+																value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
+															<c:if
+																test="${!empty bookMark.camp.caphoto && empty image}">
+																<img src="${upload}/${bookMark.camp.caphoto}"
+																	alt="${bookMark.camp.caname}">
+															</c:if> <c:if
+																test="${!empty bookMark.camp.caphoto && !empty image}">
+																<img src="${upload}/${image}"
+																	alt="${bookMark.camp.caname}">
+															</c:if> <c:if
+																test="${empty bookMark.camp.caphoto && empty image}">
+																<img src="${root}resources/images/thumb/no_profile.png"
+																	alt="${bookMark.camp.caname}">
+															</c:if>
+													</span> <b>${bookMark.camp.caname}</b>
 												</a></li>
 											</c:forEach>
 										</ul>
@@ -137,7 +261,7 @@
 					<div class="info_box">
 						<dl>
 							<dt class="pf_tit">
-								<a class="pf_name" href=""><b>${login.proname }</b></a>
+								<a class="pf_name" href="${root}user/?pronum=${login.pronum}"><b>${login.proname }</b></a>
 								<!-- 마이페이지일 경우 톱니바퀴 버튼 {  -->
 								<a class="pf_opt go_settings" href="${root }user/profile"><em
 									class="snd_only">설정</em></a>
@@ -148,8 +272,13 @@
 								<a href="">${sessionScope.profile.proaddr }</a>
 							</dd>
 							<dd class="pf_picture">
-								<img src="http://placehold.it/120x120"
-									alt="${login.proname }님의 프로필 썸네일">
+								<c:if test="${profile.prophoto ne '' }">
+									<img src="${upload }/${profile.prophoto}"
+										alt="${profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${profile.prophoto eq '' }">
+									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
+								</c:if>
 							</dd>
 						</dl>
 					</div>
@@ -189,7 +318,7 @@
 						<!-- 사업자이면서 캠핑장 있는 경우 -->
 						<c:if test="${myVenture ne null }">
 							<c:if test="${campCheck == 1 }">
-								<li><a href="${root }user/camp/" class="act">캠핑장 관리</a></li>
+								<li><a href="${root }user/camp/" >캠핑장 관리</a></li>
 							</c:if>
 						</c:if>
 						<!-- 사업자이지만 캠핑장이 없는 경우 -->
@@ -205,25 +334,38 @@
 				<!-- 컨텐츠영역 시작 { -->
 				<section class="content_area">
 					<h2 class="set_tit">캠핑장 등록</h2>
-					<form class="set_form">
+					<form id="rst" class="set_form" enctype="multipart/form-data">
 						<ul class="input_list">
-							<li class="set_file1 box">
-								<p>
-									캠핑장<br>대표사진
-								</p>
-								<div>
-									<p class="pf_picture">
-										<img src="${root}resources/images/thumb/no_profile.png"
-											alt="캠핑장 그룹의 프로필 썸네일">
-									</p>
-									<ul class="comm_buttons_s">
-										<li><input type="file" id="caphoto" name="caphoto"
-											accept="image/*"> <label for="festa3"
-											class="comm_btn cfm">등록</label></li>
-										<li>
-											<button type="button" class="comm_btn btn_cancle">삭제</button>
-										</li>
+							<li class="box">
+								<p>캠핑장 사진</p>
+								<div class="file_thumbnail mk_thumb" style="display: block">
+									<ul>
+										<c:set var="count" value="0" />
+										<c:forTokens items="${myCamp.caphoto }" delims="," var="item">
+											<c:set var="count" value="${count+1 }" />
+											<li class="ft_thumb">
+												<input type="hidden" id="caphoto${count }" name="caphoto" value="${item }" />
+												<input type="file" id="file${count }" name="files" accept="video/*, image/*" value="${item }" /> 
+												<img id="img${count }" src="${upload }/${item}" alt="" onload="squareTrim($(this), 80)">
+												<button class="btn_cancle" id="btn_caphoto${count }" type="button">
+													<em class="snd_only">업로드 취소하기</em>
+												</button> <label for="file${count }" class="btn_file">
+													<em	class="snd_only">사진/동영상 업로드하기</em>
+												</label>
+											</li>
+										</c:forTokens>
+										<c:forEach begin="${count }" end="4">
+										<c:set var="count" value="${count+1 }" />
+											<li class="ft_btn"><input type="file"
+												id="file${count }" name="files" accept="video/*, image/*" /> <img
+												src="" alt="">
+												<button class="btn_cancle" type="button">
+													<em class="snd_only">업로드 취소하기</em>
+												</button> <label for="file${count }" class="btn_file"><em
+													class="snd_only">사진/동영상 업로드하기</em></label></li>
+										</c:forEach>
 									</ul>
+									<p class="txt_explan">파일 크기 00MB 이하, 최대 5개까지 업로드 가능합니다.</p>
 								</div>
 							</li>
 							<li class="box">
@@ -257,15 +399,15 @@
 							</li>
 							<li class="box">
 								<div>
-									<input type="text" class="rd_only" id="caaddrsuv" name="caaddrsuv"
-										value="${myVenture.mvaddrsuv }" readonly="readonly">
+									<input type="text" class="rd_only" id="caaddrsuv"
+										name="caaddrsuv" value="${myVenture.mvaddrsuv }"
+										readonly="readonly">
 								</div>
 							</li>
 							<li class="box">
 								<p>지역권</p>
 								<div>
 									<select class="comm_sel" id="caaddrsel" name="caaddrsel">
-										<option value="">지역권을 선택해주세요</option>
 										<option value="서울">서울</option>
 										<option value="경기도">경기도</option>
 										<option value="강원도">강원도</option>
@@ -280,7 +422,7 @@
 										<option value="광주">광주</option>
 										<option value="대전">대전</option>
 									</select>
-									<p class="comm_sel_label">지역권을 선택해주세요</p>
+									<p class="comm_sel_label">서울</p>
 								</div>
 							</li>
 							<li class="box">
@@ -288,7 +430,7 @@
 									<label for="festa7">한줄 소개</label>
 								</p>
 								<div>
-									<input type="text" id="caintroone" name="caintroone"
+									<input type="text" id="caintroone" name="caintroone" value="${myCamp.caintroone }"
 										placeholder="한줄 소개글을 입력해주세요">
 								</div>
 							</li>
@@ -298,59 +440,51 @@
 								</p>
 								<div>
 									<textarea id="caintro" name="caintro"
-										placeholder="??자 이내로 작성해주세요"></textarea>
+										placeholder="??자 이내로 작성해주세요">${myCamp.caintro }</textarea>
 								</div>
 							</li>
 							<li class="set_tags box">
 								<p>해시태그 등록</p>
 								<div>
 									<ul>
-										<li><input type="text" id="httitle1" name="httitle1"></li>
-										<li><input type="text" id="httitle2" name="httitle2"></li>
-										<li><input type="text" id="httitle3" name="httitle3"></li>
+										<li><input type="text" id="httitle1" name="httitle1" value="${myCamp.httitle1 }"></li>
+										<li><input type="text" id="httitle2" name="httitle2" value="${myCamp.httitle2 }"></li>
+										<li><input type="text" id="httitle3" name="httitle3" value="${myCamp.httitle3 }"></li>
 									</ul>
 								</div>
 							</li>
-							<li class="box">
-								<p>캠핑장 사진</p>
-								<div class="file_thumbnail">
-									<ul>
-										<!-- <li>
-										<input type="file" id="festaFl3" name="festaFiles" accept="video/*, image/*" multiple="multiple">
-										<label for="festaFl3" class="btn_file"><em class="snd_only">사진/동영상 업로드하기</em></label>
-										<img src="http://placehold.it/80x80" alt="">
-										<button class="btn_cancle" type="button"><em class="snd_only">업로드 취소하기</em></button>
-									</li> -->
-										<li><input type="file" id="festaFl2" name="festaFiles"
-											accept="video/*, image/*" multiple="multiple"> <label
-											for="festaFl2" class="btn_file"><em class="snd_only">사진/동영상
-													업로드하기</em></label></li>
-									</ul>
-									<p class="txt_explan">파일 크기 00MB 이하, 최대 5개까지 업로드 가능합니다.</p>
-								</div>
-							</li>
+							
 							<li class="set_inputs box">
 								<p>시설 안내</p>
 								<div>
-<!-- 									<button type="button" class="btn_hf" id="btnAddInput"
+									<!-- <button type="button" class="btn_hf" id="btnAddInput"
 										data-field="caguide">
-										<i class="xi-plus"></i><em class="snd_only">입력창 추가하기</em> -->
-									</button>
-									<ul><li><input type="text" id="caguide1" name="caguide1"></li></ul>
-									<ul><li><input type="text" id="caguide2" name="caguide2"></li></ul>
-									<ul><li><input type="text" id="caguide3" name="caguide3"></li></ul>
-									<ul><li><input type="text" id="caguide4" name="caguide4"></li></ul>
-									<ul><li><input type="text" id="caguide5" name="caguide5"></li></ul>
-									<ul><li><input type="text" id="caguide6" name="caguide6"></li></ul>
-									<ul><li><input type="text" id="caguide7" name="caguide7"></li></ul>
+										<i class="xi-plus"></i><em class="snd_only">입력창 추가하기</em>
+									</button> -->
+									<c:choose>
+										<c:when
+											test="${myCamp.caguide1 eq '' and myCamp.caguide2 eq '' and myCamp.caguide3 eq '' and myCamp.caguide4 eq '' and myCamp.caguide5 eq '' and myCamp.caguide6 eq '' and myCamp.caguide7 eq '' }">
+											<li class="fstEmpty">등록된 시설 안내 사항이 없습니다</li>
+										</c:when>
+										<c:otherwise>
+											<ul><li><input type="text" id="caguide1" name="caguide1" value="${myCamp.caguide1 }"></li></ul>
+											<ul><li><input type="text" id="caguide2" name="caguide2" value="${myCamp.caguide2 }"></li></ul>
+											<ul><li><input type="text" id="caguide3" name="caguide3" value="${myCamp.caguide3 }"></li></ul>
+											<ul><li><input type="text" id="caguide4" name="caguide4" value="${myCamp.caguide4 }"></li></ul>
+											<ul><li><input type="text" id="caguide5" name="caguide5" value="${myCamp.caguide5 }"></li></ul>
+											<ul><li><input type="text" id="caguide6" name="caguide6" value="${myCamp.caguide6 }"></li></ul>
+											<ul><li><input type="text" id="caguide7" name="caguide7" value="${myCamp.caguide7 }"></li></ul>
+										</c:otherwise>
+									</c:choose>
 									<p class="txt_explan">시설안내는 최대 7개까지 등록 가능합니다.</p>
 								</div>
 							</li>
 						</ul>
 						<ul class="comm_buttons">
 							<li><button type="reset" class="btn_close comm_btn cnc">취소</button></li>
-							<li><button type="submit" class="comm_btn sbm">신청</button></li>
+							<li id="save" ><button type="submit" id="apply" class="comm_btn sbm">저장</button></li>
 						</ul>
+						<input type="hidden" name="mvnum" value="${myVenture.mvnum }"/>
 					</form>
 				</section>
 				<!-- } 컨텐츠영역 끝 -->
@@ -360,7 +494,7 @@
 		<div id="footer">
 			<div class="container">
 				<div class="img_box">
-					<img src="${root}resources/images/ico/logo_w.png" alt="FESTA">
+					<img src="${root }resources/images/ico/logo_w.png" alt="FESTA">
 				</div>
 				<div class="text_box">
 					<p>
@@ -378,9 +512,27 @@
 		</div>
 	</div>
 	<script type="text/javascript">
-	addInputs();
-	setOneFile(); //단일 프로필
-	setFile(); // 여러개 섬네일
-</script>
+		addInputs();
+		setOneFile();
+		setFile();
+	</script>
 </body>
+<div id="updateOk" class="fstPop pop2">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">등록이 완료되었습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" id="finish_update" name="finish_update" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
+<!-- #팝업 처리완료 { -->
+<div id="loginCookie" class="fstPop">
+   <div class="confirm_wrap pop_wrap">
+      <p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+      <ul class="comm_buttons">
+         <li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+         <li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+      </ul>
+   </div>
+</div>
 </html>

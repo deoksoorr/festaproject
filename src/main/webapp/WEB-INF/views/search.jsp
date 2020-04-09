@@ -19,12 +19,35 @@
 	<script type="text/javascript" src="${root }resources/js/util.js"></script>
 	<script type="text/javascript" src="${root }resources/js/site.js"></script>
 	<script type="text/javascript" src="${root }resources/js/jh.js"></script>
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-	<link rel="stylesheet" href="${root }resources/css/site.css">
+	<link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<link type="text/css" rel="stylesheet" href="${root}resources/css/site.css">
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
 	<title>FESTA</title>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			
+			var cookie = '${cookie.loginCookie.value}';
+			var login = '${login}';
+			
+			if(cookie!=''&&login==''&&loginValue==true){
+				openPop('loginCookie');
+			}
+			
+			$('#btnCookie').on('click',function(){
+				$.post('${root}member/loginCookie','id='+cookie,function(data){
+					if (data.prorn == '0') {
+						location.reload();
+					} else if (data.prorn == '1') {
+						location.href = "${root}member/stop";
+					} else if (data.prorn == '2') {
+						location.href = "${root}member/kick";
+					} else if (data.prorn == '3') {
+						location.reload();
+					} else if (data.prorn == '4') {
+						location.href = "${root}";
+					}
+				});
+			});
 			
 			//로그인하기 내부팝업->로그인버튼 클릭시 로그인외부팝업생성
 			$('#btnLogin').on('click', function() {
@@ -98,7 +121,7 @@
 					<ul id="gnb">
 						<li><a href="${root}camp/">캠핑정보</a></li>
 						<li><a href="${root}hot/">인기피드</a></li>
-						<li><a href="${root}news/">뉴스피드</a></li>
+						<li><a href="${root}news/?pronum=${login.pronum}">뉴스피드</a></li>
 						<c:if test="${login eq null }">
 							<li><a href="${root}member/login" class="btn_pop">로그인</a></li>
 						</c:if>
@@ -141,18 +164,20 @@
                            </div>
                         </dd>
                         <dd>
-                           <span class="btn_mylist">나의 채팅</span>
-                           <div class="my_list">
-                              <ul>
-                                 <c:forEach items="${joinGroup }" var="joinGroup">
-                                    <li><a href=""> <span><img
-                                             src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
-                                          <b>${joinGroup.group.grname }</b>
-                                    </a></li>
-                                 </c:forEach>
-                              </ul>
-                           </div>
-                        </dd>
+							<span class="btn_mylist">나의 채팅</span>
+							<div class="my_list">
+								<ul>
+									<c:forEach items="${joinGroup }" var="joinGroup">
+										<li>
+											<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+												<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+												<b>${joinGroup.group.grname }</b>
+											</a>
+										</li>
+									</c:forEach>
+								</ul>
+							</div>
+						</dd>
                         <dd>
 							<span class="btn_mylist">나의 캠핑장</span>
 							<div class="my_list">
@@ -472,6 +497,16 @@
 		<ul class="comm_buttons">
 			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
 			<li><button type="button" id="btnLogin" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
+	</div>
+</div>
+<!-- #팝업 처리완료 { -->
+<div id="loginCookie" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
 		</ul>
 	</div>
 </div>

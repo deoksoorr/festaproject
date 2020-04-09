@@ -12,6 +12,7 @@ import com.fin.festa.model.entity.GroupVo;
 import com.fin.festa.model.entity.LoginVo;
 import com.fin.festa.model.entity.MyAdminVo;
 import com.fin.festa.model.entity.MyCommentVo;
+import com.fin.festa.model.entity.MyFollowerVo;
 import com.fin.festa.model.entity.MyFollowingVo;
 import com.fin.festa.model.entity.MyGoodVo;
 import com.fin.festa.model.entity.MyPostVo;
@@ -33,14 +34,8 @@ public interface UserService {
 		void likeInsertOne(HttpServletRequest req, MyGoodVo myGoodVo);
 
 		void likeDeleteOne(HttpServletRequest req, MyGoodVo myGoodVo);
-
-		void followInsertOne(HttpServletRequest req, MyFollowingVo myFollowingVo);
 		
 		void followDeleteOne(HttpServletRequest req, MyFollowingVo myFollowingVo);
-		
-		void userReport(Model model, ReportListVo reportListVo);
-		
-		void feedReport(Model model, ReportListVo reportListVo);
 		
 		void myProfile(HttpServletRequest req, ProfileVo profileVo);
 		
@@ -50,15 +45,11 @@ public interface UserService {
 		
 		void myAdminUpdateOne(HttpServletRequest req, ProfileVo profileVo);
 		
-		GroupVo groupInsertOne(HttpServletRequest req, GroupVo groupVo);
-		
-		void ventureInsertOne(HttpServletRequest req, UpdateWaitVo updateWaitVo);
+		void ventureInsertOne(HttpServletRequest req, MultipartFile[] files, UpdateWaitVo updateWaitVo);
 
 		void ventureAdmin(HttpServletRequest req);
 		
 		void ventureAdminUpdateOne(HttpServletRequest req, MyVentureVo myVenture);
-		
-		void campInsertOne(Model model, CampVo campVo);
 		
 		void campAdmin(HttpServletRequest req);
 
@@ -81,4 +72,14 @@ public interface UserService {
 		int myAdminGoodbye(HttpServletRequest req, ProfileVo profileVo);
 
 		void campUpdateOne(HttpServletRequest req, MultipartFile[] files, CampVo campVo);
+
+		GroupVo groupInsertOne(HttpServletRequest req, MultipartFile[] files, GroupVo groupVo);
+
+		CampVo campInsertOne(HttpServletRequest req, MultipartFile[] files, CampVo campVo);
+
+		void followInsertOne(HttpServletRequest req, MyFollowingVo myFollowingVo);
+
+		void userReport(HttpServletRequest req, MultipartFile[] files, ReportListVo reportListVo);
+
+		void feedReport(HttpServletRequest req, MultipartFile[] files, ReportListVo reportListVo);
 }

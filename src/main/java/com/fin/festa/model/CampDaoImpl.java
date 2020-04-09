@@ -21,154 +21,154 @@ public class CampDaoImpl implements CampDao{
 	SqlSession sqlSession;
 
 	///////////////////////////////////////////////////////////////
-	////////////////////Ä·ÇÎÁ¤º¸ È­¸éÃâ·Â//////////////////////////
+	////////////////////ìº í•‘ì •ë³´ í™”ë©´ì¶œë ¥//////////////////////////
 	///////////////////////////////////////////////////////////////
 	
-	//½Å±ÔÄ·ÇÎÀå ¸ñ·Ï Ãâ·Â
+	//ì‹ ê·œìº í•‘ì¥ ëª©ë¡ ì¶œë ¥
 	@Override
 	public List<CampVo> newCampSelectAll() {
 		return sqlSession.selectList("camp.newCampSelectAll");
 	}
 
-	//Àü±¹Ä·ÇÎÀå ¸ñ·Ï Ãâ·Â
+	//ì „êµ­ìº í•‘ì¥ ëª©ë¡ ì¶œë ¥
 	@Override
 	public List<CampVo> allLocationCamp() {
 		return sqlSession.selectList("camp.allLocationCamp");
 	}
 
-	//ÇØ´çÁö¿ªÄ·ÇÎÀå ¸ñ·Ï Ãâ·Â
+	//í•´ë‹¹ì§€ì—­ìº í•‘ì¥ ëª©ë¡ ì¶œë ¥
 	@Override
 	public List<CampVo> locationCamp(CampVo campVo) {
 		return sqlSession.selectList("camp.locationCamp", campVo);
 	}
 
 	///////////////////////////////////////////////////////////////
-	////////////////Ä·ÇÎÀå»ó¼¼ °ø½Ä±×·ì Ã¼Å©///////////////////////
+	////////////////ìº í•‘ì¥ìƒì„¸ ê³µì‹ê·¸ë£¹ ì²´í¬///////////////////////
 	///////////////////////////////////////////////////////////////
 	
-	//ÇØ´çÄ·ÇÎÀå¿¡ °ø½Ä±×·ìÀÌ ÀÖ´ÂÁö Ã¼Å©
+	//í•´ë‹¹ìº í•‘ì¥ì— ê³µì‹ê·¸ë£¹ì´ ìˆëŠ”ì§€ ì²´í¬
 	@Override
 	public int ventureGroupCheck(CampVo campVo) {
 		return sqlSession.selectOne("camp.ventureGroupCheck", campVo);
 	}
 
-	//°ø½Ä±×·ìÀÌ ÀÖÀ»½Ã¿¡ °ø½Ä±×·ìÁ¤º¸ Ãâ·Â
+	//ê³µì‹ê·¸ë£¹ì´ ìˆì„ì‹œì— ê³µì‹ê·¸ë£¹ì •ë³´ ì¶œë ¥
 	@Override
 	public GroupVo campVentureGroup(CampVo campVo) {
 		return sqlSession.selectOne("camp.campVentureGroup", campVo);
 	}
 
 	///////////////////////////////////////////////////////////////
-	///////////////////Ä·ÇÎÀå»ó¼¼ È­¸éÃâ·Â/////////////////////////
+	///////////////////ìº í•‘ì¥ìƒì„¸ í™”ë©´ì¶œë ¥/////////////////////////
 	///////////////////////////////////////////////////////////////
 	
-	//Ä·ÇÎÀåÁ¤º¸ Ãâ·Â
+	//ìº í•‘ì¥ì •ë³´ ì¶œë ¥
 	@Override
 	public CampVo campInfoSelectOne(CampVo campVo) {
 		return sqlSession.selectOne("camp.campInfoSelectOne", campVo);
 	}
 	
-	//Ä·ÇÎÀå ÇÑÁÙÆò ÃÑ°¹¼ö
+	//ìº í•‘ì¥ í•œì¤„í‰ ì´ê°¯ìˆ˜
 	@Override
 	public int campReviewCount(CampVo campVo) {
 		return sqlSession.selectOne("camp.campReviewCount", campVo);
 	}
 	
-	//Ä·ÇÎÀå ÇÑÁÙÆòÃâ·Â
+	//ìº í•‘ì¥ í•œì¤„í‰ì¶œë ¥
 	@Override
 	public List<CampReviewVo> campReview(CampVo campVo) {
 		return sqlSession.selectList("camp.campReview", campVo);
 	}
 	
-	//ÇØ´çÄ·ÇÎÀå°ú °°ÀºÁö¿ªÀÇ Ä·ÇÎÀå¸ñ·Ï Ãâ·Â
+	//í•´ë‹¹ìº í•‘ì¥ê³¼ ê°™ì€ì§€ì—­ì˜ ìº í•‘ì¥ëª©ë¡ ì¶œë ¥
 	@Override
 	public List<CampVo> sameLocationCamp(CampVo campVo) {
 		return sqlSession.selectList("camp.sameLocationCamp", campVo);
 	}
 
 	///////////////////////////////////////////////////////////////
-	/////////////////Ä·ÇÎÀåÇÑÁÙÆò µî·Ï,»èÁ¦////////////////////////
+	/////////////////ìº í•‘ì¥í•œì¤„í‰ ë“±ë¡,ì‚­ì œ////////////////////////
 	///////////////////////////////////////////////////////////////
 	
-	//Ä·ÇÎÀå ÇÑÁÙÆòµî·Ï
+	//ìº í•‘ì¥ í•œì¤„í‰ë“±ë¡
 	@Override
 	public void campReviewInsert(CampReviewVo campReviewVo) {
 		sqlSession.insert("campReviewInsert", campReviewVo);
 	}
 
-	//Ä·ÇÎÀå ÇÑÁÙÆò µî·Ï½Ã Ä·ÇÎÀåÆòÁ¡ °è»êÇØ¼­ ¾÷µ¥ÀÌÆ®
+	//ìº í•‘ì¥ í•œì¤„í‰ ë“±ë¡ì‹œ ìº í•‘ì¥í‰ì  ê³„ì‚°í•´ì„œ ì—…ë°ì´íŠ¸
 	@Override
 	public int campAvgUpdate(CampReviewVo campReviewVo) {
 		return sqlSession.update("camp.campAvgUpdate", campReviewVo);
 	}
 
-	//Ä·ÇÎÀå ÇÑÁÙÆò»èÁ¦
+	//ìº í•‘ì¥ í•œì¤„í‰ì‚­ì œ
 	@Override
 	public int campReviewDelete(CampReviewVo campReviewVo) {
 		return sqlSession.delete("camp.campReviewDelete", campReviewVo);
 	}
 
 	///////////////////////////////////////////////////////////////
-	/////////////////Ä·ÇÎÀå ÁÁ¾Æ¿äµî·Ï,ÇØÁ¦////////////////////////
+	/////////////////ìº í•‘ì¥ ì¢‹ì•„ìš”ë“±ë¡,í•´ì œ////////////////////////
 	///////////////////////////////////////////////////////////////
 	
-	//Ä·ÇÎÀå ÁÁ¾Æ¿äµî·Ï
+	//ìº í•‘ì¥ ì¢‹ì•„ìš”ë“±ë¡
 	@Override
 	public void campLikeInsert(MyGoodVo myGoodVo) {
 		sqlSession.insert("camp.campLikeInsert", myGoodVo);
 	}
 
-	//Ä·ÇÎÀå ÁÁ¾Æ¿äÇØÁ¦
+	//ìº í•‘ì¥ ì¢‹ì•„ìš”í•´ì œ
 	@Override
 	public int campLikeDelete(MyGoodVo myGoodVo) {
 		return sqlSession.delete("camp.campLikeDelete", myGoodVo);
 	}
 	
-	//Ä·ÇÎÀå ÁÁ¾Æ¿ä °¹¼ö
+	//ìº í•‘ì¥ ì¢‹ì•„ìš” ê°¯ìˆ˜
 	@Override
 	public int campLikeUpdate(CampVo campVo) {
 		return sqlSession.update("camp.campLikeUpdate", campVo);
 	}
 
-	//³» ÁÁ¾Æ¿ä¸ñ·Ï °»½Å
+	//ë‚´ ì¢‹ì•„ìš”ëª©ë¡ ê°±ì‹ 
 	@Override
 	public List<MyGoodVo> myGoodRenewal(MyGoodVo myGoodVo) {
 		return sqlSession.selectList("camp.myGoodRenewal", myGoodVo);
 	}
 
 	///////////////////////////////////////////////////////////////
-	////////////////////////Ä·ÇÎÀå ½Å°íµî·Ï////////////////////////
+	////////////////////////ìº í•‘ì¥ ì‹ ê³ ë“±ë¡////////////////////////
 	///////////////////////////////////////////////////////////////
 	
-	//Ä·ÇÎÀå ½Å°íµî·Ï
+	//ìº í•‘ì¥ ì‹ ê³ ë“±ë¡
 	@Override
 	public void campReport(ReportListVo reportListVo) {
 		sqlSession.insert("camp.campReport", reportListVo);
 	}
 
-	//Ä·ÇÎÀåÁÖÀÎ ½Å°í´çÇÑÈ½¼ö +1
+	//ìº í•‘ì¥ì£¼ì¸ ì‹ ê³ ë‹¹í•œíšŸìˆ˜ +1
 	@Override
 	public int campReportCountUpdate(ReportListVo reportListVo) {
 		return sqlSession.update("camp.campReportCountUpdate", reportListVo);
 	}
 
 	///////////////////////////////////////////////////////////////
-	///////////////////Ä·ÇÎÀå ºÏ¸¶Å©µî·Ï,ÇØÁ¦//////////////////////
+	///////////////////ìº í•‘ì¥ ë¶ë§ˆí¬ë“±ë¡,í•´ì œ//////////////////////
 	///////////////////////////////////////////////////////////////
 	
-	//Ä·ÇÎÀå ºÏ¸¶Å©µî·Ï
+	//ìº í•‘ì¥ ë¶ë§ˆí¬ë“±ë¡
 	@Override
 	public void campBookMarkInsert(MyBookMarkVo myBookMarkVo) {
 		sqlSession.insert("camp.campBookMarkInsert", myBookMarkVo);
 	}
 
-	//Ä·ÇÎÀå ºÏ¸¶Å©ÇØÁ¦
+	//ìº í•‘ì¥ ë¶ë§ˆí¬í•´ì œ
 	@Override
 	public int campBookMarkDelete(MyBookMarkVo myBookMarkVo) {
 		return sqlSession.delete("camp.campBookMarkDelete", myBookMarkVo);
 	}
 
-	//³» ºÏ¸¶Å©¸ñ·Ï °»½Å
+	//ë‚´ ë¶ë§ˆí¬ëª©ë¡ ê°±ì‹ 
 	@Override
 	public List<MyBookMarkVo> mybookRenewal(MyBookMarkVo bookMarkVo) {
 		return sqlSession.selectList("camp.mybookRenewal", bookMarkVo);

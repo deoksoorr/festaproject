@@ -159,7 +159,7 @@ public class UserDaoImpl implements UserDao{
 	//상대방팔로워 삭제
 	@Override
 	public int yourFollowerDeleteOne(MyFollowingVo following) {
-		return sqlSession.delete("user.yourFollowerDelete");
+		return sqlSession.delete("user.yourFollowerDelete",following);
 	}
 
 	//내 팔로잉목록 갱신
@@ -168,6 +168,11 @@ public class UserDaoImpl implements UserDao{
 		return sqlSession.selectList("user.myFollowingRenewal",following);
 	}
 
+	//팔로우하고 있는지 확인
+	public int isFollow(MyFollowingVo myFollowingVo) {
+		return sqlSession.selectOne("user.isFollow",myFollowingVo);
+	}
+	
 	////////////////////////////////////////////////////////////
 	//////////////////피드좋아요 등록,해제//////////////////////
 	////////////////////////////////////////////////////////////	
@@ -339,13 +344,13 @@ public class UserDaoImpl implements UserDao{
 	//그룹번호
 	@Override
 	public GroupVo groupmyGroup(ProfileVo profile) {
-		return sqlSession.selectOne("myGroup",profile);
+		return sqlSession.selectOne("user.myGroup",profile);
 	}
 	
 	//그룹장 가입처리
 	@Override
 	public void myGroupJoin(GroupVo group) {
-		sqlSession.insert("myGroupJoin", group);
+		sqlSession.insert("user.myGroupJoin", group);
 	}
 
 
@@ -386,6 +391,12 @@ public class UserDaoImpl implements UserDao{
 	public void campInsert(CampVo camp) {
 		sqlSession.insert("user.myCampInsert",camp);
 	}
+	
+	//캠핑장 등록시 내 캠핑페이지 이동
+	@Override
+	public CampVo myCampPage(MyVentureVo myVenture) {
+		return sqlSession.selectOne("user.myCampPage",myVenture);
+	}
 
 	////////////////////////////////////////////////////////////
 	///////////////////////캠핑장관리///////////////////////////
@@ -402,5 +413,7 @@ public class UserDaoImpl implements UserDao{
 	public int campUpdate(CampVo camp) {
 		return sqlSession.update("user.myCampUpdate",camp);
 	}
+
+
 
 }	

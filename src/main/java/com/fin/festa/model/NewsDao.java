@@ -2,24 +2,24 @@ package com.fin.festa.model;
 
 import java.util.List;
 
+import com.fin.festa.model.entity.FeedVo;
 import com.fin.festa.model.entity.GroupCommentVo;
 import com.fin.festa.model.entity.GroupPostVo;
 import com.fin.festa.model.entity.MyCommentVo;
 import com.fin.festa.model.entity.MyFollowingVo;
 import com.fin.festa.model.entity.MyGoodVo;
 import com.fin.festa.model.entity.MyPostVo;
-import com.fin.festa.model.entity.ProfileVo;
 import com.fin.festa.model.entity.ReportListVo;
 
 public interface NewsDao {
 
-	List<MyPostVo> followFeedSelectAll(MyFollowingVo following);
+	List<FeedVo> followFeedSelectAll(MyFollowingVo following);
 	
-	List<MyCommentVo> followCommentSelectAll(MyFollowingVo following);
+	List<MyCommentVo> followCommentSelectAll(FeedVo feed);
 	
-	List<GroupPostVo> joinGroupFeedSelectAll(MyFollowingVo following);
+	List<FeedVo> joinGroupFeedSelectAll(MyFollowingVo following);
 	
-	List<GroupCommentVo> joinGroupCommentSelectAll(MyFollowingVo following);
+	List<GroupCommentVo> joinGroupCommentSelectAll(FeedVo feed);
 	
 	void myFeedCmmtInsertOne(MyCommentVo cmmt);
 	

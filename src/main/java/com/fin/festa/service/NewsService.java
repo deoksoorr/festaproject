@@ -3,7 +3,9 @@ package com.fin.festa.service;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.fin.festa.model.entity.FeedVo;
 import com.fin.festa.model.entity.GroupCommentVo;
 import com.fin.festa.model.entity.GroupPostVo;
 import com.fin.festa.model.entity.MyCommentVo;
@@ -14,19 +16,19 @@ import com.fin.festa.model.entity.ReportListVo;
 
 public interface NewsService {
 
-		void  newsFeedSelectAll(Model model, MyFollowingVo myFollowingVo);
+	void newsFeedSelectAll(HttpServletRequest req, MyFollowingVo myFollowingVo);
 		
-		void  newsFeedCmmtInsertOne(Model model, GroupCommentVo groupCommentVo, MyCommentVo myCommentVo);
+	void newsFeedCmmtInsertOne(Model model, GroupCommentVo groupCommentVo, MyCommentVo myCommentVo);
 		
-		void  newsFeedCmmtDeleteOne(Model model, GroupCommentVo groupCommentVo, MyCommentVo myCommentVo);
+	void newsFeedCmmtDeleteOne(Model model, GroupCommentVo groupCommentVo, MyCommentVo myCommentVo);
 		
-		void  newsLikeInsertOne(HttpServletRequest req, MyGoodVo myGoodVo);
+	void newsLikeInsertOne(HttpServletRequest req, MyGoodVo myGoodVo);
 		
-		void  newsLikeDeleteOne(HttpServletRequest req, MyGoodVo myGoodVo);
+	void newsLikeDeleteOne(HttpServletRequest req, MyGoodVo myGoodVo);
 		
-		void  newsFeedReport(Model model, ReportListVo reportListVo);
+	void newsFeedReport(HttpServletRequest req, ReportListVo reportListVo,  MultipartFile[] files);
 		
-		void newsFeedUpdateOne(Model model, GroupPostVo groupPostVo, MyPostVo myPostVo);
+	void newsFeedUpdateOne(HttpServletRequest req, GroupPostVo groupPostVo, MyPostVo myPostVo,  MultipartFile[] files);
 		
-		void newsFeedDeleteOne(Model model, GroupPostVo groupPostVo, MyPostVo myPostVo);
+	void newsFeedDeleteOne(Model model, GroupPostVo groupPostVo, MyPostVo myPostVo);
 }

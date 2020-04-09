@@ -50,4 +50,6 @@ public interface MemberDao {
 
 	ProfileVo find_pronum(ProfileVo profile);
 
+	ProfileVo loginCookie(LoginVo login);
+
 }

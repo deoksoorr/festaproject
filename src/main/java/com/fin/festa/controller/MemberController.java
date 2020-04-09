@@ -1,6 +1,7 @@
 package com.fin.festa.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,60 +19,59 @@ import com.fin.festa.service.MemberService;
 public class MemberController {
 
 //////////////////////////////////////////////////////////////////////
-//////////////////////////////·Î±×ÀÎ °ü·Ã//////////////////////////////
+//////////////////////////////ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½//////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
 	@Autowired
 	private MemberService memberService;
 
-	// ·Î±×ÀÎ È­¸é (ÆË¾÷)
+	// ë¡œê·¸ì¸ í™”ë©´ (íŒì—…)
 	@RequestMapping(value = "login", method = RequestMethod.GET)
 	public String login() {
 		return "member/login";
 	}
 
-	// ·Î±×ÀÎ Ã³¸®
+	// ë¡œê·¸ì¸ ì²˜ë¦¬
 	@RequestMapping(value = "login", method = RequestMethod.POST)
-	public @ResponseBody ProfileVo login(HttpServletRequest req, LoginVo loginVo) {
-		ProfileVo profile = memberService.login(req, loginVo);
+	public @ResponseBody ProfileVo login(HttpServletRequest req, HttpServletResponse resp,LoginVo loginVo) {
+		ProfileVo profile = memberService.login(req, resp,loginVo);
 
 		return profile;
 	}
 	
-	//Á¤Áö
+	//ì •ì§€
 	@RequestMapping(value = "stop", method = RequestMethod.GET)
 	public String stop() {
 		return "member/stop";
 	}
 	
-	//Ãß¹æ
+	//ì¶”ë°©
 	@RequestMapping(value = "kick", method = RequestMethod.GET)
 	public String kick() {
 		return "member/kick";
 	}
 
-	// ·Î±×¾Æ¿ô (ÆË¾÷)
+	// ë¡œê·¸ì•„ì›ƒ (íŒì—…)
 	@RequestMapping(value = "logout", method = RequestMethod.GET)
 	public String logout() {
 		return "member/logout";
 	}
 
-	// ·Î±×¾Æ¿ô (ÆË¾÷>ÆË¾÷ ³» ±â´É)
+	// ë¡œê·¸ì•„ì›ƒ (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
 	@RequestMapping(value = "logout", method = RequestMethod.POST)
-	public String logout(HttpServletRequest req) {
-		System.out.println("·Î±×¾Æ¿ô ÆË¾÷");
-		memberService.logout(req);
+	public String logout(HttpServletRequest req,HttpServletResponse resp) {
+		memberService.logout(req,resp);
 		
 		return "index";
 	}
 
-	// È¸¿ø°¡ÀÔ È­¸é
+	// íšŒì›ê°€ì… í™”ë©´
 	@RequestMapping(value = "join", method = RequestMethod.GET)
 	public String memberInsertOne() {
 		return "member/join";
 	}
 
-	// IDÁßº¹Ã¼Å©
+	// IDì¤‘ë³µì²´í¬
 	@RequestMapping(value = "join/idcheck", method = RequestMethod.POST)
 	@ResponseBody
 	public int idCheck(Model model, LoginVo loginVo) {
@@ -79,7 +79,7 @@ public class MemberController {
 		return result;
 	}
 
-	// È¸¿ø°¡ÀÔ ¼º°ø
+	// íšŒì›ê°€ì… ì„±ê³µ
 	@RequestMapping(value = "join", method = RequestMethod.POST)
 	public String memberInsertOne(Model model, ProfileVo profileVo) {
 		memberService.memberInsertOne(model, profileVo);
@@ -87,19 +87,19 @@ public class MemberController {
 	}
 
 	/*
-	 * // È¸¿ø°¡ÀÔ ¼º°ø
+	 * // È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @RequestMapping(value = "success", method = RequestMethod.POST) public String
 	 * memberInsertSuccess() { return "member/success"; }
 	 */
 
-	// IDÃ£±â È­¸é (ÆË¾÷)
+	// IDì°¾ê¸° í™”ë©´ (íŒì—…)
 	@RequestMapping(value = "find_id", method = RequestMethod.GET)
 	public String findId() {
 		return "member/find_id";
 	}
 
-	// IDÃ£±â Ã³¸® (ÆË¾÷>ÆË¾÷ ³» ±â´É)
+	// IDì°¾ê¸° ì²˜ë¦¬ (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
 	@RequestMapping(value = "find_id", method = RequestMethod.POST)
 	@ResponseBody
 	public ProfileVo findId(Model model, LoginVo loginVo) {
@@ -108,13 +108,13 @@ public class MemberController {
 		return profile;
 	}
 
-	// PWÃ£±â È­¸é (ÆË¾÷)
+	// PWì°¾ê¸° í™”ë©´ (íŒì—…)
 	@RequestMapping(value = "find_pw", method = RequestMethod.GET)
 	public String findPw() {
 		return "member/find_pw";
 	}
 
-	// PWÃ£±â Ã³¸® (ÆË¾÷>ÆË¾÷ ³» ±â´É)
+	// PWì°¾ê¸° ì²˜ë¦¬ (íŒì—…>íŒì—… ë‚´ ê¸°ëŠ¥)
 	@RequestMapping(value = "find_pw", method = RequestMethod.POST)
 	@ResponseBody
 	public ProfileVo findPw(Model model, LoginVo loginVo) {
@@ -122,12 +122,20 @@ public class MemberController {
 		return profile;
 	}
 	
-	// PW ¾÷µ¥ÀÌÆ®
+	// PW ë³€ê²½
 	@RequestMapping(value="update_pw", method= RequestMethod.POST)
 	public String updatePw(Model model,ProfileVo profile) {
-		System.out.println("Á¢¼Ó");
+		System.out.println("ï¿½ï¿½ï¿½ï¿½");
 		memberService.updatePw(model, profile);
 		return "index";
 	}
+	
+	//ë¡œê·¸ì¸ìœ ì§€
+		@RequestMapping(value = "loginCookie", method = RequestMethod.POST)
+		public @ResponseBody ProfileVo loginCookie(HttpServletRequest req, HttpServletResponse resp, LoginVo loginVo) {
+			
+			return memberService.loginCookie(req, resp, loginVo);
+		}
 
+	
 }

@@ -55,16 +55,16 @@
 				<h1>
 					<a href="${root }"><em class="snd_only">FESTA</em></a>
 				</h1>
-				<form class="search_box">
-					<input type="text" placeholder="캠핑장 또는 그룹을 검색해보세요!">
-					<button type="button" id="search">
+				<form class="search_box" action="${root }search/">
+					<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
+					<button type="submit">
 						<img src="${root }resources/images/ico/btn_search.png" alt="검색">
 					</button>
 				</form>
 				<ul id="gnb">
 					<li><a href="${root}camp/">캠핑정보</a></li>
 					<li><a href="${root}hot/">인기피드</a></li>
-					<li><a href="${root}news/">뉴스피드</a></li>
+					<li><a href="${root}news/?pronum=${login.pronum}">뉴스피드</a></li>
 					<c:if test="${login eq null }">
 						<%
 							out.println("<script>alert('로그인 후 이용이 가능합니다.')</script>");
@@ -114,10 +114,24 @@
 								<div class="my_list">
 									<ul>
 										<c:forEach items="${joinGroup }" var="joinGroup">
-											<li><a href=""> <span><img
-														src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
-													<b>${joinGroup.group.grname }</b>
-											</a></li>
+											<c:choose>
+												<c:when test="${joinGroup.group.grphoto eq null }"> 
+													<li>
+														<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+															<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+															<b>${joinGroup.group.grname }</b>
+														</a>
+													</li>
+												</c:when>
+												<c:otherwise>
+													<li>
+														<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+															<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+															<b>${joinGroup.group.grname }</b>
+														</a>
+													</li>
+												</c:otherwise>
+											</c:choose>
 										</c:forEach>
 									</ul>
 								</div>
@@ -186,17 +200,25 @@
 									test="${empty detail.httitle1 && empty detail.httitle2 && empty detail.httitle3}">
 								</c:when>
 								<c:when
+									test="${empty detail.httitle1 && empty detail.httitle3}">
+									<a href="${root }search/?keyword=${detail.httitle2}">${detail.httitle2}</a>
+								</c:when>
+								<c:when
+									test="${empty detail.httitle2 && empty detail.httitle3}">
+									<a href="${root }search/?keyword=${detail.httitle1}">${detail.httitle1}</a>
+								</c:when>
+								<c:when
 									test="${empty detail.httitle1 && empty detail.httitle2}">
-									<a href="">${detail.httitle3}</a>
+									<a href="${root }search/?keyword=${detail.httitle3}">${detail.httitle3}</a>
 								</c:when>
 								<c:when test="${empty detail.httitle1}">
-									<a href="">${detail.httitle2}</a>
-									<a href="">${detail.httitle3}</a>
+									<a href="${root }search/?keyword=${detail.httitle2}">${detail.httitle2}</a>
+									<a href="${root }search/?keyword=${detail.httitle3}">${detail.httitle3}</a>
 								</c:when>
 								<c:otherwise>
-									<a href="">${detail.httitle1}</a>
-									<a href="">${detail.httitle2}</a>
-									<a href="">${detail.httitle3}</a>
+									<a href="${root }search/?keyword=${detail.httitle1}">${detail.httitle1}</a>
+									<a href="${root }search/?keyword=${detail.httitle2}">${detail.httitle2}</a>
+									<a href="${root }search/?keyword=${detail.httitle3}">${detail.httitle3}</a>
 								</c:otherwise>
 							</c:choose>
 						</dd>
@@ -229,7 +251,7 @@
 				<!-- #비공개 시작 {  -->
 				<div class="readme_wrap">
 					<div>
-						<h3 class="set_tit">그룹 멤버에게만 공개된 페이지입니다.</h3>
+						<h3 class="set_tit">${detail.grname} 그룹 멤버에게만 공개된 페이지입니다.</h3>
 						<dl>
 							<dt>가입 승인을 대기 중입니다.</dt>
 							<dd>그룹장이 가입신청에 대해 승인한 후 해당 그룹을 이용하실 수 있습니다.</dd>
@@ -245,71 +267,71 @@
 			<!-- 우측 사이드영역 시작 { -->
 			<section class="side_area">
 				<div class="rcmm_list">
-					<h3><em class="snd_only">추천그룹 목록</em>나홀로 캠핑이 심심하신가요?</h3>
-					<ul>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="입돌아간다 그룹 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">입돌아간다</b>
-								<span class="rc_intro">안녕하세요 ㅇㅇㅇ입니다. 안녕하세요</span>
-							</a>
-						</li>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="그룹 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">그룹</b>
-								<span class="rc_intro">그룹 소개글을 작성해주세요.</span>
-							</a>
-						</li>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="그룹 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">그룹</b>
-								<span class="rc_intro">그룹 소개글을 작성해주세요.</span>
-							</a>
-						</li>
-					</ul>
-				</div>
-				<div class="rcmm_list">
-					<h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
-					<ul>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="바다애캠핑장 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">바다애캠핑장</b>
-								<span class="rc_hashtag">경기도</span>
-							</a>
-						</li>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="캠핑장 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">캠핑장</b>
-								<span class="rc_hashtag">경기도</span>
-							</a>
-						</li>
-						<li>
-							<a class="rc_thumb" href="">
-								<img src="http://placehold.it/55x55" alt="캠핑장 썸네일">
-							</a>
-							<a class="rc_text" href="">
-								<b class="rc_name">캠핑장</b>
-								<span class="rc_hashtag">경기도</span>
-							</a>
-						</li>
-					</ul>
-				</div>
-			</section>
-			<!-- } 우측 사이드영역 끝 -->
+	               <h3><em class="snd_only">추천그룹 목록</em>나홀로 캠핑이 심심하신가요?</h3>
+	               <ul>
+	                  <c:forEach items="${grouplist }" begin="0" end="2" var="grouplist">
+	                     <c:if test="${login ne null }">
+	                        <li>
+	                        	<c:choose>
+	                        		<c:when test="${grouplist.grphoto eq null }">
+			                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+			                              <img src="${root}resources/images/thumb/no_profile.png" alt="${grouplist.grname } 그룹 썸네일">
+			                           </a>
+	                        		</c:when>
+	                        		<c:otherwise>
+			                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+			                              <img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
+			                           </a>
+	                        		</c:otherwise>
+	                        	</c:choose>
+								<a class="rc_text" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+										<b class="rc_name">${grouplist.grname }</b>
+										<span class="rc_intro">${grouplist.grintro }</span>
+								</a>
+							</li>
+	                     </c:if>
+	                     <c:if test="${login eq null }">
+	                        <li>
+	                        	<c:choose>
+	                        		<c:when test="${grouplist.grphoto eq null }">
+			                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}">
+			                              <img src="${root}resources/images/thumb/no_profile.png" alt="${grouplist.grname } 그룹 썸네일">
+			                           </a>
+	                        		</c:when>
+	                        		<c:otherwise>
+			                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}">
+			                              <img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
+			                           </a>
+	                        		</c:otherwise>
+	                        	</c:choose>
+	                            <a class="rc_text" href="${root }group/?grnum=${grouplist.grnum}">
+	                                <b class="rc_name">${grouplist.grname }</b>
+	                                <span class="rc_intro">${grouplist.grintro }</span>
+	                            </a>
+	                        </li>
+	                     </c:if>
+	                  </c:forEach>
+	               </ul>
+	            </div>
+	            <div class="rcmm_list">
+	               <h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
+	               <ul>
+	                  <c:forEach items="${camplist }" begin="0" end="2" var="camplist">
+	                     <c:set var="image" value="${fn:substringBefore(camplist.caphoto,',') }"/>
+	                     <li>
+	                        <a class="rc_thumb" href="${root }camp/detail?canum=${camplist.canum}">
+	                           <img src="${upload }/${image}" alt="${camplist.caname } 썸네일">
+	                        </a>
+	                        <a class="rc_text" href="${root }camp/detail?canum=${camplist.canum}">
+	                           <b class="rc_name">${camplist.caname }</b>
+	                           <span class="rc_hashtag">${camplist.caaddrsel }</span>
+	                        </a>
+	                     </li>
+	                  </c:forEach>
+	               </ul>
+	            </div>
+	         </section>
+	         <!-- } 우측 사이드영역 끝 -->
 		</div>
 	</div>
 	<!-- } 서브페이지 -->

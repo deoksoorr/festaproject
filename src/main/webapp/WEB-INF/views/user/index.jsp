@@ -2,8 +2,8 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<c:url value="/" var="root"></c:url>
-<c:url value="/upload" var="upload"></c:url>
+<c:url value="/" var="root" />
+<c:url value="/resources/upload" var="upload" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -17,11 +17,36 @@
 <script type="text/javascript" src="${root }resources/js/site.js"></script>
 <link rel="stylesheet"
 	href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+<link type="text/css" rel="stylesheet" href="${root}resources/css/site.css">
 <link rel="stylesheet" href="${root }resources/css/site.css">
 <link rel="shortcut icon" href="${root }resources/favicon.ico">
 <title>FESTA</title>
 <script type="text/javascript">
 	$(document).ready(function() {
+		var cookie = '${cookie.loginCookie.value}';
+	      var login = '${login}';
+	      
+	      if(cookie!=''&&login==''&&loginValue==true){
+	         openPop('loginCookie');
+	      }
+	      
+	      $('#btnCookie').on('click',function(){
+	         $.post('${root}member/loginCookie','id='+cookie,function(data){
+	            if (data.prorn == '0') {
+	               location.href = "${root}user/?pronum="+data.pronum;
+	            } else if (data.prorn == '1') {
+	               location.href = "${root}member/stop";
+	            } else if (data.prorn == '2') {
+	               location.href = "${root}member/kick";
+	            } else if (data.prorn == '3') {
+	               location.href = "${root}admin/";
+	            } else if (data.prorn == '4') {
+	               location.href = "${root}";
+	            }
+	         });
+	      });
+		
 		
 		$('.feed_viewer').each(function(index) {
 			if (index > 1) {
@@ -101,10 +126,9 @@
 							+ data[index].mcdate1
 							+ '</span>';
 					var pronum_check ="${profile.pronum eq login.pronum}";
-					if(check == "true"){
+					if(pronum_check == "true"){
 						tag += '<button class="btn_pop btn_delete btn_cmmt" id="mycmmtdelete" data-layer="deletecmmt" data-value="'+data[index].mcnum+'"><em class="snd_only">삭제하기</em></button></p>'
 					}
-							
 						tag	+= '</li>';
 					
 					comments.append(tag);
@@ -184,7 +208,6 @@
 	
 	//좋아요버튼 갯수조절
 	var goodSize =$('.content_area>.feed_viewer .feed_options').length;
-	console.log('goodSize : '+goodSize);
 	if($('#wrap>input[type=hidden]').eq(0).val()!=''){
 	    for(var i = 0; i< goodSize; i++){
 	    	if($('.content_area>.feed_viewer .feed_options').eq(i).find('.btn_liked').hasClass('act')==false){
@@ -192,6 +215,17 @@
 	        }
 	    }
 	}
+	
+	//팔로우
+	$(document).on('click','#follow',function(){
+		var pronum = "${login.pronum}";
+		var pronum_sync = "${profile.pronum}";
+		var mfgname = "${profile.proname}";
+		var mfrname = "${login.proname}";
+		$.post('${root}user/follow',"pronum="+pronum+"&pronum_sync="+pronum_sync+"&mfgname="+mfgname+"&mfrname"+mfrname,function(){
+			console.log("ㅋㅋ");
+		});
+	});
 });
 	
 </script>
@@ -221,7 +255,7 @@
 					<ul id="gnb">
 						<li><a href="${root}camp/">캠핑정보</a></li>
 						<li><a href="${root}hot/">인기피드</a></li>
-						<li><a href="${root}news/">뉴스피드</a></li>
+						<li><a href="${root}news/?pronum=${login.pronum}">뉴스피드</a></li>
 						<c:if test="${login eq null }">
 							<%
 								out.println("<script>alert('로그인 후 이용이 가능합니다.')</script>");
@@ -250,16 +284,14 @@
 													<c:when test="${joinGroup.group.grphoto eq null }">
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-																<span><img
-																	src="${root }resources/upload/thumb/no_profile.png"
+																<span><img src="${root }resources/upload/thumb/no_profile.png"
 																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
 														</a></li>
 													</c:when>
 													<c:otherwise>
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-																<span><img
-																	src="${upload }/${joinGroup.group.grphoto}"
+																<span><img src="${upload }/${joinGroup.group.grphoto}"
 																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
 														</a></li>
 													</c:otherwise>
@@ -273,10 +305,24 @@
 									<div class="my_list">
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
-												<li><a href=""> <span><img
-															src="http://placehold.it/45x45" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
-														<b>${joinGroup.group.grname }</b>
-												</a></li>
+												<c:choose>
+													<c:when test="${joinGroup.group.grphoto eq null }"> 
+														<li>
+															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+																<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+																<b>${joinGroup.group.grname }</b>
+															</a>
+														</li>
+													</c:when>
+													<c:otherwise>
+														<li>
+															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+																<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+																<b>${joinGroup.group.grname }</b>
+															</a>
+														</li>
+													</c:otherwise>
+												</c:choose>
 											</c:forEach>
 										</ul>
 									</div>
@@ -285,10 +331,25 @@
 									<span class="btn_mylist">나의 캠핑장</span>
 									<div class="my_list">
 										<ul>
-											<c:forEach items="${bookMark }" var="bookMark">
-												<li><a href="${root }camp?canum=${bookMark.camp.canum}">
-														<span><img src="http://placehold.it/45x45"
-															alt="${bookMark.camp.caname } 캠핑장 썸네일"></span> <b>${bookMark.camp.caname }</b>
+											<c:forEach items="${bookMark}" var="bookMark">
+												<li><a
+													href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
+														<span> <c:set var="image"
+																value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
+															<c:if
+																test="${!empty bookMark.camp.caphoto && empty image}">
+																<img src="${upload}/${bookMark.camp.caphoto}"
+																	alt="${bookMark.camp.caname}">
+															</c:if> <c:if
+																test="${!empty bookMark.camp.caphoto && !empty image}">
+																<img src="${upload}/${image}"
+																	alt="${bookMark.camp.caname}">
+															</c:if> <c:if
+																test="${empty bookMark.camp.caphoto && empty image}">
+																<img src="${root}resources/images/thumb/no_profile.png"
+																	alt="${bookMark.camp.caname}">
+															</c:if>
+													</span> <b>${bookMark.camp.caname}</b>
 												</a></li>
 											</c:forEach>
 										</ul>
@@ -326,11 +387,13 @@
 										class="snd_only">설정</em></a>
 								</c:if>
 								<c:if test="${login.pronum ne profile.pronum }">
-									<a href="${root }common/report"
+									<a href="${root }user/us_report"
 										class="pf_opt btn_pop btn_report"><em class="snd_only">신고하기</em></a>
+									<c:if test="">
+									<button type="button" id="follow" class="btn_follow act">팔로잉</button>
+									</c:if>
 								</c:if>
 								<!-- } 유저페이지일 경우 신고하기 -->
-								<button type="button" class="btn_follow act">팔로잉</button>
 							</dt>
 							<dd class="pf_intro">${profile.prointro }</dd>
 							<dd class="pf_hashtag">
@@ -350,8 +413,8 @@
 					<div class="cnt_list">
 						<ul>
 							<li>피드<b>${myFeedCount }</b></li>
-							<li>팔로워<a class="btn_pop" href="${root }user/follower?pronum=${login.pronum}">${myFollowerCount}</a></li>
-							<li>팔로우<a class="btn_pop" href="${root }user/following?pronum=${login.pronum}">${myFollowingCount }</a></li>
+							<li>팔로워<a class="btn_pop" href="${root }user/follower?pronum=${profile.pronum}">${myFollowerCount}</a></li>
+							<li>팔로우<a id="myFollowingCount" class="btn_pop" href="${root }user/following?pronum=${profile.pronum}">${myFollowingCount }</a></li>
 						</ul>
 					</div>
 				</div>
@@ -364,8 +427,7 @@
 					<c:if test="${login.pronum eq profile.pronum}">
 						<div class="feed_maker">
 							<h3>피드 만들기</h3>
-							<form action="${root }user/add" method="post" class="maker_form"
-								enctype="multipart/form-data">
+							<form action="${root }user/add" method="post" class="maker_form" enctype="multipart/form-data">
 								<input type="hidden" name="mpauthor" value="${login.proname }" />
 								<input type="hidden" id="mypronum" name="pronum" value="${login.pronum }" />
 								<div class="mk_cont box">
@@ -476,7 +538,8 @@
 										</c:if>
 									</c:forEach>
 									<c:if test="${login.pronum ne myFeedSelectAll.pronum }">
-										<li><a href="${root }user/report"
+									
+										<li><a href="${root }user/report?mpnum=${myFeedSelectAll.mpnum}"
 											class="btn_pop btn_report"><em class="snd_only">신고하기</em></a></li>
 									</c:if>
 									<c:if test="${login.pronum eq myFeedSelectAll.pronum }">
@@ -608,50 +671,70 @@
 				<!-- 우측 사이드영역 시작 { -->
 				<section class="side_area">
 					<div class="rcmm_list">
-						<h3>
-							<em class="snd_only">추천그룹 목록</em>나홀로 캠핑이 심심하신가요?
-						</h3>
-						<ul>
-							<li><a class="rc_thumb" href=""> <img
-									src="http://placehold.it/55x55" alt="입돌아간다 그룹 썸네일">
-							</a> <a class="rc_text" href=""> <b class="rc_name">입돌아간다</b> <span
-									class="rc_intro">안녕하세요 ㅇㅇㅇ입니다. 안녕하세요</span>
-							</a></li>
-							<li><a class="rc_thumb" href=""> <img
-									src="http://placehold.it/55x55" alt="그룹 썸네일">
-							</a> <a class="rc_text" href=""> <b class="rc_name">그룹</b> <span
-									class="rc_intro">그룹 소개글을 작성해주세요.</span>
-							</a></li>
-							<li><a class="rc_thumb" href=""> <img
-									src="http://placehold.it/55x55" alt="그룹 썸네일">
-							</a> <a class="rc_text" href=""> <b class="rc_name">그룹</b> <span
-									class="rc_intro">그룹 소개글을 작성해주세요.</span>
-							</a></li>
-						</ul>
-					</div>
-					<div class="rcmm_list">
-						<h3>
-							<em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?
-						</h3>
-						<ul>
-							<li><a class="rc_thumb" href=""> <img
-									src="http://placehold.it/55x55" alt="바다애캠핑장 썸네일">
-							</a> <a class="rc_text" href=""> <b class="rc_name">바다애캠핑장</b> <span
-									class="rc_hashtag">경기도</span>
-							</a></li>
-							<li><a class="rc_thumb" href=""> <img
-									src="http://placehold.it/55x55" alt="캠핑장 썸네일">
-							</a> <a class="rc_text" href=""> <b class="rc_name">캠핑장</b> <span
-									class="rc_hashtag">경기도</span>
-							</a></li>
-							<li><a class="rc_thumb" href=""> <img
-									src="http://placehold.it/55x55" alt="캠핑장 썸네일">
-							</a> <a class="rc_text" href=""> <b class="rc_name">캠핑장</b> <span
-									class="rc_hashtag">경기도</span>
-							</a></li>
-						</ul>
-					</div>
-				</section>
+		               <h3><em class="snd_only">추천그룹 목록</em>나홀로 캠핑이 심심하신가요?</h3>
+		               <ul>
+		                  <c:forEach items="${grouplist }" begin="0" end="2" var="grouplist">
+		                     <c:if test="${login ne null }">
+		                        <li>
+		                        	<c:choose>
+		                        		<c:when test="${grouplist.grphoto eq null }">
+				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+				                              <img src="${root}resources/images/thumb/no_profile.png" alt="${grouplist.grname } 그룹 썸네일">
+				                           </a>
+		                        		</c:when>
+		                        		<c:otherwise>
+				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+				                              <img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
+				                           </a>
+		                        		</c:otherwise>
+		                        	</c:choose>
+									<a class="rc_text" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+											<b class="rc_name">${grouplist.grname }</b>
+											<span class="rc_intro">${grouplist.grintro }</span>
+									</a>
+								</li>
+		                     </c:if>
+		                     <c:if test="${login eq null }">
+		                        <li>
+		                        	<c:choose>
+		                        		<c:when test="${grouplist.grphoto eq null }">
+				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}">
+				                              <img src="${root}resources/images/thumb/no_profile.png" alt="${grouplist.grname } 그룹 썸네일">
+				                           </a>
+		                        		</c:when>
+		                        		<c:otherwise>
+				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}">
+				                              <img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
+				                           </a>
+		                        		</c:otherwise>
+		                        	</c:choose>
+		                            <a class="rc_text" href="${root }group/?grnum=${grouplist.grnum}">
+		                                <b class="rc_name">${grouplist.grname }</b>
+		                                <span class="rc_intro">${grouplist.grintro }</span>
+		                            </a>
+		                        </li>
+		                     </c:if>
+		                  </c:forEach>
+		               </ul>
+		            </div>
+		            <div class="rcmm_list">
+		               <h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
+		               <ul>
+		                  <c:forEach items="${camplist }" begin="0" end="2" var="camplist">
+		                     <c:set var="image" value="${fn:substringBefore(camplist.caphoto,',') }"/>
+		                     <li>
+		                        <a class="rc_thumb" href="${root }camp/detail?canum=${camplist.canum}">
+		                           <img src="${upload }/${image}" alt="${camplist.caname } 썸네일">
+		                        </a>
+		                        <a class="rc_text" href="${root }camp/detail?canum=${camplist.canum}">
+		                           <b class="rc_name">${camplist.caname }</b>
+		                           <span class="rc_hashtag">${camplist.caaddrsel }</span>
+		                        </a>
+		                     </li>
+		                  </c:forEach>
+		               </ul>
+		            </div>
+		         </section>
 				<!-- } 우측 사이드영역 끝 -->
 			</div>
 		</div>
@@ -733,14 +816,23 @@
 			</ul>
 		</div>
 	</div>
-
+</body>
+<!-- #팝업 처리완료 { -->
+<div id="loginCookie" class="fstPop">
+   <div class="confirm_wrap pop_wrap">
+      <p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+      <ul class="comm_buttons">
+         <li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+         <li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+      </ul>
+   </div>
+</div>
 	<!-- } #팝업 처리완료 -->
 	<script type="text/javascript">
 		feedType('feed_viewer');
 		btnPop('btn_pop2');
 		setFile();
 	</script>
-</body>
 </html>
 
 

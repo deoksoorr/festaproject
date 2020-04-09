@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:url value="/" var="root"></c:url>
+<c:url value="/" var="root" />
+<c:url value="/resources/upload" var="upload" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -16,6 +17,32 @@
 <link rel="stylesheet" href="${root }resources/css/site.css">
 <link rel="shortcut icon" href="${root }resources/favicon.ico">
 <title>FESTA</title>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var cookie = '${cookie.loginCookie.value}';
+	      var login = '${login}';
+	      
+	      if(cookie!=''&&login==''&&loginValue==true){
+	         openPop('loginCookie');
+	      }
+	      
+	      $('#btnCookie').on('click',function(){
+	         $.post('${root}member/loginCookie','id='+cookie,function(data){
+	            if (data.prorn == '0') {
+	               location.href = "${root}user/?pronum="+data.pronum;
+	            } else if (data.prorn == '1') {
+	               location.href = "${root}member/stop";
+	            } else if (data.prorn == '2') {
+	               location.href = "${root}member/kick";
+	            } else if (data.prorn == '3') {
+	               location.href = "${root}admin/";
+	            } else if (data.prorn == '4') {
+	               location.href = "${root}";
+	            }
+	         });
+	      });
+	});
+</script>
 </head>
 <body>
 	<div id="wrap">
@@ -34,7 +61,7 @@
 					<ul id="gnb">
 						<li><a href="${root }camp/">캠핑정보</a></li>
 						<li><a href="${root }hot/">인기피드</a></li>
-						<li><a href="${root }news/">뉴스피드</a></li>
+						<li><a href="${root}news/?pronum=${login.pronum}">뉴스피드</a></li>
 						<li><a href="${root }member/login" class="btn_pop">로그인</a></li>
 					</ul>
 					<button type="button" id="btnTop">
@@ -88,4 +115,14 @@
 	fileThumbnail();
 </script>
 </body>
+<!-- #팝업 처리완료 { -->
+<div id="loginCookie" class="fstPop">
+   <div class="confirm_wrap pop_wrap">
+      <p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+      <ul class="comm_buttons">
+         <li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+         <li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+      </ul>
+   </div>
+</div>
 </html>

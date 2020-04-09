@@ -210,7 +210,7 @@
 	<div class="tit box">
 		<dl class="feed_inform">
 			<dt>
-				<a href="">
+				<a href="" style="cursor: default; ">
 					<input type="hidden" id="ntcaddName" value="${login.proname}" />
 					<input type="hidden" id="ntcaddPro" value="${login.pronum}" />
 					<input type="hidden" id="ntcaddGr" value="${ntcDetail.grnum}">
@@ -218,7 +218,7 @@
 					<span class="pf_picture"><img src="${upload }/${ntcDetail.profile.prophoto}" alt="${ntcDetail.gnauthor}님의 프로필 썸네일"></span>
 					<span class="fd_name">[그룹장] ${ntcDetail.gnauthor}</span>
 				</a>
-				<a href="">
+				<a href="" style="cursor: default;">
 					<span class="fd_group">${detail.grname } 공지사항</span>
 				</a>
 			</dt>
@@ -252,12 +252,12 @@
 						<c:if test="${not doneLoop }">
 							<li>
 								<!-- # 프로필 이미지 없음 { -->
-								<a href="" class="pf_picture">
+								<a href="${root }user/?pronum=${ntcCmmt.pronum}" class="pf_picture">
 									<img src="${upload }/${ntcCmmt.profile.prophoto}" alt="${ntcCmmt.gncauthor }님의 프로필 썸네일">
 								</a>
 								<!-- } # 프로필 이미지 없음 -->
 								<p class="cmt_content">
-									<a href="" class="cmt_name">${ntcCmmt.gncauthor }</a>&nbsp;&nbsp;${ntcCmmt.gnccontent }
+									<a href="${root }user/?pronum=${ntcCmmt.pronum}" class="cmt_name">${ntcCmmt.gncauthor }</a>&nbsp;&nbsp;${ntcCmmt.gnccontent }
 									<span class="cmt_date">${ntcCmmt.gncdate1 }</span>
 									<c:if test="${(login.pronum eq ntcCmmt.pronum) or (login.pronum eq detail.pronum)}">
 										<button class="btn_delete btn_pop ntccmmtdel" data-layer="deletentc" data-value="${ntcCmmt.gncnum }"><em class="snd_only">삭제하기</em></button>
@@ -279,13 +279,13 @@
 		<form class="message_form" action="" method="post">
 			<c:choose>
 				<c:when test="${login.prophoto eq null}">
-					<a class="pf_picture" href="">
+					<a class="pf_picture" href="${root }user/?pronum=${login.pronum}">
 						<img src="${root}resources/images/thumb/no_profile.png"
 							alt="${login.proname } 님의 프로필 썸네일">
 					</a>
 				</c:when>
 				<c:otherwise>
-					<a class="pf_picture" href="">
+					<a class="pf_picture" href="${root }user/?pronum=${login.pronum}">
 						<img src="${upload }/${login.prophoto }"
 							alt="${login.proname } 님의 프로필 썸네일">
 					</a>

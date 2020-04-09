@@ -2,16 +2,16 @@ package com.fin.festa.model.entity;
 
 import java.sql.Date;
 
-public class CampReviewVo {		//Ä·ÇÎÀå ÇÑÁÙÆò
+public class CampReviewVo {		//ìº í•‘ì¥ í•œì¤„í‰
 	
-	private int crnum;			//ÇÑÁÙÆò ±Û¹øÈ£ (pk)
-	private String crauthor;	//ÀÛ¼ºÀÚ ÀÌ¸§
-	private String crcontent;	//ÇÑÁÙÆò ³»¿ë
-	private Date crdate;		//ÀÛ¼ºÀÏ
-	private double crgood;		//º°Á¡
-	private int canum;			//Ä·ÇÎÀå ¹øÈ£ 
-	private int pronum;			//ÀÛ¼ºÀÚ ¹øÈ£
-	private int crrn;			//ÆäÀÌÁö ¹øÈ£
+	private int crnum;			//í•œì¤„í‰ ê¸€ë²ˆí˜¸ (pk)
+	private String crauthor;	//ì‘ì„±ì ì´ë¦„
+	private String crcontent;	//í•œì¤„í‰ ë‚´ìš©
+	private Date crdate;		//ì‘ì„±ì¼
+	private double crgood;		//ë³„ì 
+	private int canum;			//ìº í•‘ì¥ ë²ˆí˜¸ 
+	private int pronum;			//ì‘ì„±ì ë²ˆí˜¸
+	private int crrn;			//í˜ì´ì§€ ë²ˆí˜¸
 	private CampVo camp;
 	private GroupCommentVo groupComment;
 	private GroupNoticeCommentVo groupNoticeComment;

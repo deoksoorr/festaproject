@@ -39,8 +39,9 @@
 			if(socket.readyState !== 1){
 				return;
 			}
+			var grnum=$('#lastchance').val();
 			let msg=$('#chstmsg').val();
-			socket.send(msg);
+			socket.send(grnum+"="+msg);
 			$('#chstmsg').val('');
 		});
 	});
@@ -59,23 +60,23 @@
 			
 			var myid=$('#proid').val();
 			var chat=event.data.split('|');		// 아이디 + 이름 + 사진 + 메세지 + 시간 
-			
+
 			if(chat[1]==null){
-				var chat=event.data.split('+');
+				var chat=event.data.split('*');
 				console.log(chat[1]);
 				$('.chatarea').append(
 					'<li>'+
 						'<p class="ch_msg">'+chat[0]+'</p>'+
 					'</li>'
 				);
-				$('.ch_user').append(
+				/*$('.ch_user').append(
 					'<li>'+
 						'<a class="pf_picture" href="" target="_blank">'+
 							'<img src="${upload}/'+chat[3]+'" alt="'+chat[2]+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
 						'</a>'+
 						'<a class="pf_name" href="" target="_blank">'+chat[2]+'('+chat[1]+')</a>'+
 					'</li>'
-				);
+				);*/
 			}else{
 				var chatid=chat[0];
 				if(myid==chatid){
@@ -125,8 +126,16 @@
 		<input type="hidden" id="pronum" value="${login.pronum }" />
 		<section class="title_area">
 			<ul class="chat_info box">
-				<li class="pf_picture"><img src="${upload }/${detail.grphoto }"
-					alt="${detail.grname }  그룹 썸네일" onload="squareTrim($(this), 30)"></li>
+				<li class="pf_picture">
+					<c:choose>
+						<c:when test="${detail.grphoto eq null }">
+							<img src="${root}resources/images/thumb/no_profile.png" alt="${detail.grname }  그룹 썸네일" onload="squareTrim($(this), 30)">
+						</c:when>
+						<c:otherwise>
+							<img src="${upload }/${detail.grphoto }" alt="${detail.grname }  그룹 썸네일" onload="squareTrim($(this), 30)">
+						</c:otherwise>
+					</c:choose>
+				</li>
 				<li class="ch_gpname">${detail.grname } </li>
 				<li><span class="gp_official"></span></li>
 			</ul>
@@ -145,6 +154,7 @@
 					<img src="${upload }/${login.prophoto }" alt="나의 프로필 썸네일" onload="squareTrim($(this), 30)"> 
 				</a>
 				<p class="msg_input">
+					<input type="hidden" id="lastchance" value="${detail.grnum }" />
 					<textarea id="chstmsg" name="" placeholder="메세지를 입력해주세요"></textarea>
 					<button type="button" class="btn_send">
 						<em class="snd_only">전송</em>
@@ -153,11 +163,9 @@
 			</form>
 		</section>
 		<section class="users_area">
-			<div class="chat_user box">
+			<div class="chat_user box" id="userbox">
 				<p class="ch_number">현재 접속자 (999명)</p>
 				<div class="scrBar">
-					<ul class="ch_user">
-					</ul>
 				</div>
 			</div>
 		</section>

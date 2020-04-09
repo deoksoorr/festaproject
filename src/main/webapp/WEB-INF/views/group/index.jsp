@@ -227,7 +227,7 @@
 		 				$.post('${root}/group/out', 'grnum='+grnum+'&pronum='+pronum+'&jointot=1'+'&grtotal='+grtotal, function(data){
 								openPop("ok");
 								$('#success').on('click', function(){
-									window.location.href='http://localhost:8080/festa/user/';
+									window.location.href='${root}festa/user/?pronum='+pronum;
 								});
 		 				});
 	 				})
@@ -293,16 +293,16 @@
 					<h1>
 						<a href="${root }"><em class="snd_only">FESTA</em></a>
 					</h1>
-					<form class="search_box" >
-						<input type="text" value="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!">
-						<button type="button" id="search" >
+					<form class="search_box" action="${root }search/">
+						<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
+						<button type="submit">
 							<img src="${root }resources/images/ico/btn_search.png" alt="검색">
 						</button>
 					</form>
 					<ul id="gnb">
 						<li><a href="${root}camp/">캠핑정보</a></li>
 						<li><a href="${root}hot/">인기피드</a></li>
-						<li><a href="${root}news/">뉴스피드</a></li>
+						<li><a href="${root}news/?pronum=${login.pronum}">뉴스피드</a></li>
 						<c:if test="${login eq null }">
 							<%
 								out.println("<script>alert('로그인 후 이용이 가능합니다.')</script>");
@@ -331,7 +331,7 @@
 													<c:when test="${joinGroup.group.grphoto eq null }">
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-																<span><img src="${upload }/${joinGroup.group.grphoto}"
+																<span><img src="${root}resources/images/thumb/no_profile.png"
 																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
 														</a></li>
 													</c:when>
@@ -352,10 +352,24 @@
 									<div class="my_list">
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
-												<li><a href=""> <span><img
-															src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
-														<b>${joinGroup.group.grname }</b>
-												</a></li>
+												<c:choose>
+													<c:when test="${joinGroup.group.grphoto eq null }"> 
+														<li>
+															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+																<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+																<b>${joinGroup.group.grname }</b>
+															</a>
+														</li>
+													</c:when>
+													<c:otherwise>
+														<li>
+															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+																<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+																<b>${joinGroup.group.grname }</b>
+															</a>
+														</li>
+													</c:otherwise>
+												</c:choose>
 											</c:forEach>
 										</ul>
 									</div>
@@ -431,32 +445,31 @@
 									</c:when>
 									<c:when
 										test="${empty detail.httitle1 && empty detail.httitle3}">
-										<a href="">${detail.httitle2}</a>
+										<a href="${root }search/?keyword=${detail.httitle2}">${detail.httitle2}</a>
 									</c:when>
 									<c:when
 										test="${empty detail.httitle2 && empty detail.httitle3}">
-										<a href="">${detail.httitle1}</a>
+										<a href="${root }search/?keyword=${detail.httitle1}">${detail.httitle1}</a>
 									</c:when>
 									<c:when
 										test="${empty detail.httitle1 && empty detail.httitle2}">
-										<a href="">${detail.httitle3}</a>
+										<a href="${root }search/?keyword=${detail.httitle3}">${detail.httitle3}</a>
 									</c:when>
 									<c:when test="${empty detail.httitle1}">
-										<a href="">${detail.httitle2}</a>
-										<a href="">${detail.httitle3}</a>
+										<a href="${root }search/?keyword=${detail.httitle2}">${detail.httitle2}</a>
+										<a href="${root }search/?keyword=${detail.httitle3}">${detail.httitle3}</a>
 									</c:when>
 									<c:otherwise>
-										<a href="">${detail.httitle1}</a>
-										<a href="">${detail.httitle2}</a>
-										<a href="">${detail.httitle3}</a>
+										<a href="${root }search/?keyword=${detail.httitle1}">${detail.httitle1}</a>
+										<a href="${root }search/?keyword=${detail.httitle2}">${detail.httitle2}</a>
+										<a href="${root }search/?keyword=${detail.httitle3}">${detail.httitle3}</a>
 									</c:otherwise>
 								</c:choose>
 							</dd>
 							<dd class="gp_list">
-								<span>그룹장 : ${detail.profile.proname}</span> <a
-									class="btn_pop btn_member"
-									href="${root }group/member?grnum=${detail.grnum}">멤버 :
-									${detail.grtotal }명</a> <span>개설일 : ${detail.grdate }</span>
+								<span>그룹장 : ${detail.profile.proname}</span>
+									<a class="btn_pop btn_member" href="${root }group/member?grnum=${detail.grnum}">
+									멤버 : ${detail.grtotal }명</a> <span>개설일 : ${detail.grdate }</span>
 								<c:if test="${login.pronum ne detail.pronum }">
 									<a class="btn_pop btn_out" id="groupbyebtn" data-layer="groupbye" style="cursor: pointer">탈퇴</a>
 								</c:if>
@@ -476,8 +489,7 @@
 						</dl>
 					</div>
 					<p class="social_btns">
-						<button type="button" class="btn_chat"
-							onclick="window.open('${root}group/chat?grnum=${detail.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">그룹채팅</button>
+						<button type="button" class="btn_chat" onclick="window.open('${root}group/chat?grnum=${detail.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">그룹채팅</button>
 					</p>
 				</div>
 			</section>
@@ -522,7 +534,7 @@
 							</c:if>
 							<div class="mk_cont box">
 								<c:choose>
-									<c:when test="${login.prophoto eq '' }">
+									<c:when test="${login.prophoto eq null }">
 										<p class="pf_picture">
 											<img src="${root}resources/images/thumb/no_profile.png"
 												alt="${login.proname } 님의 프로필 썸네일">
@@ -628,7 +640,6 @@
 											<input type="hidden" id="cmmtGrnum" value="${detail.grnum }" />
 											<input type="hidden" id="masterPronum" value="${detail.pronum }" />
 											<input type="hidden" id="feedPronum" value="${feed.pronum }" />
-											
 											<c:choose>
 												<c:when test="${feed.profile.prophoto eq '' }">
 													<span class="pf_picture"><img src="${root}resources/images/thumb/no_profile.png" alt="${feed.gpauthor}님의 프로필 썸네일"></span>
@@ -637,10 +648,9 @@
 													<span class="pf_picture"><img src="${upload }/${feed.profile.prophoto}" alt="${feed.gpauthor}님의 프로필 썸네일"></span>
 												</c:otherwise>
 											</c:choose>
-										
 											<span class="fd_name">${feed.gpauthor}</span>
 										</a> 
-										<a href="">
+										<a href="${root }group/?grnum=${detail.grnum }&pronum=${login.pronum}">
 											<span class="fd_group">${detail.grname}</span>
 										</a>
 									</dt>
@@ -690,32 +700,32 @@
 												</c:when>
 												<c:when
 													test="${empty feed.httitle1 && empty feed.httitle2}">
-													<li><a href="">${feed.httitle3}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle3}">${feed.httitle3}</a></li>
 												</c:when>
 												<c:when
 													test="${empty feed.httitle2 && empty feed.httitle3}">
-													<li><a href="">${feed.httitle1}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle1}">${feed.httitle1}</a></li>
 												</c:when>
 												<c:when
 													test="${empty feed.httitle1 && empty feed.httitle3}">
-													<li><a href="">${feed.httitle2}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle2}">${feed.httitle2}</a></li>
 												</c:when>
 												<c:when test="${empty feed.httitle1}">
-													<li><a href="">${feed.httitle2}</a></li>
-													<li><a href="">${feed.httitle3}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle2}">${feed.httitle2}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle3}">${feed.httitle3}</a></li>
 												</c:when>
 												<c:when test="${empty feed.httitle2}">
-													<li><a href="">${feed.httitle1}</a></li>
-													<li><a href="">${feed.httitle3}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle1}">${feed.httitle1}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle3}">${feed.httitle3}</a></li>
 												</c:when>
 												<c:when test="${empty feed.httitle3}">
-													<li><a href="">${feed.httitle1}</a></li>
-													<li><a href="">${feed.httitle2}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle1}">${feed.httitle1}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle2}">${feed.httitle2}</a></li>
 												</c:when>
 												<c:otherwise>
-													<li><a href="">${feed.httitle1}</a></li>
-													<li><a href="">${feed.httitle2}</a></li>
-													<li><a href="">${feed.httitle3}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle1}">${feed.httitle1}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle2}">${feed.httitle2}</a></li>
+													<li><a href="${root }search/?keyword=${feed.httitle3}">${feed.httitle3}</a></li>
 												</c:otherwise>
 											</c:choose>
 										</ul>
@@ -730,13 +740,13 @@
 												<c:if test="${not doneLoop }">
 													<li class="">
 														<c:choose>
-															<c:when test="${feedcmmt.profile.prophoto eq '' }">
-																<a href="" class="pf_picture">
+															<c:when test="${feedcmmt.profile.prophoto eq null }">
+																<a href="${root }user/?pronum=${feedcmmt.pronum}" class="pf_picture">
 																	<img src="${root }resources/upload/thumb/no_profile.png" alt="${feedcmmt.gcauthor }님의 프로필 썸네일">
 																</a>
 															</c:when>
 															<c:otherwise>
-																<a href="" class="pf_picture">
+																<a href="${root }user/?pronum=${feedcmmt.pronum}" class="pf_picture">
 																	<img src="${upload }/${feedcmmt.profile.prophoto}" alt="${feedcmmt.gcauthor }님의 프로필 썸네일">
 																</a>
 															</c:otherwise>
@@ -744,7 +754,7 @@
 														<!-- } # 프로필 이미지 없음 -->
 														<p class="cmt_content">
 														<input type="hidden" id="delCmmtNum" value="${feedcmmt.gcnum}" />
-														<a href="" class="cmt_name">${feedcmmt.gcauthor }</a>&nbsp;&nbsp;${feedcmmt.gccontent }
+														<a href="${root }user/?pronum=${feedcmmt.pronum}" class="cmt_name">${feedcmmt.gcauthor }</a>&nbsp;&nbsp;${feedcmmt.gccontent }
 														<span class="cmt_date">${feedcmmt.gcdate1 }</span>
 															<c:if test="${(login.pronum eq feed.pronum ) or (login.pronum eq feedcmmt.pronum) or (login.pronum eq detail.pronum)}">
 																<button class="btn_delete btn_pop" id="groupcmmtdelete" data-layer="deletegrcmmt" data-value="${feedcmmt.gcnum }">
@@ -771,14 +781,12 @@
 									<c:choose>
 										<c:when test="${login.prophoto eq null}">
 											<a class="pf_picture" href="">
-												<img src="${root}resources/images/thumb/no_profile.png"
-													alt="${login.proname } 님의 프로필 썸네일">
+												<img src="${root}resources/images/thumb/no_profile.png" alt="${login.proname } 님의 프로필 썸네일">
 											</a>
 										</c:when>
 										<c:otherwise>
 											<a class="pf_picture" href="">
-												<img src="${upload }/${login.prophoto }"
-													alt="${login.proname } 님의 프로필 썸네일">
+												<img src="${upload }/${login.prophoto }" alt="${login.proname } 님의 프로필 썸네일">
 											</a>
 										</c:otherwise>
 									</c:choose>

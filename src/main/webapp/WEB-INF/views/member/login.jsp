@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:url value="/" var="root"></c:url>
+<c:url value="/" var="root" />
+<c:url value="/resources/upload" var="upload" />
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#btn_submit2').on("click", function() {
@@ -15,7 +16,10 @@
 						} else if (data.prorn == '3') {
 							location.href = "${root}admin/";
 						} else if (data.prorn == '4') {
-							location.href = "${root}";
+							var url = window.location.href;
+							if(url.indexOf('login')>0)
+								location.href='${root}empty';
+								$('#check').show();
 						}
 					});
 					return false;
@@ -102,9 +106,7 @@
 					<div class="ip_box">
 						<input id="pw" name="pw" type="password" placeholder="password">
 					</div>
-					<c:if test="${data == 4 }">
-					<p class="f_message rst">아이디 혹은 비밀번호를 다시 확인해주세요.</p>
-					</c:if>
+					<p id="check" hidden="hidden" class="f_message rst">아이디 혹은 비밀번호를 다시 확인해주세요.</p>
 					<button type="submit" name="btn_submit2" id="btn_submit2"
 						class="comm_btn sbm">로그인</button>
 				</form>

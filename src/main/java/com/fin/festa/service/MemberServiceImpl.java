@@ -1,16 +1,16 @@
 package com.fin.festa.service;
 
-import java.util.Enumeration;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.fin.festa.model.MemberDaoImpl;
 import com.fin.festa.model.entity.CampVo;
 import com.fin.festa.model.entity.GroupVo;
@@ -25,37 +25,42 @@ import com.fin.festa.model.entity.ProfileVo;
 @Service
 public class MemberServiceImpl implements MemberService {
 
-	// µî·Ï,¼öÁ¤,»èÁ¦°¡ ÃÖ¼Ò2°³ÀÌ»ó µé¾î°¡´Â ¸Ş¼Òµå´Â ²À Æ®·£Àè¼Ç Àû¿ëÇÒ°Í!!
+	// ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½2ï¿½ï¿½ï¿½Ì»ï¿½ ï¿½ï¿½î°¡ï¿½ï¿½ ï¿½Ş¼Òµï¿½ï¿½ ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ò°ï¿½!!
 
 	@Autowired
 	MemberDaoImpl memberDao;
 
-	// ·Î±×ÀÎÃ³¸® À¯¹«, È¸¿øÀÌ ÀÖÀ»½Ã ÇØ´çÈ¸¿øÁ¤º¸ Ãâ·Â v
-	// ·Î±×ÀÎ¿Ï·á½Ã °èÁ¤ºñÈ°¼ºÈ­ È°¼ºÈ­·Î ¾÷µ¥ÀÌÆ® v
-	// ·Î±×ÀÎ¿Ï·á½Ã Á¤Áö,Ãß¹æ,°ü¸®ÀÚ °èÁ¤ÀÎÁö Ã¼Å© v
-	// ·Î±×ÀÎ¿Ï·á½Ã ÇØ´çÈ¸¿øÀÇ °¡ÀÔ±×·ì¸ñ·Ï Ãâ·Â v
-	// ·Î±×ÀÎ¿Ï·á½Ã ÇØ´çÈ¸¿øÀÇ ºÏ¸¶Å©¸ñ·Ï Ãâ·Â v
-	// ·Î±×ÀÎ¿Ï·á½Ã ÃßÃµ±×·ì¸®½ºÆ® Ãâ·Â v
-	// ·Î±×ÀÎ¿Ï·á½Ã ÃßÃµÄ·ÇÎÀå¸®½ºÆ® Ãâ·Â v
-	// ·Î±×ÀÎ¿Ï·á½Ã ³»ÁÁ¾Æ¿ä¸ñ·Ï Ãâ·Â v
-	// ³» ÆÈ·ÎÀ×¸®½ºÆ® Ãâ·Â(¼¼¼ÇÀÌ °ª¸¸ ´ã¾ÆµÎ±â ´Ù¸¥»ç¶÷ÇÁ·ÎÇÊ Á¢¼Ó½Ã ÆÈ·Î¿ì À¯¹«Ã¼Å©ÇÏ±âÀ§ÇÔ) v
+	// ë¡œê·¸ì¸ì²˜ë¦¬ ìœ ë¬´, íšŒì›ì´ ìˆì„ì‹œ í•´ë‹¹íšŒì›ì •ë³´ ì¶œë ¥ v
+	// ë¡œê·¸ì¸ì™„ë£Œì‹œ ê³„ì •ë¹„í™œì„±í™” í™œì„±í™”ë¡œ ì—…ë°ì´íŠ¸ v
+	// ë¡œê·¸ì¸ì™„ë£Œì‹œ ì •ì§€,ì¶”ë°©,ê´€ë¦¬ì ê³„ì •ì¸ì§€ ì²´í¬ v
+	// ë¡œê·¸ì¸ì™„ë£Œì‹œ í•´ë‹¹íšŒì›ì˜ ê°€ì…ê·¸ë£¹ëª©ë¡ ì¶œë ¥ v
+	// ë¡œê·¸ì¸ì™„ë£Œì‹œ í•´ë‹¹íšŒì›ì˜ ë¶ë§ˆí¬ëª©ë¡ ì¶œë ¥ v
+	// ë¡œê·¸ì¸ì™„ë£Œì‹œ ì¶”ì²œê·¸ë£¹ë¦¬ìŠ¤íŠ¸ ì¶œë ¥ v
+	// ë¡œê·¸ì¸ì™„ë£Œì‹œ ì¶”ì²œìº í•‘ì¥ë¦¬ìŠ¤íŠ¸ ì¶œë ¥ v
+	// ë¡œê·¸ì¸ì™„ë£Œì‹œ ë‚´ì¢‹ì•„ìš”ëª©ë¡ ì¶œë ¥ v
+	// ë‚´ íŒ”ë¡œì‰ë¦¬ìŠ¤íŠ¸ ì¶œë ¥(ì„¸ì…˜ì´ ê°’ë§Œ ë‹´ì•„ë‘ê¸° ë‹¤ë¥¸ì‚¬ëŒí”„ë¡œí•„ ì ‘ì†ì‹œ íŒ”ë¡œìš° ìœ ë¬´ì²´í¬í•˜ê¸°ìœ„í•¨) v
 	@Override
-	public ProfileVo login(HttpServletRequest req, LoginVo loginVo) {
+	public ProfileVo login(HttpServletRequest req,HttpServletResponse resp, LoginVo loginVo) {
 		ProfileVo profile = memberDao.login(loginVo);
 		System.out.println(profile);
 		if (profile.getLogincheck() != 0) {
 			HttpSession session = req.getSession();
 			session.setAttribute("login", profile);
-			// Á¤Áö,°­Åğ ¾Æ´Ï¸é1 ÇØ´çÀÌ¸é 2
+			// ì •ì§€,ê°•í‡´ ì•„ë‹ˆë©´1 í•´ë‹¹ì´ë©´ 2Ø´ï¿½ï¿½Ì¸ï¿½ 2
 			MyAdminVo myAdmin = memberDao.stopAndKickMember(profile);
 			if (myAdmin.getProstop() == 2) {
-				// Á¤ÁöÈ¸¿ø
+				// ì •ì§€íšŒì›
 				profile.setProrn(1);
 			} else if (myAdmin.getProkick() == 2) {
-				// Ãß¹æÈ¸¿ø
+				// ì¶”ë°©íšŒì›
 				profile.setProrn(2);
 			} else if (myAdmin.getPropublic() == 3) {
-				// °ü¸®ÀÚ
+				// ê´€ë¦¬ì
+				Cookie userCookie = new Cookie("loginCookie",profile.getProid());
+				userCookie.setMaxAge(60*60*24);
+				userCookie.setPath("/");
+				resp.addCookie(userCookie);
+				
 				profile.setProrn(3);
 			} else {
 				memberDao.inactiveUpdate(profile);
@@ -73,6 +78,11 @@ public class MemberServiceImpl implements MemberService {
 				session.setAttribute("goodlist", goodlist);
 				session.setAttribute("followlist", followlist);
 
+				Cookie userCookie = new Cookie("loginCookie",profile.getProid());
+				userCookie.setMaxAge(60*60*24);
+				userCookie.setPath("/");
+				resp.addCookie(userCookie);
+				
 				profile.setProrn(0);
 			}
 		} else {
@@ -81,26 +91,32 @@ public class MemberServiceImpl implements MemberService {
 		return profile;
 	}
 
-	// ÇØ´çÈ¸¿ø ·Î±×¾Æ¿ôÃ³¸®
+	// í•´ë‹¹íšŒì› ë¡œê·¸ì•„ì›ƒì²˜ë¦¬
 	@Override
-	public void logout(HttpServletRequest req) {
+	public void logout(HttpServletRequest req,HttpServletResponse resp) {
 		HttpSession session = req.getSession();
 		session.invalidate();
+		Cookie[] userCookies = req.getCookies();
+	    for(int i=0; i<userCookies.length; i++) {
+	         userCookies[i].setMaxAge(0);
+	         userCookies[i].setPath("/");
+	         resp.addCookie(userCookies[i]);
+	    }
 	}
 
-	// È¸¿ø°¡ÀÔ µî·ÏÃ³¸®
-	// ¼Ò¼ÈÈ¸¿ø°¡ÀÔ,ÀÏ¹İÈ¸¿ø°¡ÀÔ ±¸ºĞ
-	// È¸¿ø°¡ÀÔ µî·Ï¿Ï·á½Ã ³»°ü¸®Å×ÀÌºí »ı¼º
+	// È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã³ï¿½ï¿½
+	// ï¿½Ò¼ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½Ï¹ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ï¿Ï·ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½
 	@Override
 	public void memberInsertOne(Model model, ProfileVo profileVo) {
 		if(profileVo.getProprovide() == 0) {
 			String proidnum = profileVo.getProidnum();
 			StringBuffer sb = new StringBuffer(proidnum);
 			
-			sb.insert(4,"³â");
-			sb.insert(7, "¿ù");
+			sb.insert(4,"ï¿½ï¿½");
+			sb.insert(7, "ï¿½ï¿½");
 			proidnum = sb.toString();
-			proidnum +="ÀÏ";
+			proidnum +="ï¿½ï¿½";
 			
 			profileVo.setProidnum(proidnum);
 			
@@ -116,7 +132,7 @@ public class MemberServiceImpl implements MemberService {
 
 	}
 
-	// ¾ÆÀÌµğÁßº¹Ã¼Å©
+	// ï¿½ï¿½ï¿½Ìµï¿½ï¿½ßºï¿½Ã¼Å©
 	@Override
 	public int idCheck(Model model, LoginVo loginVo) {
 		int result = memberDao.idDuplicate(loginVo);
@@ -124,32 +140,32 @@ public class MemberServiceImpl implements MemberService {
 		return result;
 	}
 
-	// ¾ÆÀÌµğÃ£±â
+	// ï¿½ï¿½ï¿½Ìµï¿½Ã£ï¿½ï¿½
 	@Override
 	public ProfileVo findId(Model model, LoginVo loginVo) {
 		ProfileVo profile = null;
 		if(loginVo.getProidnum().length()==8 && loginVo.getProidnum() != null) {
 			StringBuffer sb = new StringBuffer(loginVo.getProidnum());
-			sb.insert(4,"³â");
-			sb.insert(7, "¿ù");
+			sb.insert(4,"ï¿½ï¿½");
+			sb.insert(7, "ï¿½ï¿½");
 			String proidnum = sb.toString();
-			proidnum +="ÀÏ";
+			proidnum +="ï¿½ï¿½";
 			loginVo.setProidnum(proidnum);
 			profile = memberDao.findId(loginVo);
 		}
 		return profile;
 	}
 
-	// ºñ¹Ğ¹øÈ£Ã£±â
+	// ï¿½ï¿½Ğ¹ï¿½È£Ã£ï¿½ï¿½
 	@Override
 	public ProfileVo findPw(Model model, LoginVo loginVo) {
 		ProfileVo profile = null;
 		if(loginVo.getProidnum().length()==8) {
 			StringBuffer sb = new StringBuffer(loginVo.getProidnum());
-			sb.insert(4,"³â");
-			sb.insert(7, "¿ù");
+			sb.insert(4,"ï¿½ï¿½");
+			sb.insert(7, "ï¿½ï¿½");
 			String proidnum = sb.toString();
-			proidnum +="ÀÏ";
+			proidnum +="ï¿½ï¿½";
 			loginVo.setProidnum(proidnum);
 			profile = memberDao.findPw(loginVo);
 //			System.out.println("profile.getproid : "+profile.getProid());
@@ -162,7 +178,7 @@ public class MemberServiceImpl implements MemberService {
 		}
 		return profile;
 	}
-	//ºñ¹Ğ¹øÈ£ Àç¼³Á¤
+	//ï¿½ï¿½Ğ¹ï¿½È£ ï¿½ç¼³ï¿½ï¿½
 	@Override
 	public String updatePw(Model model,ProfileVo profile) {
 		System.out.println(profile.getPronum());
@@ -171,4 +187,61 @@ public class MemberServiceImpl implements MemberService {
 		return "index";
 	}
 
+	//ë¡œê·¸ì¸ìœ ì§€
+		@Override
+		public ProfileVo loginCookie(HttpServletRequest req, HttpServletResponse resp, LoginVo loginVo) {
+
+			ProfileVo profile = memberDao.loginCookie(loginVo);
+			loginVo.setPw(profile.getPropw());
+			
+			profile = memberDao.login(loginVo);
+			System.out.println(profile);
+			if (profile.getLogincheck() != 0) {
+				HttpSession session = req.getSession();
+				session.setAttribute("login", profile);
+				// ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´Ï¸ï¿½1 ï¿½Ø´ï¿½ï¿½Ì¸ï¿½ 2
+				MyAdminVo myAdmin = memberDao.stopAndKickMember(profile);
+				if (myAdmin.getProstop() == 2) {
+					// ï¿½ï¿½ï¿½ï¿½È¸ï¿½ï¿½
+					profile.setProrn(1);
+				} else if (myAdmin.getProkick() == 2) {
+					// ï¿½ß¹ï¿½È¸ï¿½ï¿½
+					profile.setProrn(2);
+				} else if (myAdmin.getPropublic() == 3) {
+					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+					Cookie userCookie = new Cookie("loginCookie", profile.getProid());
+					userCookie.setMaxAge(60*60*24);
+					userCookie.setPath("/");
+					resp.addCookie(userCookie);
+					
+					profile.setProrn(3);
+				} else {
+					memberDao.inactiveUpdate(profile);
+					List<JoinGroupVo> joinGroup = memberDao.myJoinGroupSelectAll(profile);
+					List<MyBookMarkVo> bookMark = memberDao.myBookMarkSelectAll(profile);
+					List<GroupVo> goodgroup = memberDao.goodGroupSelectAll();
+					List<CampVo> goodcamp = memberDao.goodCampSelectAll();
+					List<MyGoodVo> goodlist = memberDao.myGoodSelectAll(profile);
+					List<MyFollowingVo> followlist = memberDao.myFollowingList(profile);
+
+					session.setAttribute("joinGroup", joinGroup);
+					session.setAttribute("bookMark", bookMark);
+					session.setAttribute("goodgroup", goodgroup);
+					session.setAttribute("goodcamp", goodcamp);
+					session.setAttribute("goodlist", goodlist);
+					session.setAttribute("followlist", followlist);
+					
+					Cookie userCookie = new Cookie("loginCookie", profile.getProid());
+					userCookie.setMaxAge(60*60*24);
+					userCookie.setPath("/");
+					resp.addCookie(userCookie);
+
+					profile.setProrn(0);
+					
+				}
+			} else {
+				profile.setProrn(4);
+			}
+			return profile;
+		}
 }

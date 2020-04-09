@@ -11,10 +11,37 @@
 	<script type="text/javascript" src="${root }resources/js/jquery-1.12.4.js"></script>
 	<script type="text/javascript" src="${root }resources/js/util.js"></script>
 	<script type="text/javascript" src="${root }resources/js/site.js"></script>
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-	<link rel="stylesheet" href="${root }resources/css/site.css">
+	<link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<link type="text/css" rel="stylesheet" href="${root}resources/css/site.css">
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
 	<title>FESTA</title>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			
+			var cookie = '${cookie.loginCookie.value}';
+			var login = '${login}';
+			
+			if(cookie!=''&&login==''&&loginValue==true){
+				openPop('loginCookie');
+			}
+			
+			$('#btnCookie').on('click',function(){
+				$.post('${root}member/loginCookie','id='+cookie,function(data){
+					if (data.prorn == '0') {
+						location.reload();
+					} else if (data.prorn == '1') {
+						location.href = "${root}member/stop";
+					} else if (data.prorn == '2') {
+						location.href = "${root}member/kick";
+					} else if (data.prorn == '3') {
+						location.reload();
+					} else if (data.prorn == '4') {
+						location.href = "${root}";
+					}
+				});
+			});
+		});
+	</script>
 </head>
 <body>
 <c:if test="${sessionScope.login eq null}">
@@ -224,6 +251,16 @@
 				<p>&copy; DEOKSOORR. All RIGHTS RESERVED.</p>
 			</div>
 		</div>
+	</div>
+</div>
+<!-- #팝업 처리완료 { -->
+<div id="loginCookie" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
 	</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>

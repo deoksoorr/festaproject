@@ -3,7 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:url value="/" var="root"></c:url>
-<c:url value="/upload" var="upload"></c:url>
+<c:url value="/resources/upload" var="upload" />
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -13,12 +13,38 @@
 	<script type="text/javascript" src="${root}resources/js/jquery-1.12.4.js"></script>
 	<script type="text/javascript" src="${root}resources/js/util.js"></script>
 	<script type="text/javascript" src="${root}resources/js/site.js"></script>
-	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
-	<link rel="stylesheet" href="${root}resources/css/site.css">
+	<link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
+	<link type="text/css" rel="stylesheet" href="${root}resources/css/site.css">
 	<link rel="shortcut icon" href="${root}resources/favicon.ico">
 	<title>FESTA</title>
 	<script type="text/javascript">
 	$(function() {
+		var login = '${login ne null}';
+		if (login == 'false') {
+			location.href='${root}empty';
+		}
+		var cookie = '${cookie.loginCookie.value}';
+		var login = '${login}';
+	    
+		if(cookie!=''&&login==''&&loginValue==true){
+			openPop('loginCookie');
+		}
+	    
+		$('#btnCookie').on('click',function(){
+			$.post('${root}member/loginCookie','id='+cookie,function(data){
+				if (data.prorn == '0') {
+					location.reload();
+				} else if (data.prorn == '1') {
+					location.href = "${root}member/stop";
+				} else if (data.prorn == '2') {
+					location.href = "${root}member/kick";
+				} else if (data.prorn == '3') {
+					location.reload();
+				} else if (data.prorn == '4') {
+					location.href = "${root}";
+				}
+			});
+		});
 		// 로그인 유무에 따른 버튼 처리
 		var login = '${login ne null}';
 		if (login == 'false') {
@@ -495,6 +521,15 @@
 			<li><button type="button" class="btn_close comm_btn cnc">취소</button></li>
 			<li><button type="button" id="deleteBtn" class="comm_btn cfm">확인</button></li>
 			<li><button type="button" id="confirmBtn" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
+<div id="loginCookie" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">로그인을 유지하시겠습니까?</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cnc">로그아웃</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">확인</button></li>
 		</ul>
 	</div>
 </div>

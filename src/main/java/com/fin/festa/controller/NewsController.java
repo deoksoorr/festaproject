@@ -7,6 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fin.festa.model.entity.GroupCommentVo;
 import com.fin.festa.model.entity.GroupPostVo;
@@ -30,9 +32,16 @@ public class NewsController {
 	
 	//뉴스피드 조회
 	@RequestMapping(value = "", method = RequestMethod.GET)
-	public String newsFeedSelectAll(Model model, MyFollowingVo myFollowingVo){
-		newsService.newsFeedSelectAll(model, myFollowingVo);
+	public String newsFeedSelectAll(HttpServletRequest req, MyFollowingVo myFollowingVo){
+		newsService.newsFeedSelectAll(req, myFollowingVo);
 		return "news/index";
+	}
+	
+	//뉴스피드 조회
+	@RequestMapping(value = "more", method = RequestMethod.GET)
+	public @ResponseBody String newsFeedMore(HttpServletRequest req, MyFollowingVo myFollowingVo){
+		newsService.newsFeedSelectAll(req, myFollowingVo);
+		return "news/more";
 	}
 	
 	//내 피드 수정 (팝업)
@@ -43,7 +52,7 @@ public class NewsController {
 	
 	//내 피드 수정 (팝업>팝업 내 기능)
 	@RequestMapping(value = "edit", method = RequestMethod.POST)
-	public String feedUpdateOne(Model model, MyPostVo myPostVo, GroupPostVo groupPostVo) {
+	public String feedUpdateOne(HttpServletRequest req, MyPostVo myPostVo, GroupPostVo groupPostVo, MultipartFile[] files) {
 		return "news/index";
 	}
 
@@ -85,7 +94,7 @@ public class NewsController {
 	
 	//뉴스피드 신고 (팝업>팝업 내 기능)
 	@RequestMapping(value = "report", method = RequestMethod.POST)
-	public String newsFeedReport(Model model, ReportListVo reportListVo){
+	public String newsFeedReport(HttpServletRequest req, ReportListVo reportListVo, MultipartFile[] files){
 		return "news/index";
 	}
 }
