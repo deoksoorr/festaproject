@@ -39,7 +39,7 @@ public class GroupVo {					//그룹
 	private ProfileVo profile;
 	private ReportListVo reportList;
 	private UpdateWaitVo updateWait;
-	
+	private List<ProfileVo> list;
 	@Override
 	public String toString() {
 		return "GroupVo [groupList=" + groupList + ", grnum=" + grnum + ", grname=" + grname + ", grintro=" + grintro
@@ -51,7 +51,7 @@ public class GroupVo {					//그룹
 				+ joinGroup + ", myAdmin=" + myAdmin + ", myBookMark=" + myBookMark + ", myComment=" + myComment
 				+ ", myFollower=" + myFollower + ", myFollowing=" + myFollowing + ", myGood=" + myGood + ", myPost="
 				+ myPost + ", myVenture=" + myVenture + ", pageSearch=" + pageSearch + ", profile=" + profile
-				+ ", reportList=" + reportList + ", updateWait=" + updateWait + "]";
+				+ ", reportList=" + reportList + ", updateWait=" + updateWait + ", list="+list+"]";
 	}
 	
 	public GroupVo() {
@@ -64,7 +64,7 @@ public class GroupVo {					//그룹
 			GroupNoticeCommentVo groupNoticeComment, GroupNoticeVo groupNotice, GroupPostVo groupPost,
 			JoinGroupVo joinGroup, MyAdminVo myAdmin, MyBookMarkVo myBookMark, MyCommentVo myComment,
 			MyFollowerVo myFollower, MyFollowingVo myFollowing, MyGoodVo myGood, MyPostVo myPost, MyVentureVo myVenture,
-			PageSearchVo pageSearch, ProfileVo profile, ReportListVo reportList, UpdateWaitVo updateWait) {
+			PageSearchVo pageSearch, ProfileVo profile, ReportListVo reportList, UpdateWaitVo updateWait, List<ProfileVo> list) {
 		super();
 		this.groupList = groupList;
 		this.grnum = grnum;
@@ -100,6 +100,15 @@ public class GroupVo {					//그룹
 		this.profile = profile;
 		this.reportList = reportList;
 		this.updateWait = updateWait;
+		this.list = list;
+	}
+	
+	public List<ProfileVo> getList() {
+		return list;
+	}
+
+	public void setList(List<ProfileVo> list) {
+		this.list = list;
 	}
 
 	public List<GroupVo> getGroupList() {

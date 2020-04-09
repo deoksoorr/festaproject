@@ -25,7 +25,28 @@
 	<script type="text/javascript">
 
 		$(document).ready(function(){
+
+			var login = '${login}';
+			var cookie = '${cookie.loginCookie.value}';
+			if(cookie!=''&&login==''&&loginValue==true){
+			   openPop('loginCookie');
+			}
 			
+			$('#btnCookie').on('click',function(){
+			   $.post('${root}member/loginCookie','id='+cookie,function(data){
+			      if (data.prorn == '0') {
+			         location.href = "${root}user/?pronum="+data.pronum;
+			      } else if (data.prorn == '1') {
+			         location.href = "${root}member/stop";
+			      } else if (data.prorn == '2') {
+			         location.href = "${root}member/kick";
+			      } else if (data.prorn == '3') {
+			         location.href = "${root}admin/";
+			      } else if (data.prorn == '4') {
+			         location.href = "${root}";
+			      }
+			   });
+			});
 			$('#request').on('click', function(){
 				var grnum=$('#grnum').val();
 				var grname=$('#grname').val();
@@ -414,6 +435,17 @@
 			<p class="pop_tit">내용을 다시 확인해주세요.</p>
 			<ul class="comm_buttons">
 				<li><button type="button" id="failed" class="btn_close ok comm_btn cfm" >확인</button></li>
+			</ul>
+		</div>
+	</div>
+	<!-- #팝업 처리완료 { -->
+	<div id="loginCookie" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+			<ul class="comm_buttons">
+				<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+				<li><button type="button" id="btnCookie"
+						class="ok comm_btn cfm">로그인</button></li>
 			</ul>
 		</div>
 	</div>
