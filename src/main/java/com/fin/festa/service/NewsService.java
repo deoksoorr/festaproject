@@ -1,5 +1,7 @@
 package com.fin.festa.service;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
@@ -26,9 +28,13 @@ public interface NewsService {
 		
 	void newsLikeDeleteOne(HttpServletRequest req, MyGoodVo myGoodVo);
 		
-	void newsFeedReport(HttpServletRequest req, ReportListVo reportListVo,  MultipartFile[] files);
+	void newsFeedReport(HttpServletRequest req, MultipartFile[] files, ReportListVo reportListVo);
 		
 	void newsFeedUpdateOne(HttpServletRequest req, GroupPostVo groupPostVo, MyPostVo myPostVo,  MultipartFile[] files);
 		
 	void newsFeedDeleteOne(Model model, GroupPostVo groupPostVo, MyPostVo myPostVo);
+
+	void newsFeedSelectOne(Model model, GroupPostVo groupPostVo, MyPostVo myPostVo);
+	
+	void newsFeedMore(HttpServletRequest req, MyFollowingVo myFollowingVo);
 }

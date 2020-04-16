@@ -22,9 +22,9 @@
 		$(document).ready(function(){
 			
 			var cookie = '${cookie.loginCookie.value}';
-			var login = '${login}';
+			var login = '${login ne null}';
 			
-			if(cookie!=''&&login==''&&loginValue==true){
+			if(cookie!=''&&login=='false'){
 				openPop('loginCookie');
 			}
 			
@@ -106,6 +106,13 @@
 				var mpnum = feed.find('input[type=hidden]').val();
 				$.get('${root}admin/user/detail/cmmt','pronum=${userdetail.pronum}&mpnum='+mpnum+'&pageSearch.page4='+myPage,function(data){
 					$(data).each(function(index){
+						var prophoto=data[index].profile.prophoto;
+						var prophototag;
+						if(prophoto==null||prophoto==''||prophoto==undefined||prophoto.inEmpty){
+							prophototag='<img src="${root}resources/images/thumb/no_profile.png" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+						}else{
+							prophototag='<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+						}
 						if(index==3){
 							 return false;
 						}else if(data.length<4){
@@ -113,7 +120,7 @@
 						}
 						comments.append('<li>'+
 								'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="pf_picture">'+
-									'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
+								prophototag+
 								'</a><p class="cmt_content">'+
 									'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].mcauthor+'</a>&nbsp;'+
 									data[index].mccontent+
@@ -144,10 +151,7 @@
 	</script>
 </head>
 <body>
-<c:if test="${sessionScope.login eq null}">
-	<c:redirect url="/empty"/>
-</c:if>
-<c:if test="${sessionScope.login ne numm }">
+<c:if test="${sessionScope.login ne null }">
 	<c:if test="${sessionScope.login.proid ne 'admin@festa.com' }">
 		<c:redirect url="/empty"/>
 	</c:if>
@@ -180,7 +184,12 @@
 							<a href="">${userdetail.proaddr }</a>
 						</dd>
 						<dd class="pf_picture">
+						<c:if test="${!empty userdetail.prophoto }">
 							<img src="${upload }/${userdetail.prophoto}" alt="${userdetail.proname }님의 프로필 썸네일">
+						</c:if>
+						<c:if test="${empty userdetail.prophoto }">
+							<img src="${root }resources/images/thumb/no_profile.png" alt="${userdetail.proname }님의 프로필 썸네일">
+						</c:if>
 						</dd>
 					</dl>
 				</div>
@@ -207,7 +216,12 @@
 								<a href="${root }admin/user/detail?pronum=${userfeed.pronum}">
 									<input type="hidden" value="${userfeed.mpnum }">
 									<span class="pf_picture">
+									<c:if test="${!empty userfeed.profile.prophoto }">
 										<img src="${upload }/${userfeed.profile.prophoto}" alt="${userfeed.profile.proname }님의 프로필 썸네일">
+									</c:if>
+									<c:if test="${empty userfeed.profile.prophoto }">
+										<img src="${root }resources/images/thumb/no_profile.png" alt="${userfeed.profile.proname }님의 프로필 썸네일">
+									</c:if>
 									</span>
 									<span class="fd_name">${userfeed.mpauthor }</span>
 								</a>
@@ -271,7 +285,12 @@
 										<li>
 											<!-- # 프로필 이미지 없음 { -->
 											<a href="${root }admin/user/detail?pronum=${usercmmt.pronum}" class="pf_picture">
+											<c:if test="${!empty usercmmt.profile.prophoto }">
 												<img src="${upload }/${usercmmt.profile.prophoto}" alt="${usercmmt.profile.proname }님의 프로필 썸네일">
+											</c:if>
+											<c:if test="${empty usercmmt.profile.prophoto }">
+												<img src="${root }resources/images/thumb/no_profile.png" alt="${usercmmt.profile.proname }님의 프로필 썸네일">
+											</c:if>
 											</a>
 											<!-- } # 프로필 이미지 없음 -->
 											<p class="cmt_content">

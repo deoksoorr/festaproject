@@ -324,7 +324,6 @@ public class UserServiceImpl implements UserService {
 		userDao.joinInfoUpdate(profileVo);
 		HttpSession session = req.getSession();
 		session.setAttribute("profile", profileVo);
-		System.out.println(profileVo.getPronum());
 	}
 
 	// 비활성화계정 처리

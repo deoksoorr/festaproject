@@ -80,6 +80,13 @@
 			console.log(gpnum);
 			$.get('${root}search/feed/group_cmmt','gpnum='+gpnum+'&pageSearch.page4='+myPage,function(data){
 				$(data).each(function(index){
+					var prophoto=data[index].profile.prophoto;
+					var prophototag;
+					if(prophoto==null||prophoto==''||prophoto==undefined||prophoto.inEmpty){
+						prophototag='<img src="${root}resources/images/thumb/no_profile.png" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+					}else{
+						prophototag='<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+					}
 					if(index==3){
 						 return false;
 					}else if(data.length<4){
@@ -87,7 +94,7 @@
 					}
 					comments.append('<li>'+
 							'<a href="${root }user/?pronum='+data[index].pronum+'" class="pf_picture">'+
-								'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
+							prophototag+
 							'</a><p class="cmt_content">'+
 								'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].gcauthor+'</a>&nbsp;'+
 								data[index].gccontent+
@@ -108,6 +115,13 @@
 			console.log(mpnum);
 			$.get('${root}search/feed/my_cmmt','mpnum='+mpnum+'&pageSearch.page4='+myPage,function(data){
 				$(data).each(function(index){
+					var prophoto=data[index].profile.prophoto;
+					var prophototag;
+					if(prophoto==null||prophoto==''||prophoto==undefined||prophoto.inEmpty){
+						prophototag='<img src="${root}resources/images/thumb/no_profile.png" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+					}else{
+						prophototag='<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+					}
 					if(index==3){
 						 return false;
 					}else if(data.length<4){
@@ -115,7 +129,7 @@
 					}
 					comments.append('<li>'+
 							'<a href="${root }user/?pronum='+data[index].pronum+'" class="pf_picture">'+
-								'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
+							prophototag+
 							'</a><p class="cmt_content">'+
 								'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].mcauthor+'</a>&nbsp;'+
 								data[index].mccontent+
@@ -183,7 +197,12 @@
 						<a href="${root }user/?pronum${feedDetail.pronum}">
 							<input type="hidden" name="pronum" value="${feedDetail.pronum }">
 							<input type="hidden" name="mpnum" value="${feedDetail.mpnum }">
-							<span class="pf_picture"><img src="${upload }/${feedDetail.profile.prophoto}" alt="${feedDetail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
+							<c:if test="${!empty feedDetail.profile.prophoto }">
+								<span class="pf_picture"><img src="${upload }/${feedDetail.profile.prophoto}" alt="${feedDetail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
+							</c:if>
+							<c:if test="${empty feedDetail.profile.prophoto }">
+								<span class="pf_picture"><img src="${root }resources/images/thumb/no_profile.png" alt="${feedDetail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
+							</c:if>
 							<span class="fd_name">${feedDetail.profile.proname }</span>
 						</a>
 					</dt>
@@ -254,7 +273,12 @@
 							<li>
 								<!-- # 프로필 이미지 없음 { -->
 								<a href="${root }user/?pronum=${feedCmmt.pronum}" class="pf_picture">
+								<c:if test="${!empty feedCmmt.profile.prophoto }">
 									<img src="${upload }/${feedCmmt.profile.prophoto}" alt="${feedCmmt.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
+								</c:if>
+								<c:if test="${empty feedCmmt.profile.prophoto }">
+									<img src="${root }resources/images/thumb/no_profile.png" alt="${feedCmmt.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
+								</c:if>
 								</a>
 								<!-- } # 프로필 이미지 없음 -->
 								<p class="cmt_content">
@@ -278,7 +302,12 @@
 				<c:if test="${login ne null }">
 					<form class="message_form">
 						<a class="pf_picture" href="${root }user/?pronum=${login.pronum}">
+						<c:if test="${!empty login.prophoto }">
 							<img src="${upload }/${login.prophoto}" alt="나의 프로필 썸네일" onload="squareTrim($(this), 30)">
+						</c:if>
+						<c:if test="${empty login.prophoto }">
+							<img src="${root }resources/images/thumb/no_profile.png" alt="나의 프로필 썸네일" onload="squareTrim($(this), 30)">
+						</c:if>
 						</a>
 						<p class="msg_input">
 							<textarea id="" name="mccontent" placeholder="메세지를 입력해주세요"></textarea>
@@ -318,7 +347,12 @@
 							<input type="hidden" name="pronum" value="${feedDetail.pronum }">
 							<input type="hidden" name="gpnum" value="${feedDetail.gpnum }">
 							<input type="hidden" name="grnum" value="${feedDetail.grnum }">
-							<span class="pf_picture"><img src="${upload }/${feedDetail.profile.prophoto}" alt="${feedDetail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
+							<c:if test="${!empty feedDetail.profile.prophoto }">
+								<span class="pf_picture"><img src="${upload }/${feedDetail.profile.prophoto}" alt="${feedDetail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
+							</c:if>
+							<c:if test="${empty feedDetail.profile.prophoto }">
+								<span class="pf_picture"><img src="${root }resources/images/thumb/no_profile.png" alt="${feedDetail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
+							</c:if>
 							<span class="fd_name">${feedDetail.profile.proname }</span>
 						</a>
 						<c:if test="${login ne null }">
@@ -399,7 +433,12 @@
 							<li>
 								<!-- # 프로필 이미지 없음 { -->
 								<a href="${root }user/?pronum=${feedCmmt.pronum}" class="pf_picture">
+								<c:if test="${!empty feedCmmt.profile.prophoto }">
 									<img src="${upload }/${feedCmmt.profile.prophoto}" alt="${feedCmmt.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
+								</c:if>
+								<c:if test="${empty feedCmmt.profile.prophoto }">
+									<img src="${root }resources/images/thumb/no_profile.png" alt="${feedCmmt.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
+								</c:if>
 								</a>
 								<!-- } # 프로필 이미지 없음 -->
 								<p class="cmt_content">
@@ -423,7 +462,12 @@
 				<c:if test="${login ne null }">
 					<form class="message_form">
 						<a class="pf_picture" href="${root }user/?pronum=${login.pronum}">
+						<c:if test="${!empty login.prophoto }">
 							<img src="${upload }/${login.prophoto}" alt="나의 프로필 썸네일" onload="squareTrim($(this), 30)">
+						</c:if>
+						<c:if test="${empty login.prophoto }">
+							<img src="${root }resources/images/thumb/no_profile.png" alt="나의 프로필 썸네일" onload="squareTrim($(this), 30)">
+						</c:if>
 						</a>
 						<p class="msg_input">
 							<textarea id="" name="gccontent" placeholder="메세지를 입력해주세요"></textarea>

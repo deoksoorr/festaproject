@@ -5,6 +5,10 @@
 <c:url value="/" var="root" />
 <c:url value="/resources/upload" var="upload" />
 <script type="text/javascript">
+var url = window.location.href;
+if(url.indexOf('maker')>0){
+	window.location.href='${root}empty';
+}
 	$('#feedUpdate').on('click',function(){
 		var mpcontent = $('#mpcontent1').val();
 		
@@ -49,14 +53,13 @@
 		} 그룹페이지일 경우 공지 -->
 			<div class="mk_cont box">
 			<p class="pf_picture">
-				<c:if test="${profile.prophoto ne '' }">
-					<img src="${upload }/${profile.prophoto}"
-						alt="${profile.proname }님의 프로필 썸네일">
-				</c:if>
-				<c:if test="${profile.prophoto eq '' }">
-					<img src="${root }resources/upload/thumb/no_profile.png"
-						alt="${profile.proname }님의 프로필 썸네일">
-				</c:if>
+				<c:if test="${!empty profile.prophoto }">
+									<img src="${upload }/${profile.prophoto}"
+										alt="${profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${empty profile.prophoto}">
+									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
+								</c:if>
 			</p>
 			<textarea id="mpcontent1" name="mpcontent" placeholder="${login.proname } 님, 무슨 생각을 하고 계신가요?" >${feedDetail.mpcontent}</textarea>
 		</div>

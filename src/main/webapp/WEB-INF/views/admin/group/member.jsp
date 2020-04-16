@@ -6,9 +6,6 @@
 <c:url value="/resources/upload" var="upload"></c:url>
 <!DOCTYPE html>
 <!-- #그룹 멤버 팝업 -->
-<c:if test="${sessionScope.login eq null}">
-	<c:redirect url="/empty"/>
-</c:if>
 <html>
 <script type="text/javascript">
 	var url = window.location.href;
@@ -27,7 +24,12 @@
 						<li>
 							<a href="${root }admin/user/detail?pronum=${joingroup.profile.pronum}">
 								<span class="pf_picture">
+								<c:if test="${!empty joingroup.profile.prophoto }">
 									<img src="${upload }/${joingroup.profile.prophoto}" alt="${joingroup.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 50)">
+								</c:if>
+								<c:if test="${empty joingroup.profile.prophoto }">
+									<img src="${root }resources/images/thumb/no_profile.png" alt="${joingroup.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 50)">
+								</c:if>
 								</span>
 								<b class="fw_name">${joingroup.profile.proname }</b>
 								<span class="fw_intro">${joingroup.profile.prointro }</span>

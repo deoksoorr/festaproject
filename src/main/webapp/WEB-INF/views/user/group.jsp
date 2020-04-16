@@ -22,27 +22,27 @@
 	<script type="text/javascript">
 		$(document).ready(function(){
 			var cookie = '${cookie.loginCookie.value}';
-		      var login = '${login}';
-		      
-		      if(cookie!=''&&login==''&&loginValue==true){
-		         openPop('loginCookie');
-		      }
-		      
-		      $('#btnCookie').on('click',function(){
-		         $.post('${root}member/loginCookie','id='+cookie,function(data){
-		            if (data.prorn == '0') {
-		               location.href = "${root}user/?pronum="+data.pronum;
-		            } else if (data.prorn == '1') {
-		               location.href = "${root}member/stop";
-		            } else if (data.prorn == '2') {
-		               location.href = "${root}member/kick";
-		            } else if (data.prorn == '3') {
-		               location.href = "${root}admin/";
-		            } else if (data.prorn == '4') {
-		               location.href = "${root}";
-		            }
-		         });
-		      });
+			var login = '${login}';
+			
+			if(cookie!=''&&login==''){
+			   openPop('loginCookie');
+			}
+			
+			$('#btnCookie').on('click',function(){
+			   $.post('${root}member/loginCookie','id='+cookie,function(data){
+			      if (data.prorn == '0') {
+			         location.reload();
+			      } else if (data.prorn == '1') {
+			         location.href = "${root}member/stop";
+			      } else if (data.prorn == '2') {
+			         location.href = "${root}member/kick";
+			      } else if (data.prorn == '3') {
+			         location.reload();
+			      } else if (data.prorn == '4') {
+			         location.href = "${root}";
+			      }
+			   });
+			});
 		});
 	</script>
 </head>
@@ -197,11 +197,11 @@
 							<a href="">${sessionScope.profile.proaddr }</a>
 						</dd>
 						<dd class="pf_picture">
-							<c:if test="${profile.prophoto ne '' }">
-									<img src="${upload }/${login.prophoto}"
+							<c:if test="${!empty profile.prophoto }">
+									<img src="${upload }/${profile.prophoto}"
 										alt="${profile.proname }님의 프로필 썸네일">
 								</c:if>
-								<c:if test="${profile.prophoto eq '' }">
+								<c:if test="${empty profile.prophoto}">
 									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
 								</c:if>
 						</dd>
@@ -210,8 +210,8 @@
 				<div class="cnt_list">
 					<ul>
 						<li>피드<b>${myFeedCount }</b></li>
-						<li>팔로워<a class="btn_pop" href="${root }user/follower">${myFollowerCount}</a></li>
-						<li>팔로우<a class="btn_pop" href="${root }user/following">${myFollowingCount }</a></li>
+						<li>팔로워<a class="btn_pop" href="${root }user/follower?pronum=${profile.pronum}">${myFollowerCount}</a></li>
+							<li>팔로우<a id="myFollowingCount" class="btn_pop" href="${root }user/following?pronum=${profile.pronum}">${myFollowingCount }</a></li>
 					</ul>
 				</div>
 			</div>
@@ -222,7 +222,9 @@
 			<section class="side_area">
 				<ul class="lnb_list">
 					<li><a href="${root }user/profile">프로필 관리</a></li>
+					<c:if test="${profile.proprovide ne 1 }">
 					<li><a href="${root }user/check">계정 관리</a></li>
+					</c:if>
 					<!-- 그룹장이 아닌 경우 { -->
 					<c:if test="${groupCheck != 1 }">
 					<li><a href="${root }user/group" class="act">그룹 생성</a></li>
@@ -288,7 +290,7 @@
 						<li class="box">
 							<p><label for="festa3">그룹 소개</label></p>
 							<div>
-								<textarea id="grintro" name="grintro" placeholder="??자 이내로 작성해주세요"></textarea>
+								<textarea id="grintro" name="grintro" placeholder="500자 이내로 작성해주세요"></textarea>
 							</div>
 						</li>
 					</ul>

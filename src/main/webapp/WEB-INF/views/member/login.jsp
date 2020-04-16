@@ -3,6 +3,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:url value="/" var="root" />
 <c:url value="/resources/upload" var="upload" />
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="523392531637-h589a81n8ni7bgln4dc5ot68904e6p4g.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#btn_submit2').on("click", function() {
@@ -10,9 +13,9 @@
 						if (data.prorn == '0') {
 							location.href = "${root}user/?pronum="+data.pronum;
 						} else if (data.prorn == '1') {
-							location.href = "${root}member/stop";
+							location.href = "${root}member/stop?pronum="+data.pronum;
 						} else if (data.prorn == '2') {
-							location.href = "${root}member/kick";
+							location.href = "${root}member/kick?pronum="+data.pronum;
 						} else if (data.prorn == '3') {
 							location.href = "${root}admin/";
 						} else if (data.prorn == '4') {
@@ -39,8 +42,8 @@
 	                }
 	                var date = year+"년"+month+"월"+time.getDate()+"일";
 	                $('#check_proid').html("아이디 : "+ id);
-					$('#check_prodate').html("가입일 : "+date);
-				}
+					$('#check_prodate').html("가입일 : "+date);	
+					}
 				else{
 					$('#find_id_result').html("일치하는 아이디가 없습니다.");
 					$('#check_proid').html();
@@ -48,9 +51,12 @@
 				}
 			});
 		});
+
 		var pronum;
 		$('#find_pw').on("click",function(){
-			$.post('${root}member/find_pw','id='+$('#find_pw_check_id').val()+'&proidnum='+$('#find_pw_check_date').val(),function(data){
+			$('#emailCheck_result').html($('#find_pw_check_id').val()+" 으로 이메일을 보냈습니다.");
+			openPop('emailCheck');
+			$.post('${root}member/emailCheck','id='+$('#find_pw_check_id').val()+'&proidnum='+$('#find_pw_check_date').val(),function(data){
 				var proid = data.proid;
 				var proidnum = data.proidnum;
 				pronum = data.pronum;
@@ -63,16 +69,30 @@
 				console.log(proid);
 				console.log(proidnum);
 				if(proid == find_pw_check_id  && proidnum ==editProidnum ){
-					openPop('resetPw');
+					console.log("id "+proid);
+
 				} else{
-					openPop('ok', noResult, none);
+					openPop('nok');
+				}
+			});
+		});
+		
+		$('#check_email').on("click",function(){
+			$.post("${root}member/dice",function(data){
+				var dice = data;
+				var email_chk = $('#email_chk').val();
+				if(dice==email_chk){
+					openPop('resetPw');
+				}
+				else{
+					openPop('nok');
 				}
 			});
 		});
 		
 		function noResult() {
 			var text = $('.confirm_wrap .pop_tit');
-			text.text('일치하는 회원 정보가 없습니다.');
+			text.text('인증번호가 일치하지 않습니다.');
 		}
 		$('#change_pw').on('click',function(){
 			if($('#propw').val() == $('#propw_check').val()){
@@ -86,6 +106,10 @@
 		$('#change_ok').on('click',function(){
 			window.location.reload();
 		})
+		
+		$('#googleLogin').on("clifk",function(){
+			console.log("클릭");
+		});
 	});
 </script>
 	<!-- #1단계팝업 로그인 -->
@@ -113,10 +137,24 @@
 				<dl class="lg_sns">
 					<dt>SNS계정 간편 로그인</dt>
 					<dd>
-						<button type="button">
-							<img src="${root }resources/images/ico/shp_kakao.png"
-								alt="카카오 계정으로 로그인">
-						</button>
+						<div class="g-signin2" id="googleLogin" data-onsuccess="onSignIn" data-theme="dark"></div>
+						<script>
+						      function onSignIn(googleUser) {
+						        // Useful data for your client-side scripts:
+						        var profile = googleUser.getBasicProfile();
+								$.get("${root}member/socialJoin?id="+profile.getEmail()+"&proname="+profile.getName()+"&proprovide=1",function(data){
+									if(data.prorn==0){
+										location.href="${root}user/?pronum="+data.pronum;
+										
+									}else{
+										location.href="${root}member/join?proid="+profile.getEmail()+"&proname="+profile.getName()+"&proprovide=1"
+									}
+								});
+						        // The ID token you need to pass to your backend:
+						        var id_token = googleUser.getAuthResponse().id_token;
+						        console.log("ID Token: " + id_token);
+      }
+    </script>
 					</dd>
 					<dd>
 						<button type="button">
@@ -213,6 +251,23 @@
 			</ul>
 		</div>
 	</div>
+	<!-- #이메일 인증 { -->
+	<div id="emailCheck" class="fstPop">
+		<div class="id_wrap pop_wrap">
+			<h3 class="pop_tit">이메일 인증</h3>
+			<form class="comm_form">
+				<p id="emailCheck_result">${email.proid }로 이메일을 보냈습니다.</p>
+				<div class="ip_box">
+					<input type="text" id="email_chk" placeholder="인증번호를 입력해주세요." />
+				</div>
+			</form>
+			<ul class="comm_buttons">
+				<li><button type="button" id="check_email"
+							class="comm_btn cfm btn_move">확인</button></li>
+			</ul>
+		</div>
+		
+	</div>
 	<!-- } #2단계팝업 아이디찾기 결과 -->
 	<!-- #2단계팝업 비밀번호 변경 { -->
 	<div id="resetPw" class="fstPop">
@@ -254,6 +309,15 @@
 			<p class="pop_tit">처리가 완료되었습니다.</p>
 			<ul class="comm_buttons">
 				<li><button type="button" class="btn_close comm_btn cfm" id="change_ok" name="change_ok">확인</button></li>
+			</ul>
+		</div>
+	</div>
+		<!-- #3단계팝업 처리완료 { -->
+	<div id="nok" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">인증번호가 일치하지 않습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" class="btn_close comm_btn cnc">확인</button></li>
 			</ul>
 		</div>
 	</div>

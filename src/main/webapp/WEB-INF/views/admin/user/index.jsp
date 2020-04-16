@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:url value="/" var="root"></c:url>
 <!DOCTYPE html>
 <html lang="ko">
@@ -20,9 +22,9 @@
 		$(document).ready(function(){
 			
 			var cookie = '${cookie.loginCookie.value}';
-			var login = '${login}';
+			var login = '${login ne null}';
 			
-			if(cookie!=''&&login==''&&loginValue==true){
+			if(cookie!=''&&login=='false'){
 				openPop('loginCookie');
 			}
 			
@@ -123,10 +125,7 @@
 	</script>
 </head>
 <body>
-<c:if test="${sessionScope.login eq null}">
-	<c:redirect url="/empty"/>
-</c:if>
-<c:if test="${sessionScope.login ne numm }">
+<c:if test="${sessionScope.login ne null }">
 	<c:if test="${sessionScope.login.proid ne 'admin@festa.com' }">
 		<c:redirect url="/empty"/>
 	</c:if>

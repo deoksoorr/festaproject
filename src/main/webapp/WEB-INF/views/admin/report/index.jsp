@@ -19,9 +19,9 @@
 		$(document).ready(function(){
 			
 			var cookie = '${cookie.loginCookie.value}';
-			var login = '${login}';
+			var login = '${login ne null}';
 			
-			if(cookie!=''&&login==''&&loginValue==true){
+			if(cookie!=''&&login=='false'){
 				openPop('loginCookie');
 			}
 			
@@ -140,10 +140,7 @@
 	</script>
 </head>
 <body>
-<c:if test="${sessionScope.login eq null}">
-	<c:redirect url="/empty"/>
-</c:if>
-<c:if test="${sessionScope.login ne numm }">
+<c:if test="${sessionScope.login ne null }">
 	<c:if test="${sessionScope.login.proid ne 'admin@festa.com' }">
 		<c:redirect url="/empty"/>
 	</c:if>

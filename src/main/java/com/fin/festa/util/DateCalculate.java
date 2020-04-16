@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fin.festa.model.entity.FeedVo;
+import com.fin.festa.model.entity.ProfileVo;
 
 //날짜관련 계산
 public class DateCalculate {
@@ -40,7 +41,31 @@ public class DateCalculate {
 		
 	}
 	
-	//그룹,개인피드 병합해서 날짜 2순위,좋아요 1순위 정렬(인기피드출력에 쓰임)
+	//관리자 회원정보 생년월일포맷팅
+	public List<ProfileVo> proidnumFormat(List<ProfileVo> profile){
+		
+		for(int i=0; i<profile.size(); i++) {
+			String proidnum = profile.get(i).getProidnum();
+			String proidnum1 = proidnum.replaceAll("년", "-");
+			String proidnum2 = proidnum1.replaceAll("월", "-");
+			String proidnum3 = proidnum2.replaceAll("일", "");
+			String[] nums = proidnum3.split("-");
+			int num1 = Integer.parseInt(nums[1]);
+			int num2 = Integer.parseInt(nums[2]);
+			if(num1<10) {
+				nums[1] = "0" + Integer.toString(num1);
+			}
+			if(num2<10) {
+				nums[2] = "0" + Integer.toString(num2);
+			}
+			proidnum3 = nums[0]+"-"+nums[1]+"-"+nums[2];
+			profile.get(i).setProidnum(proidnum3);
+		}
+		
+		return profile;
+	}
+	
+	//그룹,개인피드 병합해서 날짜 정렬(뉴스피드출력에 쓰임)
 	public List<FeedVo> VoDateReturn(List<FeedVo> groupFeedList, List<FeedVo> feedList) {
 		
 		List<FeedVo> list= new ArrayList<>();
@@ -66,7 +91,7 @@ public class DateCalculate {
 		return list;
 	}
 	
-	//그룹,개인피드 병합해서 날짜 정렬(뉴스피드출력에 쓰임)
+	//그룹,개인피드 병합해서 날짜 2순위,좋아요 1순위 정렬(인기피드출력에 쓰임)
 	public List<FeedVo> VoDateGoodReturn(List<FeedVo> groupFeedList, List<FeedVo> feedList) {
 		
 		List<FeedVo> list= new ArrayList<>();

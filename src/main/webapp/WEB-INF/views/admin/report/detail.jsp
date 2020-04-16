@@ -5,14 +5,17 @@
 <c:url value="/" var="root"></c:url>
 <c:url value="/resources/upload" var="upload"></c:url>
 <!DOCTYPE html>
-<c:if test="${sessionScope.login eq null}">
-	<c:redirect url="/empty"/>
-</c:if>
-<c:if test="${sessionScope.login ne numm }">
+<c:if test="${sessionScope.login ne null }">
 	<c:if test="${sessionScope.login.proid ne 'admin@festa.com' }">
 		<c:redirect url="/empty"/>
 	</c:if>
 </c:if>
+<script type="text/javascript">
+var url = window.location.href;
+if(url.indexOf('detail')>0){
+	window.location.href='${root}empty';
+}
+</script>
 <!-- #팝업 신고 내용 보기 { -->
 <div class="report_viewer pop_wrap">
 	<h4 class="pop_tit">접수된 신고</h4>

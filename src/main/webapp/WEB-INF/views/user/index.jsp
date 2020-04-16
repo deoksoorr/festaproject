@@ -25,27 +25,27 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		var cookie = '${cookie.loginCookie.value}';
-	      var login = '${login}';
-	      
-	      if(cookie!=''&&login==''&&loginValue==true){
-	         openPop('loginCookie');
-	      }
-	      
-	      $('#btnCookie').on('click',function(){
-	         $.post('${root}member/loginCookie','id='+cookie,function(data){
-	            if (data.prorn == '0') {
-	               location.href = "${root}user/?pronum="+data.pronum;
-	            } else if (data.prorn == '1') {
-	               location.href = "${root}member/stop";
-	            } else if (data.prorn == '2') {
-	               location.href = "${root}member/kick";
-	            } else if (data.prorn == '3') {
-	               location.href = "${root}admin/";
-	            } else if (data.prorn == '4') {
-	               location.href = "${root}";
-	            }
-	         });
-	      });
+		var login = '${login}';
+		
+		if(cookie!=''&&login==''){
+		   openPop('loginCookie');
+		}
+		
+		$('#btnCookie').on('click',function(){
+		   $.post('${root}member/loginCookie','id='+cookie,function(data){
+		      if (data.prorn == '0') {
+		         location.reload();
+		      } else if (data.prorn == '1') {
+		         location.href = "${root}member/stop";
+		      } else if (data.prorn == '2') {
+		         location.href = "${root}member/kick";
+		      } else if (data.prorn == '3') {
+		         location.reload();
+		      } else if (data.prorn == '4') {
+		         location.href = "${root}";
+		      }
+		   });
+		});
 		
 		
 		$('.feed_viewer').each(function(index) {
@@ -107,7 +107,7 @@
 				}
 				if (del == data[index].pronum|| del == fpronum|| pronum == mpronum) {
 					console.log("데이터 : "+data[index].pronum);
-					var check = "${profile.prophoto eq null}";
+					var check = "${!empty profile.prophoto}";
 					var tag = '<li>'
 						+ '<a href="${root}user/?pronum='+data[index].pronum+'" class="pf_picture">';
 						
@@ -118,7 +118,7 @@
 					}
 					
 						tag += '</a><p class="cmt_content">'
-							+ '<a href="" class="cmt_name">'
+							+ '<a href="${root}user/?pronum='+data[index].pronum+'" class="cmt_name">'
 							+ data[index].mcauthor
 							+ '</a>&nbsp;&nbsp;'
 							+ data[index].mccontent
@@ -379,7 +379,7 @@
 					<div class="info_box">
 						<dl>
 							<dt class="pf_tit">
-								<a class="pf_name" href=""><b>${profile.proname }</b></a>
+								<a class="pf_name" href="${root}user/?pronum=${login.pronum}"><b>${profile.proname }</b></a>
 								<!-- 마이페이지일 경우 톱니바퀴 버튼 -->
 								<!-- 유저페이지일 경우 신고하기  -->
 								<c:if test="${login.pronum eq profile.pronum }">
@@ -400,11 +400,11 @@
 								<a href="">${profile.proaddr }</a>
 							</dd>
 							<dd class="pf_picture">
-								<c:if test="${profile.prophoto ne '' }">
+								<c:if test="${!empty profile.prophoto }">
 									<img src="${upload }/${profile.prophoto}"
 										alt="${profile.proname }님의 프로필 썸네일">
 								</c:if>
-								<c:if test="${profile.prophoto eq '' }">
+								<c:if test="${empty profile.prophoto}">
 									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
 								</c:if>
 							</dd>
@@ -432,13 +432,13 @@
 								<input type="hidden" id="mypronum" name="pronum" value="${login.pronum }" />
 								<div class="mk_cont box">
 									<p class="pf_picture">
-										<c:if test="${profile.prophoto ne '' }">
-											<img src="${upload }/${profile.prophoto}"
-											alt="${profile.proname }님의 프로필 썸네일">
-										</c:if>
-										<c:if test="${profile.prophoto eq '' }">
-											<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >										
-										</c:if>
+										<c:if test="${!empty profile.prophoto }">
+									<img src="${upload }/${profile.prophoto}"
+										alt="${profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${empty profile.prophoto}">
+									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
+								</c:if>
 									</p>
 									<textarea id="mpcontent" name="mpcontent"
 										placeholder="${profile.proname } 님, 무슨 생각을 하고 계신가요?"></textarea>
@@ -515,12 +515,13 @@
 											<input type="hidden" id="pronum_sync" name="pronum_sync" value="${myFeedSelectAll.pronum}" /> 
 											<input type="hidden" id="feedPronum" value="${myFeedSelectAll.pronum }" /> 
 											<span class="pf_picture"> 
-											<c:if test="${profile.prophoto ne '' }">
-												<img src="${upload }/${profile.prophoto}" alt="${profile.proname }님의 프로필 썸네일">
-											</c:if> 
-											<c:if test="${profile.prophoto eq '' }">
-												<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일">
-											</c:if>
+											<c:if test="${!empty profile.prophoto }">
+									<img src="${upload }/${profile.prophoto}"
+										alt="${profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${empty profile.prophoto}">
+									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
+								</c:if>
 											</span> 
 											<span class="fd_name">${profile.proname }</span>
 										</a>
@@ -567,16 +568,16 @@
 												</c:when>
 												<c:when
 													test="${empty myFeedSelectAll.httitle2 && empty myFeedSelectAll.httitle3 }">
-													<li><a href="">${myFeedSelectAll.httitle1 }</a></li>
+													<li><a href="${root }search/?keyword=${myFeedSelectAll.httitle1}">${myFeedSelectAll.httitle1 }</a></li>
 												</c:when>
 												<c:when test="${empty myFeedSelectAll.httitle3 }">
-													<li><a href="">${myFeedSelectAll.httitle1 }</a></li>
-													<li><a href="">${myFeedSelectAll.httitle2 }</a></li>
+													<li><a href="${root }search/?keyword=${myFeedSelectAll.httitle1}">${myFeedSelectAll.httitle1 }</a></li>
+													<li><a href="${root }search/?keyword=${myFeedSelectAll.httitle2}">${myFeedSelectAll.httitle2 }</a></li>
 												</c:when>
 												<c:otherwise>
-													<li><a href="">${myFeedSelectAll.httitle1 }</a></li>
-													<li><a href="">${myFeedSelectAll.httitle2 }</a></li>
-													<li><a href="">${myFeedSelectAll.httitle3 }</a></li>
+													<li><a href="${root }search/?keyword=${myFeedSelectAll.httitle1}">${myFeedSelectAll.httitle1 }</a></li>
+													<li><a href="${root }search/?keyword=${myFeedSelectAll.httitle2}">${myFeedSelectAll.httitle2 }</a></li>
+													<li><a href="${root }search/?keyword=${myFeedSelectAll.httitle3}">${myFeedSelectAll.httitle3 }</a></li>
 												</c:otherwise>
 											</c:choose>
 										</ul>
@@ -593,18 +594,17 @@
 														<!-- # 프로필 이미지 없음 { -->
 														<a
 														href="${root }user/?pronum=${myFeedCmmtSelectAll.pronum}"
-														class="pf_picture"> <c:if
-																test="${profile.prophoto ne '' }">
+														class="pf_picture"><c:if
+																test="${!empty profile.prophoto }">
 																<img src="${upload }/${profile.prophoto}"
 																	alt="${profile.proname }님의 프로필 썸네일">
-															</c:if> <c:if test="${profile.prophoto eq '' }">
+															</c:if> <c:if test="${empty profile.prophoto}">
 																<img src="${root }resources/upload/thumb/no_profile.png"
 																	alt="${profile.proname }님의 프로필 썸네일">
-															</c:if>
-													</a> <!-- } # 프로필 이미지 없음 -->
+															</c:if> </a> <!-- } # 프로필 이미지 없음 -->
 														<p class="cmt_content">
 														<input type="hidden" id="delCmmtNum" value="${myFeedCmmtSelectAll.mcnum}" />
-														<a href="" class="cmt_name">${myFeedCmmtSelectAll.mcauthor }</a>&nbsp;&nbsp;${myFeedCmmtSelectAll.mccontent }
+														<a href="${root }user/?pronum=${myFeedCmmtSelectAll.pronum}" class="cmt_name">${myFeedCmmtSelectAll.mcauthor }</a>&nbsp;&nbsp;${myFeedCmmtSelectAll.mccontent }
 														<span class="cmt_date">${myFeedCmmtSelectAll.mcdate1 }</span>
 															<c:if test="${profile.pronum eq login.pronum}">
 																<button class="btn_delete btn_pop" id="mycmmtdelete" data-layer="deletecmmt" data-value="${myFeedCmmtSelectAll.mcnum }">
@@ -629,11 +629,13 @@
 								</div>
 								<form class="message_form">
 									<a class="pf_picture" href=""> 
-									<c:if test="${profile.prophoto ne '' }">
-										<img src="${upload }/${profile.prophoto}" alt="${profile.proname }님의 프로필 썸네일">
-										</c:if> <c:if test="${profile.prophoto eq '' }">
-											<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일">
-										</c:if>
+									<c:if test="${!empty profile.prophoto }">
+									<img src="${upload }/${profile.prophoto}"
+										alt="${profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${empty profile.prophoto}">
+									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
+								</c:if>
 									</a>
 									<p class="msg_input">
 										<textarea id="mccontent" name="mccontent"
@@ -673,7 +675,7 @@
 					<div class="rcmm_list">
 		               <h3><em class="snd_only">추천그룹 목록</em>나홀로 캠핑이 심심하신가요?</h3>
 		               <ul>
-		                  <c:forEach items="${grouplist }" begin="0" end="2" var="grouplist">
+		                  <c:forEach items="${goodgroup }" begin="0" end="2" var="grouplist">
 		                     <c:if test="${login ne null }">
 		                        <li>
 		                        	<c:choose>
@@ -720,7 +722,7 @@
 		            <div class="rcmm_list">
 		               <h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
 		               <ul>
-		                  <c:forEach items="${camplist }" begin="0" end="2" var="camplist">
+		                  <c:forEach items="${goodcamp }" begin="0" end="2" var="camplist">
 		                     <c:set var="image" value="${fn:substringBefore(camplist.caphoto,',') }"/>
 		                     <li>
 		                        <a class="rc_thumb" href="${root }camp/detail?canum=${camplist.canum}">

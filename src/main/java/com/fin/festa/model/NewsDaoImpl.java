@@ -53,60 +53,62 @@ public class NewsDaoImpl implements NewsDao{
 	/////////////////////피드,댓글 수정,등록,삭제/////////////////////////
 	//////////////////////////////////////////////////////////////////////
 	
+	//뉴스피드(유저피드) 1개출력
+	public FeedVo myFeedSelectOne(MyPostVo post) {
+		return sqlSession.selectOne("news.myFeedSelectOne", post);
+	}
+	
+	//뉴스피드(그룹피드) 1개출력
+	public FeedVo groupFeedSelectOne(GroupPostVo grouppost) {
+		return sqlSession.selectOne("news.groupFeedSelectOne", grouppost);
+	}
+	
 	//뉴스피드(유저피드) 댓글등록
 	@Override
 	public void myFeedCmmtInsertOne(MyCommentVo cmmt) {
-		// TODO Auto-generated method stub
-		
+		sqlSession.insert("news.myFeedCmmtInsert", cmmt);
 	}
 
 	//뉴스피드(그룹피드) 댓글등록
 	@Override
 	public void groupFeedCmmtInsertOne(GroupCommentVo groupcmmt) {
-		// TODO Auto-generated method stub
-		
+		sqlSession.insert("news.groupFeedCmmtInsert", groupcmmt);
 	}
 
 	//뉴스피드(유저피드) 댓글삭제
 	@Override
 	public int myFeedCmmtDeleteOne(MyCommentVo cmmt) {
-		// TODO Auto-generated method stub
-		return 0;
+		return sqlSession.delete("news.myFeedCmmtDelete", cmmt);
 	}
 
 	//뉴스피드(그룹피드) 댓글삭제
 	@Override
 	public int groupFeedCmmtDeleteOne(GroupCommentVo groupcmmt) {
-		// TODO Auto-generated method stub
-		return 0;
+		return sqlSession.delete("news.groupFeedCmmtDelete", groupcmmt);
 	}
 	
 	//뉴스피드(유저피드) 삭제
 	@Override
 	public int myFeedDeleteOne(MyPostVo post) {
-		// TODO Auto-generated method stub
-		return 0;
+		return sqlSession.delete("news.myFeedDelete", post);
 	}
 
 	//뉴스피드(그룹피드) 삭제
 	@Override
 	public int groupFeedDeleteOne(GroupPostVo grouppost) {
-		// TODO Auto-generated method stub
-		return 0;
+		return sqlSession.delete("news.groupFeedDelete", grouppost);
 	}
-
+	
 	//뉴스피드(유저피드) 수정
 	@Override
 	public int myFeedUpdateOne(MyPostVo post) {
-		// TODO Auto-generated method stub
-		return 0;
+		return sqlSession.update("news.myFeedUpdate", post);
 	}
-
-	//뉴스피드(그룹피드) 삭제
+	
+	//뉴스피드(그룹피드) 수정
 	@Override
 	public int groupFeedUpdateOne(GroupPostVo grouppost) {
-		// TODO Auto-generated method stub
-		return 0;
+		return sqlSession.update("news.groupFeedUpdate", grouppost);
 	}
 	
 	//////////////////////////////////////////////////////////////////////
@@ -115,65 +117,44 @@ public class NewsDaoImpl implements NewsDao{
 	
 	//뉴스피드(유저피드) 좋아요등록
 	@Override
-	public void myFeedLikeInsertOne(MyGoodVo good) {
-		// TODO Auto-generated method stub
-		
+	public void myFeedLikeInsertOne(MyGoodVo myGoodVo) {
+		sqlSession.insert("news.myFeedLikeInsert", myGoodVo);
 	}
 
 	//뉴스피드(그룹피드) 좋아요등록
 	@Override
-	public void groupFeedLikeInsertOne(MyGoodVo good) {
-		// TODO Auto-generated method stub
-		
+	public void groupFeedLikeInsertOne(MyGoodVo myGoodVo) {
+		sqlSession.insert("news.groupFeedLikeInsert", myGoodVo);
 	}
 
 	//뉴스피드(유저피드) 좋아요해제
 	@Override
-	public int myFeedLikeDeleteOne(MyGoodVo good) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int myFeedLikeDeleteOne(MyGoodVo myGoodVo) {
+		return sqlSession.delete("news.myFeedLikeDelete", myGoodVo);
 	}
-
+	
 	//뉴스피드(그룹피드) 좋아요해제
 	@Override
-	public int groupFeedLikeDeleteOne(MyGoodVo good) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int groupFeedLikeDeleteOne(MyGoodVo myGoodVo) {
+		return sqlSession.delete("news.groupFeedLikeDelete", myGoodVo);
 	}
 
-	//뉴스피드(개인피드) 좋아요등록시 개인피드좋아요 갯수 +1
+	//뉴스피드(개인피드) 좋아요등록시 개인피드좋아요 갯수 업데이트
 	@Override
-	public int myFeedLikeOnePlus(MyPostVo post) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int myFeedLikeUpdate(MyPostVo post) {
+		return sqlSession.update("news.myFeedLikeUpdate", post);
 	}
 
-	//뉴스피드(그룹피드) 좋아요등록시 그룹피드좋아요 갯수+1
+	//뉴스피드(그룹피드) 좋아요등록시 그룹피드좋아요 갯수 업데이트
 	@Override
-	public int groupFeedLikeOnePlus(GroupPostVo grouppost) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	//뉴스피드(개인피드) 좋아요해제시 개인피드좋아요 갯수 -1
-	@Override
-	public int myFeedLikeOneMinus(MyPostVo post) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	//뉴스피드(그룹피드) 좋아요해제시 그룹피드좋아요 갯수 -1
-	@Override
-	public int groupFeedLikeOneMinus(GroupPostVo grouppost) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int groupFeedLikeUpdate(GroupPostVo grouppost) {
+		return sqlSession.update("news.groupFeedLikeUpdate", grouppost);
 	}
 
 	//내 좋아요목록 갱신
 	@Override
 	public List<MyGoodVo> myGoodRenewal(MyGoodVo good) {
-		// TODO Auto-generated method stub
-		return null;
+		return sqlSession.selectList("news.myGoodRenewal", good);
 	}
 	
 	//////////////////////////////////////////////////////////////////////
@@ -183,23 +164,18 @@ public class NewsDaoImpl implements NewsDao{
 	//뉴스피드(유저피드) 신고등록
 	@Override
 	public void myFeedReportInsertOne(ReportListVo report) {
-		// TODO Auto-generated method stub
-		
+		sqlSession.insert("news.myFeedReportInsert", report);
 	}
 
 	//뉴스피드(그룹피드) 신고등록
 	@Override
 	public void groupFeedReportInsertOne(ReportListVo report) {
-		// TODO Auto-generated method stub
-		
+		sqlSession.insert("news.groupFeedReportInsert", report);
 	}
 
 	//신고당한유저 신고당한횟수 +1
 	@Override
 	public int feedReportCountUpdate(ReportListVo report) {
-		// TODO Auto-generated method stub
-		return 0;
+		return sqlSession.update("news.feedReportCountUpdate", report);
 	}
-
-	
 }

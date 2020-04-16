@@ -84,6 +84,13 @@
 			console.log('공지사항번호',gnnum);
 			$.get('${root}admin/group/detail/notice/cmmt','gnnum=${noticedetail.gnnum}&pageSearch.page4='+myPage,function(data){
 				$(data).each(function(index){
+					var prophoto=data[index].profile.prophoto;
+					var prophototag;
+					if(prophoto==null||prophoto==''||prophoto==undefined||prophoto.inEmpty){
+						prophototag='<img src="${root}resouces/images/thumb/no_profile.png" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+					}else{
+						prophototag='<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+					}
 					if(index==3){
 						 return false;
 					}else if(data.length<4){
@@ -91,7 +98,7 @@
 					}
 					comments.append('<li>'+
 							'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="pf_picture">'+
-								'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
+							prophototag+
 							'</a><p class="cmt_content">'+
 								'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].gncauthor+'</a>&nbsp;'+
 								data[index].gnccontent+
@@ -107,9 +114,6 @@
 <!-- #팝업 피드 -->
 <!-- #텍스트+썸네일 피드 시작 { -->
 <body>
-<c:if test="${sessionScope.login eq null}">
-	<c:redirect url="/empty"/>
-</c:if>
 <div class="adm">
 	<div class="feed_viewer<c:if test="${noticedetail.gnphoto ne '' }"> half</c:if>">
 		<div class="tit box">
@@ -117,7 +121,12 @@
 				<dt>
 					<a href="${root }admin/user/detail?pronum=${noticedetail.profile.pronum}">
 						<input type="hidden" value="${noticedetail.gnnum }">
-						<span class="pf_picture"><img src="${upload }/${noticedetail.profile.prophoto}" alt="${noticedatail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
+						<c:if test="${!empty noticedetail.profile.prophoto }">
+							<span class="pf_picture"><img src="${upload }/${noticedetail.profile.prophoto}" alt="${noticedatail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
+						</c:if>
+						<c:if test="${empty noticedetail.profile.prophoto }">
+							<span class="pf_picture"><img src="${root }resources/images/thumb/no_profile.png" alt="${noticedatail.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)"></span>
+						</c:if>
 						<span class="fd_name">${noticedetail.gnauthor }</span>
 					</a>
 					<a href="${root }admin/group/detail?grnum=${noticedetail.grnum}">
@@ -145,7 +154,12 @@
 						<li>
 							<!-- # 프로필 이미지 없음 { -->
 							<a href="${root }admin/user/detail?pronum=${noticecmmt.pronum}" class="pf_picture">
+							<c:if test="${!empty noticecmmt.profile.prophoto }">
 								<img src="${upload }/${noticecmmt.profile.prophoto}" alt="${noticecmmt.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
+							</c:if>
+							<c:if test="${empty noticecmmt.profile.prophoto }">
+								<img src="${root }resources/images/thumb/no_profile.png" alt="${noticecmmt.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
+							</c:if>
 							</a>
 							<!-- } # 프로필 이미지 없음 -->
 							<p class="cmt_content">
@@ -167,7 +181,7 @@
 				</c:if>
 			</div>
 		</div>
-		<c:if test="${noticedetail.gnphoto ne '' }">
+		<c:if test="${!empty noticedetail.gnphoto }">
 		<!-- # 썸네일 영역 { -->
 		<div class="img box">
 			<div class="thumb_slide">

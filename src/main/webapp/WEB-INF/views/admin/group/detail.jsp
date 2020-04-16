@@ -22,9 +22,9 @@
 		$(document).ready(function(){
 			
 			var cookie = '${cookie.loginCookie.value}';
-			var login = '${login}';
+			var login = '${login ne null}';
 			
-			if(cookie!=''&&login==''&&loginValue==true){
+			if(cookie!=''&&login=='false'){
 				openPop('loginCookie');
 			}
 			
@@ -106,6 +106,13 @@
 				var gpnum = feed.find('input[type=hidden]').val();
 				$.get('${root}admin/group/detail/cmmt','grnum=${groupinfo.grnum}&gpnum='+gpnum+'&pageSearch.page4='+myPage,function(data){
 					$(data).each(function(index){
+						var prophoto=data[index].profile.prophoto;
+						var prophototag;
+						if(prophoto==null||prophoto==''||prophoto==undefined||prophoto.inEmpty){
+							prophototag='<img src="${root}resources/images/thumb/no_profile.png" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+						}else{
+							prophototag='<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+						}
 						if(index==3){
 							 return false;
 						}else if(data.length<4){
@@ -113,7 +120,7 @@
 						}
 						comments.append('<li>'+
 								'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="pf_picture">'+
-									'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
+								prophototag+
 								'</a><p class="cmt_content">'+
 									'<a href="${root }admin/user/detail?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].gcauthor+'</a>&nbsp;'+
 									data[index].gccontent+
@@ -148,10 +155,7 @@
 	</script>
 </head>
 <body>
-<c:if test="${sessionScope.login eq null}">
-	<c:redirect url="/empty"/>
-</c:if>
-<c:if test="${sessionScope.login ne numm }">
+<c:if test="${sessionScope.login ne null }">
 	<c:if test="${sessionScope.login.proid ne 'admin@festa.com' }">
 		<c:redirect url="/empty"/>
 	</c:if>
@@ -227,10 +231,10 @@
 							<span>개설일 : ${groupinfo.grdate }</span>
 						</dd>
 						<dd class="pf_picture">
-							<c:if test="${groupinfo.grphoto ne '' }">
+							<c:if test="${!empty groupinfo.grphoto }">
 								<img src="${upload }/${groupinfo.grphoto}" alt="${groupinfo.grname } 그룹 썸네일">
 							</c:if>
-							<c:if test="${groupinfo.grphoto eq '' }">
+							<c:if test="${empty groupinfo.grphoto }">
 								<img src="${root }resources/images/thumb/no_profile.png" alt="${groupinfo.grname } 그룹 썸네일">
 							</c:if>
 						</dd>
@@ -268,7 +272,12 @@
 								<dt>
 									<a href="${root }admin/user/detail?pronum=${groupfeed.pronum}">
 										<input type="hidden" value="${groupfeed.gpnum }">
-										<span class="pf_picture"><img src="${upload }/${groupfeed.profile.prophoto}" alt="${groupfeed.profile.proname }님의 프로필 썸네일"></span>
+										<c:if test="${!empty groupfeed.profile.prophoto }">
+											<span class="pf_picture"><img src="${upload }/${groupfeed.profile.prophoto}" alt="${groupfeed.profile.proname }님의 프로필 썸네일"></span>
+										</c:if>
+										<c:if test="${empty groupfeed.profile.prophoto }">
+											<span class="pf_picture"><img src="${root }resources/images/thumb/no_profile.png" alt="${groupfeed.profile.proname }님의 프로필 썸네일"></span>
+										</c:if>
 										<span class="fd_name">${groupfeed.gpauthor }</span>
 									</a>
 									<a href="${root }admin/group/detail?grnum=${groupinfo.grnum}">
@@ -334,7 +343,12 @@
 										<li>
 											<!-- # 프로필 이미지 없음 { -->
 											<a href="${root }admin/user/detail?pronum=${groupcmmt.pronum}" class="pf_picture">
+											<c:if test="${!empty groupcmmt.profile.prophoto }">
 												<img src="${upload }/${groupcmmt.profile.prophoto}" alt="${groupcmmt.profile.proname }님의 프로필 썸네일">
+											</c:if>
+											<c:if test="${empty groupcmmt.profile.prophoto }">
+												<img src="${root }resources/images/thumb/no_profile.png" alt="${groupcmmt.profile.proname }님의 프로필 썸네일">
+											</c:if>
 											</a>
 											<!-- } # 프로필 이미지 없음 -->
 											<p class="cmt_content">

@@ -132,7 +132,7 @@
 	</resultMap>
 	<!-- 신고관리 내피드 댓글 조인시에 참조되는 데이터 -->
 	<resultMap type="MyCommentVo" id="cmmt">
-		<result column="mcnum" property="mcnum"/>
+		<id column="mcnum" property="mcnum"/>
 		<result column="mccontent" property="mccontent"/>
 		<result column="mcauthor" property="mcauthor"/>
 		<result column="mcdate" property="mcdate"/>
@@ -154,6 +154,7 @@
 		<association property="profile" resultMap="profile4"/>
 	</resultMap>
 	<resultMap type="ProfileVo" id="profile4">
+		<id column="dummy_column_for_unique"/>
 		<result column="prophoto" property="prophoto"/>
 		<result column="pronum" property="pronum"/>
 		<result column="proname" property="proname"/>
@@ -442,7 +443,7 @@
 	
 	<!-- 유저 피드댓글목록 출력 -->
 	<select id="userCmmt" parameterType="ProfileVo" resultMap="cmmt">
-		select a.*,b.prophoto from mycomment a inner join profile b on a.pronum13=b.pronum where pronum_sync=#{pronum} order by mcdate desc
+		select a.*,b.prophoto,b.proname from mycomment a inner join profile b on a.pronum13=b.pronum where pronum_sync=#{pronum} order by mcdate desc
 	</select>
 	
 	<!-- 유저피드 댓글 더보기출력 -->

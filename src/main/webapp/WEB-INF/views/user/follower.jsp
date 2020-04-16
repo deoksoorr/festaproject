@@ -5,8 +5,11 @@
 <c:url value="/" var="root" />
 <c:url value="/resources/upload" var="upload" />
 <script type="text/javascript">
+var url = window.location.href;
+if(url.indexOf('follower')>0){
+	window.location.href='${root}empty';
+}
 $(document).ready(function(){
-	console.log("접속");
 	//팔로우 등록,해제
 	$(document).on('click','.btn_follow',function(){
 		var mfgname = $(this).siblings('a').find('.fw_name').text();
@@ -38,13 +41,15 @@ $(document).ready(function(){
 	 var listSize = $('.follow_wrap .scrBar li').length;
      console.log(listSize); 
 	 for(var i = 0; i< listSize; i++){
-         if($('.follow_wrap .scrBar li').eq(i).find('.btn_follow').hasClass('act')==false){
+	 	if(listSize!=1){
+		 	if($('.follow_wrap .scrBar li').eq(i).find('.btn_follow').hasClass('act')==false){
             var userNum = $('.follow_wrap .scrBar li').eq(i).find('input[type=hidden]').val();
             var myNum = $('.follow_wrap input[type=hidden]').eq(0).val();
             if(userNum != myNum){
                $('.follow_wrap .scrBar li').eq(i).append('<button class="btn_follow">팔로우</button>');
             }
          }
+	 	}
       }
 });
 </script>
@@ -60,10 +65,10 @@ $(document).ready(function(){
 						<li>
 							<a href="">
 								<span class="pf_picture">
-									<c:if test="${follower.profile.prophoto ne ''}">
+									<c:if test="${!empty follower.profile.prophoto}">
 											<img src="${upload }/${follower.profile.prophoto}" alt="${follower.profile.prophoto }님의 프로필 썸네일" onload="squareTrim($(this), 50)">
 										</c:if>
-										<c:if test="${follower.profile.prophoto eq '' }">
+										<c:if test="${empty follower.profile.prophoto}">
 											<img src="${root }resources/upload/thumb/no_profile.png" alt="${follower.profile.prophoto}님의 프로필 썸네일" onload="squareTrim($(this), 50)">										
 										</c:if>
 								</span>

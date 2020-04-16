@@ -26,7 +26,7 @@
 		var cookie = '${cookie.loginCookie.value}';
 		var login = '${login}';
 	    
-		if(cookie!=''&&login==''&&loginValue==true){
+		if(cookie!=''&&login==''){
 			openPop('loginCookie');
 		}
 	    
@@ -49,22 +49,14 @@
 		var login = '${login ne null}';
 		if (login == 'false') {
 			$('.btn_go a').on('click', function(e) {openLayer(e, '${root}member/login')});
-		} else if (login == 'true') {
-			var btnContainer = $('.cp_options li'),
-				likedBtn = '<button class="btn_liked" onclick="liked($(this))"><em class="snd_only">하트</em></button>',
-				bookmarkBtn = '<button class="btn_bookmark" onclick="liked($(this))"><em class="snd_only">저장하기</em></button>';
-			if ($('.btn_liked').length < 1) {
-				btnContainer.eq(0).append(likedBtn);
-			}
-			if ($('.btn_bookmark').length < 1) {
-				btnContainer.eq(1).append(bookmarkBtn);
-			}
 		}
 		
 		// 신고하기
 		$('.btn_report').on('click', function(e) {
 			openLayer(e, '${root}camp/detail/report?canum=${camp.canum}&profile.pronum=${camp.profile.pronum}&profile.proname=${camp.profile.proname}&profile.proid=${camp.profile.proid}');
 		});
+		
+		// 한줄평 등록
 		var rvForm = $('.rate_form');
 		rvForm.on('submit', function(e) {
 			e.preventDefault();
@@ -80,6 +72,7 @@
 				.done(refresh);
 		});
 		
+		// 삭제하기
 		var alertText = $('#layer').find('.pop_tit');
 		var buttons = $('#layer .comm_buttons');
 		var deleteBtn = $('#layer').find('#deleteBtn');
@@ -220,11 +213,26 @@
 							<span class="btn_mylist">나의 채팅</span>
 							<div class="my_list">
 								<ul>
-								<c:forEach items="${joinGroup }" var="joinGroup">
-									<li><a href=""> <span><img
-												src="http://placehold.it/45x45" alt="입돌아간다 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
-									</a></li>
-								</c:forEach>
+									<c:forEach items="${joinGroup }" var="joinGroup">
+										<c:choose>
+											<c:when test="${joinGroup.group.grphoto eq null }"> 
+												<li>
+													<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+														<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+														<b>${joinGroup.group.grname }</b>
+													</a>
+												</li>
+											</c:when>
+											<c:otherwise>
+												<li>
+													<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+														<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+														<b>${joinGroup.group.grname }</b>
+													</a>
+												</li>
+											</c:otherwise>
+										</c:choose>
+									</c:forEach>
 								</ul>
 							</div>
 						</dd>
@@ -281,23 +289,30 @@
 						<ul class="cp_options">
 							<li>
 								<b class="cp_liked">${camp.cagood}</b>
-								<c:choose>
-									<c:when test="${login ne null}">
-										<c:forEach items="${goodlist}" var="good"><c:if test="${camp.canum eq good.canum}"><button class="btn_liked act" onclick="liked($(this))"><em class="snd_only">하트</em></button></c:if></c:forEach>
-									</c:when>
-									<c:otherwise><a class="btn_liked2 btn_pop" href="${root}member/login"><em class="snd_only">하트</em></a></c:otherwise>
-								</c:choose>
+							<c:choose>
+								<c:when test="${login ne null}">
+								<c:forEach items="${goodlist}" var="good">
+									<c:if test="${camp.canum eq good.canum}">
+										<c:set var="active" value=" act"></c:set>
+									</c:if>
+								</c:forEach>
+									<button class="btn_liked${active}" onclick="liked($(this));"><em class="snd_only">하트</em></button>
+								</c:when>
+								<c:otherwise><a class="btn_liked2 btn_pop" href="${root}member/login"><em class="snd_only">하트</em></a></c:otherwise>
+							</c:choose>
 							</li>
 							<li>
-								<c:choose>
-									<c:when test="${login ne null}">
-										<c:forEach items="${bookMark}" var="book">
-											<c:if test="${book.camp.canum eq camp.canum}"><button class="btn_bookmark act" onclick="liked($(this))"><em class="snd_only">저장하기</em></button></c:if>
-											<c:if test="${book.camp.canum ne camp.canum && book.camp.canum eq 1}">test</c:if>
-										</c:forEach>
-									</c:when>
-									<c:otherwise><a class="btn_bookmark2 btn_pop" href="${root}member/login"><em class="snd_only">저장하기</em></a></c:otherwise>
-								</c:choose>
+							<c:choose>
+								<c:when test="${login ne null}">
+								<c:forEach items="${bookMark}" var="book">
+									<c:if test="${book.camp.canum eq camp.canum}">
+										<c:set var="active2" value=" act"></c:set>
+									</c:if>
+								</c:forEach>
+								<button class="btn_bookmark${active2}" onclick="liked($(this));"><em class="snd_only">저장하기</em></button>
+								</c:when>
+								<c:otherwise><a class="btn_bookmark2 btn_pop" href="${root}member/login"><em class="snd_only">저장하기</em></a></c:otherwise>
+							</c:choose>
 							</li>
 							<c:if test="${login ne null}">
 							<li><a href="${root}camp/detail/report" class="btn_report"><em class="snd_only">신고하기</em></a></li>
@@ -374,14 +389,14 @@
 					<c:when test="${campReviewCount ne null}">
 						<c:forEach items="${campReviewList}" var="review">
 						<li>
-							<a class="pf_picture" href="${root}user/?pronum=${login.pronum}">
+							<a class="pf_picture" href="${root}user/?pronum=${review.pronum}">
 							<c:choose>
 								<c:when test="${!empty review.profile.prophoto}"><img src="${upload}/${review.profile.prophoto}" alt="${review.crauthor}"></c:when>
 								<c:otherwise><img src="${root}resources/images/thumb/no_profile.png" alt="${camp.caname}"></c:otherwise>
 							</c:choose>
 							</a>
 							<p class="rt_user">
-								<a class="rt_name" href="${root}user/?pronum=${login.pronum}">
+								<a class="rt_name" href="${root}user/?pronum=${review.pronum}">
 									<b>${review.crauthor}</b>
 								</a>
 								<c:if test="${review.crgood eq 1.0}"><span class="rt_star"><img src="${root}resources/images/ico/shp_star1.png" alt="별 1개"></span></c:if>
@@ -410,12 +425,12 @@
 				<c:choose>
 				<c:when test="${login ne null}">
 				<form class="rate_form" method="POST" action="${root}camp/detail/revadd">
-					<input type="hidden" name="pronum" value="${profile.pronum}">
+					<input type="hidden" name="pronum" value="${login.pronum}">
 					<input type="hidden" name="canum" value="${camp.canum}">
 					<input type="hidden" name="caavg" value="${camp.caavg}">
-					<input type="hidden" name="crauthor" value="${profile.proname}">
+					<input type="hidden" name="crauthor" value="${login.proname}">
 					<div>
-						<p class="rt_name">${profile.proname}</p>
+						<p class="rt_name">${login.proname}</p>
 						<ul class="rt_rates">
 							<li>
 								<input type="radio" id="rtRate1" name="crgood" value="1.0">

@@ -21,6 +21,10 @@ public interface NewsDao {
 	
 	List<GroupCommentVo> joinGroupCommentSelectAll(FeedVo feed);
 	
+	FeedVo myFeedSelectOne(MyPostVo mypost);
+	
+	FeedVo groupFeedSelectOne(GroupPostVo grouppost);
+	
 	void myFeedCmmtInsertOne(MyCommentVo cmmt);
 	
 	void groupFeedCmmtInsertOne(GroupCommentVo groupcmmt);
@@ -29,13 +33,13 @@ public interface NewsDao {
 	
 	int groupFeedCmmtDeleteOne(GroupCommentVo groupcmmt);
 	
-	void myFeedLikeInsertOne(MyGoodVo good);
+	void myFeedLikeInsertOne(MyGoodVo myGoodVo);
 	
-	void groupFeedLikeInsertOne(MyGoodVo good);
+	void groupFeedLikeInsertOne(MyGoodVo myGoodVo);
 	
-	int myFeedLikeDeleteOne(MyGoodVo good);
+	int myFeedLikeDeleteOne(MyGoodVo myGoodVo);
 	
-	int groupFeedLikeDeleteOne(MyGoodVo good);
+	int groupFeedLikeDeleteOne(MyGoodVo myGoodVo);
 	
 	void myFeedReportInsertOne(ReportListVo report);
 	
@@ -49,13 +53,9 @@ public interface NewsDao {
 	
 	int groupFeedUpdateOne(GroupPostVo grouppost);
 
-	int myFeedLikeOnePlus(MyPostVo post);
+	int myFeedLikeUpdate(MyPostVo post);
 	
-	int groupFeedLikeOnePlus(GroupPostVo grouppost);
-	
-	int myFeedLikeOneMinus(MyPostVo post);
-	
-	int groupFeedLikeOneMinus(GroupPostVo grouppost);
+	int groupFeedLikeUpdate(GroupPostVo grouppost);
 	
 	List<MyGoodVo> myGoodRenewal(MyGoodVo good);
 	

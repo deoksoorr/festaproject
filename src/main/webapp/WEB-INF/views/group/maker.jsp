@@ -49,9 +49,20 @@
 		</p>
 		} 그룹페이지일 경우 공지 -->
 			<div class="mk_cont box">
-			<p class="pf_picture">
-				<img src="http://placehold.it/55x55" alt="${login.proname }님의 프로필 썸네일">
-			</p>
+			<c:choose>
+				<c:when test="${login.prophoto eq null }">
+					<p class="pf_picture">
+						<img src="${root}resources/images/thumb/no_profile.png"
+							alt="${login.proname } 님의 프로필 썸네일" onload="squareTrim($(this), 60)">
+					</p>
+				</c:when>
+				<c:otherwise>
+					<p class="pf_picture">
+						<img src="${upload }/${login.prophoto }"
+							alt="${login.proname } 님의 프로필 썸네일" onload="squareTrim($(this), 60)">
+					</p>
+				</c:otherwise>
+			</c:choose>
 			<textarea id="gpcontent1" name="gpcontent" placeholder="${login.proname } 님, 무슨 생각을 하고 계신가요?" >${feedDetail.gpcontent}</textarea>
 		</div>
 		<div class="file_thumbnail mk_thumb box" style="display: block">

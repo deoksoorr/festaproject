@@ -1,5 +1,8 @@
 package com.fin.festa.service;
 
+import java.io.IOException;
+import java.util.concurrent.Future;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,4 +28,12 @@ public interface MemberService {
 		void logout(HttpServletRequest req, HttpServletResponse resp);
 
 		ProfileVo loginCookie(HttpServletRequest req, HttpServletResponse resp, LoginVo loginVo);
+
+		void isKick(Model model, ProfileVo profile);
+
+		void isStop(Model model, ProfileVo profile);
+
+		ProfileVo emailCheck(HttpServletRequest req, HttpServletResponse resp, LoginVo loginVo) throws IOException;
+
+		int dice();
 }

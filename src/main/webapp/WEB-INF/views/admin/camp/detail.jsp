@@ -14,19 +14,56 @@
 	<script type="text/javascript" src="${root }resources/js/util.js"></script>
 	<script type="text/javascript" src="${root }resources/js/site.js"></script>
 	<script type="text/javascript" src="${root }resources/js/jh.js"></script>
+	<script type="text/javascript" src="${root }resources/js/three.js"></script>
+	<script type="text/javascript" src="${root }resources/js/three.module.js"></script>
 	<link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<link type="text/css" rel="stylesheet" href="${root}resources/css/site.css">
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
 	<title>FESTA</title>
+	<style type="text/css">
+		#iframe{
+			text-align: center;
+		}
+	</style>
 	<script type="text/javascript">
+	
+		
 		$(document).ready(function(){
 			
-			var cookie = '${cookie.loginCookie.value}';
-			var login = '${login}';
-			
-			if(cookie!=''&&login==''&&loginValue==true){
-				openPop('loginCookie');
-			}
+				//지오로케이션 접근시 스크롤기능막기
+				var check=false;
+				var i=0;
+				$(document).on('mouseenter','#reali',function(e){
+					check=true;
+					setTimeout(function(){
+						i++;
+					},2000);
+					var scroll = $(document).scrollTop();
+					$(document).on('scroll touchmove mousewheel',function(event){
+						if(check==true&&i>=1){
+							$(document).scrollTop(scroll);
+						}
+					});
+				});
+				//도큐먼트 클릭시 스크롤기능실행
+				$(document).on('click',function(e){
+					check=false;
+					i=0;
+				});
+				
+				/* $(document).on('mouseenter','#reali',function(){
+					var scrolled = -$(document).scrollTop();
+					console.log(scrolled);
+					$('body').css({'position':'fixed','top':scrolled,'text-align':'center','width':'100%'});
+				}); */
+				
+				
+				var cookie = '${cookie.loginCookie.value}';
+				var login = '${login ne null}';
+				
+				if(cookie!=''&&login=='false'){
+					openPop('loginCookie');
+				}
 			
 			$('#btnCookie').on('click',function(){
 				$.post('${root}member/loginCookie','id='+cookie,function(data){
@@ -77,6 +114,9 @@
 				e.preventDefault();
 			});
 			
+			
+			
+			
 		});
 		
 		//페이징에 필요한 필드선언
@@ -85,10 +125,7 @@
 	</script>
 </head>
 <body>
-<c:if test="${sessionScope.login eq null}">
-	<c:redirect url="/empty"/>
-</c:if>
-<c:if test="${sessionScope.login ne numm }">
+<c:if test="${sessionScope.login ne null }">
 	<c:if test="${sessionScope.login.proid ne 'admin@festa.com' }">
 		<c:redirect url="/empty"/>
 	</c:if>
@@ -164,7 +201,7 @@
 				</div>
 				<div class="intro box">
 					<h4 class="snd_only">캠핑장 사진</h4>
-					<c:if test="${campdetail.caphoto ne '' }">
+					<c:if test="${!empty campdetail.caphoto }">
 						<div class="thumb_slide">
 							<div class="swiper-wrapper">
 								<c:set var="caphoto" value="${campdetail.caphoto }" />
@@ -177,7 +214,7 @@
 							<div class="swiper-pagination"></div>
 						</div>
 					</c:if>
-					<c:if test="${campdetail.caphoto eq '' }">
+					<c:if test="${empty campdetail.caphoto }">
 						<div class="thumb_slide">
 							<div class="swiper-wrapper">
 								<div class="swiper-slide">
@@ -218,6 +255,10 @@
 				</div>
 			</div>
 		</section>
+		<div id="iframe">
+			<iframe id="reali" src="${root }admin/camp/gl_camp" width="1000" height="500" scrolling="no" frameborder="1"></iframe>
+		</div>
+		
 		<section class="location_area">
 			<div class="container">
 				<h4 class="sub_tit">오시는 길</h4>
@@ -238,8 +279,13 @@
 							<li>
 								<!-- # 프로필 이미지 없음 { -->
 								<a class="pf_picture" href="${root }admin/user/detail?pronum=${campreview.pronum}">
-									<c:set var="crphoto" value="${campreview.profile.prophoto }" />
+								<c:set var="crphoto" value="${campreview.profile.prophoto }" />
+								<c:if test="${!empty crphoto }">
 									<img src="${upload }/${crphoto}" alt="${campreview.profile.proname }님의 프로필 썸네일">
+								</c:if>
+								<c:if test="${empty crphoto }">
+									<img src="${root }resources/images/thumb/no_profile.png" alt="${campreview.profile.proname }님의 프로필 썸네일">
+								</c:if>
 								</a>
 								<!-- } # 프로필 이미지 없음 -->
 								<p class="rt_option">

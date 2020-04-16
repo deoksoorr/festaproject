@@ -200,14 +200,15 @@ public class AdminServiceImpl implements AdminService{
 		//키워드값에따라 유동적으로 검색갯수를 리턴받아서 페이지에 넣어줌
 		pageSearchVo.setTotalCount2(adminDao.adminUserCount(pageSearchVo));
 		
+		DateCalculate cal = new DateCalculate();
 		//카테고리가 전체일때, 정지중일때 뿌리는값 처리
 		if(pageSearchVo.getCategory().equals("전체")) {
 			
-			model.addAttribute("userlist", adminDao.adminUserSelectAll(pageSearchVo));
+			model.addAttribute("userlist", cal.proidnumFormat(adminDao.adminUserSelectAll(pageSearchVo)));
 			
 		}else if(pageSearchVo.getCategory().equals("정지 중")) {
 			
-			model.addAttribute("userlist", adminDao.adminUserStopSelectAll(pageSearchVo));
+			model.addAttribute("userlist", cal.proidnumFormat(adminDao.adminUserStopSelectAll(pageSearchVo)));
 		}
 		
 		
@@ -256,7 +257,6 @@ public class AdminServiceImpl implements AdminService{
 		List<List<?>> list = new ArrayList<>();
 		list.add(adminDao.userFeed(profileVo));
 		list.add(adminDao.userCmmt(profileVo));
-		
 		return list;
 	}
 

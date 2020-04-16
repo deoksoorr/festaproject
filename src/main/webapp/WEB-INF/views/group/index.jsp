@@ -304,9 +304,6 @@
 						<li><a href="${root}hot/">인기피드</a></li>
 						<li><a href="${root}news/?pronum=${login.pronum}">뉴스피드</a></li>
 						<c:if test="${login eq null }">
-							<%
-								out.println("<script>alert('로그인 후 이용이 가능합니다.')</script>");
-							%>
 							<li><a href="${root}member/login" class="btn_pop">로그인</a></li>
 						</c:if>
 						<c:if test="${login ne null }">

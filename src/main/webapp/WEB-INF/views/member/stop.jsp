@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.util.Date" %>
+<%@ page import="java.text.SimpleDateFormat" %>
 <c:url value="/" var="root" />
 <c:url value="/resources/upload" var="upload" />
 <!DOCTYPE html>
@@ -22,10 +24,13 @@
 		var cookie = '${cookie.loginCookie.value}';
 	      var login = '${login}';
 	      
-	      if(cookie!=''&&login==''&&loginValue==true){
+	      if(cookie!=''&&login==''){
 	         openPop('loginCookie');
 	      }
 	      
+	      var nalja = new Date();
+	      var stoplv = "${stop.stoplv}";
+	      console.log(nalja+stoplv);
 	      $('#btnCookie').on('click',function(){
 	         $.post('${root}member/loginCookie','id='+cookie,function(data){
 	            if (data.prorn == '0') {
@@ -41,6 +46,10 @@
 	            }
 	         });
 	      });
+	      
+	      $('.btn_logout').on('click',function(){
+		    	 location.href="${root}"; 
+		      });
 	});
 </script>
 </head>
@@ -60,9 +69,9 @@
 					</form>
 					<ul id="gnb">
 						<li><a href="${root}camp/">캠핑정보</a></li>
-						<li><a href="/hot/">인기피드</a></li>
+						<li><a href="${root }/hot/">인기피드</a></li>
 						<li><a href="${root}news/?pronum=${login.pronum}">뉴스피드</a></li>
-						<li><a href="/member/login" class="btn_pop">로그인</a></li>
+						<li><a href="${root }/member/login" class="btn_pop">로그인</a></li>
 					</ul>
 					<button type="button" id="btnTop">
 						<em class="snd_only">맨 위로</em>
@@ -79,8 +88,8 @@
 				</h2>
 				<p>해당 계정은 아래와 같은 이유로 페스타를 이용할 수 없습니다.</p>
 				<ul class="info_box">
-					<li><b>정지사유 : </b>타인에 대한 욕설 또는 비방</li>
-					<li><b>제재기간 : </b>2020-01-01 까지 (30일)</li>
+					<li><b>정지사유 : </b>${stop.stopresult }</li>
+					<li><b>제재기간 : </b>${stoplv } (${stop.stoplv }일)</li>
 				</ul>
 				<p class="comm_buttons">
 					<button class="btn_logout comm_btn cfm">메인으로 돌아가기</button>

@@ -58,8 +58,13 @@
 			<c:choose>
 				<c:when test="${detail.grtotal ne 0}">
 					<c:forEach items="${member }" var="member">
-						<li><a href="${root }user/?pronum=${member.profile.pronum}"> <span class="pf_picture"> <img
-									src="${upload }/${member.profile.prophoto}" alt="김덕수님의 프로필 썸네일" onload="squareTrim($(this), 50)">
+						<li><a href="${root }user/?pronum=${member.profile.pronum}"> <span class="pf_picture">
+							<c:if test="${!empty member.profile.prophoto }">
+								<img src="${upload }/${member.profile.prophoto}" alt="${member.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 50)">
+							</c:if>
+							<c:if test="${empty member.profile.prophoto }">
+								<img src="${root }resources/images/thumb/no_profile.png" alt="${member.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 50)">
+							</c:if>
 							</span> <input type="hidden" value="${member.profile.pronum }">
 								<b class="fw_name">${member.profile.proname }</b> <span
 								class="fw_intro">${member.profile.prointro }</span>

@@ -45,7 +45,12 @@
 			<input type="hidden" name="gpnum" value="${feedEdit.gpnum }"/>
 			<div class="mk_cont box">
 				<p class="pf_picture">
+				<c:if test="${!empty feedEdit.profile.prophoto }">
 					<img src="${upload }/${feedEdit.profile.prophoto}" alt="${feedEdit.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)">
+				</c:if>
+				<c:if test="${empty feedEdit.profile.prophoto }">
+					<img src="${root }resources/images/thumb/no_profile.png" alt="${feedEdit.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)">
+				</c:if>
 				</p>
 				<textarea id="" name="gpcontent" placeholder="${feedEdit.profile.proname } 님, 무슨 생각을 하고 계신가요?">${feedEdit.gpcontent }</textarea>
 			</div>
@@ -102,7 +107,12 @@
 			<input type="hidden" name="mpnum" value="${feedEdit.mpnum }"/>
 			<div class="mk_cont box">
 				<p class="pf_picture">
+				<c:if test="${!empty feedEdit.profile.prophoto }">
 					<img src="${upload }/${feedEdit.profile.prophoto}" alt="${feedEdit.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)">
+				</c:if>
+				<c:if test="${empty feedEdit.profile.prophoto }">
+					<img src="${root }resources/images/thumb/no_profile.png" alt="${feedEdit.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)">
+				</c:if>
 				</p>
 				<textarea id="" name="mpcontent" placeholder="${feedEdit.profile.proname } 님, 무슨 생각을 하고 계신가요?">${feedEdit.mpcontent }</textarea>
 			</div>

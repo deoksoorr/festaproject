@@ -29,42 +29,15 @@ function scrBar() {
 	}
 }
 
-function layerOff() {
-	$(window).one('click', function(e) {
-		var result = 0;
-		var target = $(e.target),
-		classes = target.parents();
-		classes.push(target);
-		for (var i=0; i<classes.length; i++) {
-			var c = $(classes[i]);
-			if (c.hasClass('fstLyr')) {
-				result++;
-			}
-		}
-		if (result < 1) {
-			$('.fstLyr').removeClass('act');
-		}
-		userMenu();
-	});
-}
-
 /* #나의 메뉴 (상단 더보기) { */
 function userMenu() {
 	var menu = $('#userMenu'),
 		box = menu.find('.menu_box');
-	box.on('focusin', function() {
-		menu.addClass('act');
-		box.fadeIn(300);
-	});
-	box.on('focusout', function() {
-		menu.removeClass('act');
-		box.hide();
-	});
 	if (menu.hasClass('act')) {
-		box.focusin();
+		box.fadeIn(300);
 	} else {
 		myListOff();
-		box.focusout();
+		box.hide();
 	}
 }
 function setMyList() {
@@ -310,8 +283,9 @@ function loginMove() {
 
 $(document).ready(function() {
 	var topBtn = $('#btnTop');
-	var userMenuBtn = $('#userMenu .btn_menu');
-	var mylistBtn = $('#userMenu .btn_mylist');
+	var menu = $('#userMenu'),
+		userMenuBtn = menu.find('.btn_menu'),
+		mylistBtn = menu.find('.btn_mylist');
 
 	scrX();
 	scrBar();
@@ -328,12 +302,20 @@ $(document).ready(function() {
 
 	// 나의 메뉴 (상단 더보기)
 	userMenuBtn.on('click', function() {
-		var menu = $('#userMenu');
 		if (menu.hasClass('act')) {
 			menu.removeClass('act');
 		} else {
 			menu.addClass('act');
-			setTimeout(layerOff, 150);
+		}
+		userMenu();
+	});
+	$(window).on('click', function(e) {
+		if (menu.hasClass('act')) {
+			var my = $(e.target),
+				parents = my.parents('#userMenu');
+			if (!parents.length > 0) {
+				$('#userMenu').removeClass('act');
+			}
 		}
 		userMenu();
 	});

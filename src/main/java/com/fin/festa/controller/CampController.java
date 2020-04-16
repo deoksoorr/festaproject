@@ -101,7 +101,6 @@ public class CampController {
 	@RequestMapping(value = "detail/report", method = RequestMethod.POST)
 	public String campReport(HttpServletRequest req, MultipartFile[] files, ReportListVo reportListVo) {
 		campService.campReport(req, files, reportListVo);
-		System.out.println(reportListVo);
 		return "camp/detail/index";
 	}
 }

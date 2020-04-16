@@ -22,9 +22,9 @@
 		$(document).ready(function(){
 			
 			var cookie = '${cookie.loginCookie.value}';
-			var login = '${login}';
+			var login = '${login ne null}';
 			
-			if(cookie!=''&&login==''&&loginValue==true){
+			if(cookie!=''&&login=='false'){
 				openPop('loginCookie');
 			}
 			
@@ -208,6 +208,13 @@
 				console.log(gpnum);
 				$.get('${root}hot/groupfeed/cmmt','gpnum='+gpnum+'&pageSearch.page4='+myPage,function(data){
 					$(data).each(function(index){
+						var prophoto=data[index].profile.prophoto;
+						var prophototag;
+						if(prophoto==null||prophoto==''||prophoto==undefined||prophoto.inEmpty){
+							prophototag='<img src="${root}resources/images/thumb/no_profile.png" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+						}else{
+							prophototag='<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+						}
 						if(index==3){
 							 return false;
 						}else if(data.length<4){
@@ -223,7 +230,7 @@
 						}
 						comments.append('<li>'+
 								'<a href="${root }user/?pronum='+data[index].pronum+'" class="pf_picture">'+
-									'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
+								prophototag+
 								'</a><p class="cmt_content">'+
 									'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].gcauthor+'</a>&nbsp;'+
 									data[index].gccontent+
@@ -247,6 +254,13 @@
 				console.log(mpnum);
 				$.get('${root}hot/myfeed/cmmt','mpnum='+mpnum+'&pageSearch.page4='+myPage,function(data){
 					$(data).each(function(index){
+						var prophoto=data[index].profile.prophoto;
+						var prophototag;
+						if(prophoto==null|prophoto==''||prophoto==undefined||prophoto.inEmpty){
+							prophototag='<img src="${root}resources/images/thumb/no_profile.png" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+						}else{
+							prophototag='<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">';
+						}
 						if(index==3){
 							 return false;
 						}else if(data.length<4){
@@ -262,7 +276,7 @@
 						}
 						comments.append('<li>'+
 								'<a href="${root }user/?pronum='+data[index].pronum+'" class="pf_picture">'+
-									'<img src="${upload}/'+data[index].profile.prophoto+'" alt="'+data[index].profile.proname+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
+								prophototag+
 								'</a><p class="cmt_content">'+
 									'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].mcauthor+'</a>'+
 									data[index].mccontent+
@@ -333,80 +347,92 @@
                </ul>
                <c:if test="${login ne null }">
                   <div id="userMenu" class="fstLyr">
-                     <button class="btn_menu">
-                        <em class="snd_only">나의 메뉴 더보기</em>
-                     </button>
-                     <dl class="menu_box" tabindex="0">
-                        <dt>
-                           <b>${login.proname }님 환영합니다.</b>
-                        </dt>
-                        <dd>
-                           <span class="btn_mylist">나의 그룹</span>
-                           <div class="my_list">
-                              <ul>
-                                 <c:forEach items="${joinGroup }" var="joinGroup">
-                                    <c:choose>
-                                       <c:when test="${joinGroup.group.grphoto eq null }">
-                                          <li><a
-                                             href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-                                                <span><img src="${root }resources/upload/thumb/no_profile.png"
-                                                   alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
-                                          </a></li>
-                                       </c:when>
-                                       <c:otherwise>
-                                          <li><a
-                                             href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-                                                <span><img src="${upload }/${joinGroup.group.grphoto}"
-                                                   alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
-                                          </a></li>
-                                       </c:otherwise>
-                                    </c:choose>
-                                 </c:forEach>
-                              </ul>
-                           </div>
-                        </dd>
-                        <dd>
-							<span class="btn_mylist">나의 채팅</span>
-							<div class="my_list">
-								<ul>
-									<c:forEach items="${joinGroup }" var="joinGroup">
-										<li>
-											<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
-												<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
-												<b>${joinGroup.group.grname }</b>
-											</a>
-										</li>
-									</c:forEach>
-								</ul>
-							</div>
-						</dd>
-                        <dd>
-							<span class="btn_mylist">나의 캠핑장</span>
-							<div class="my_list">
-								<ul>
-								<c:forEach items="${bookMark}" var="bookMark">
-									<li>
-										<a href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
-											<span>
-												<c:set var="image" value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
-												<c:if test="${!empty bookMark.camp.caphoto && empty image}"><img src="${upload}/${bookMark.camp.caphoto}" alt="${bookMark.camp.caname}"></c:if>
-												<c:if test="${!empty bookMark.camp.caphoto && !empty image}"><img src="${upload}/${image}" alt="${bookMark.camp.caname}"></c:if>
-												<c:if test="${empty bookMark.camp.caphoto && empty image}"><img src="${root}resources/images/thumb/no_profile.png" alt="${bookMark.camp.caname}"></c:if>
-											</span>
-											<b>${bookMark.camp.caname}</b>
-										</a>
-									</li>
-								</c:forEach>
-								</ul>
-							</div>
-						</dd>
-                        <dd class="btn_logout">
-                           <form>
-                              <a href="${root}member/logout" class="btn_pop">로그아웃</a>
-                           </form>
-                        </dd>
-                     </dl>
-                  </div>
+							<button class="btn_menu">
+								<em class="snd_only">나의 메뉴 더보기</em>
+							</button>
+							<dl class="menu_box" tabindex="0">
+								<dt>
+									<b>${login.proname }님 환영합니다.</b>
+								</dt>
+								<dd>
+									<span class="btn_mylist">나의 그룹</span>
+									<div class="my_list">
+										<ul>
+											<c:forEach items="${joinGroup }" var="joinGroup">
+												<c:choose>
+													<c:when test="${joinGroup.group.grphoto eq null }">
+														<li><a
+															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
+																<span><img src="${root}resources/images/thumb/no_profile.png"
+																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
+														</a></li>
+													</c:when>
+													<c:otherwise>
+														<li><a
+															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
+																<span><img src="${upload }/${joinGroup.group.grphoto}"
+																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
+														</a></li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+										</ul>
+									</div>
+								</dd>
+								<dd>
+									<span class="btn_mylist">나의 채팅</span>
+									<div class="my_list">
+										<ul>
+											<c:forEach items="${joinGroup }" var="joinGroup">
+												<c:choose>
+													<c:when test="${joinGroup.group.grphoto eq null }"> 
+														<li>
+															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+																<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+																<b>${joinGroup.group.grname }</b>
+															</a>
+														</li>
+													</c:when>
+													<c:otherwise>
+														<li>
+															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
+																<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
+																<b>${joinGroup.group.grname }</b>
+															</a>
+														</li>
+													</c:otherwise>
+												</c:choose>
+											</c:forEach>
+										</ul>
+									</div>
+								</dd>
+								<dd>
+									<span class="btn_mylist">나의 캠핑장</span>
+									<div class="my_list">
+										<ul>
+										<c:forEach items="${bookMark}" var="bookMark">
+											<li>
+												<a href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
+													<span>
+														<c:set var="image" value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
+														<c:if test="${!empty bookMark.camp.caphoto && empty image}"><img src="${upload}/${bookMark.camp.caphoto}" alt="${bookMark.camp.caname}"></c:if>
+														<c:if test="${!empty bookMark.camp.caphoto && !empty image}"><img src="${upload}/${image}" alt="${bookMark.camp.caname}"></c:if>
+														<c:if test="${empty bookMark.camp.caphoto && empty image}"><img src="${root}resources/images/thumb/no_profile.png" alt="${bookMark.camp.caname}"></c:if>
+													</span>
+													<b>${bookMark.camp.caname}</b>
+												</a>
+											</li>
+										</c:forEach>
+										</ul>
+									</div>
+								</dd>
+								<dd class="btn_logout">
+									<form>
+										<a href="${root}member/logout" class="btn_pop">로그아웃</a>
+									</form>
+								</dd>
+							</dl>
+						</div>
                </c:if>
 				<button type="button" id="btnTop"><em class="snd_only">맨 위로</em></button>
 			</div>
@@ -430,7 +456,12 @@
 										<a href="${root }user/?pronum=${feedList.pronum}">
 											<input type="hidden" value="${feedList.pronum }">
 											<input type="hidden" value="${feedList.mpnum }">
-											<span class="pf_picture"><img src="${upload }/${feedList.profile.prophoto}" alt="${feedList.profile.proname }님의 프로필 썸네일"></span>
+											<c:if test="${!empty feedList.profile.prophoto }">
+												<span class="pf_picture"><img src="${upload }/${feedList.profile.prophoto}" alt="${feedList.profile.proname }님의 프로필 썸네일"></span>
+											</c:if>
+											<c:if test="${empty feedList.profile.prophoto }">
+												<span class="pf_picture"><img src="${root }resources/images/thumb/no_profile.png" alt="${feedList.profile.proname }님의 프로필 썸네일"></span>
+											</c:if>
 											<span class="fd_name">${feedList.mpauthor }</span>
 										</a>
 									</dt>
@@ -506,7 +537,12 @@
 												<li>
 													<!-- # 프로필 이미지 없음 { -->
 													<a href="${root }user/?pronum=${myFeedCmmt.pronum}" class="pf_picture">
+													<c:if test="${!empty myFeedCmmt.profile.prophoto }">
 														<img src="${upload }/${myFeedCmmt.profile.prophoto}" alt="${myFeedCmmt.profile.proname }님의 프로필 썸네일">
+													</c:if>
+													<c:if test="${empty myFeedCmmt.profile.prophoto }">
+														<img src="${root }resources/images/thumb/no_profile.png" alt="${myFeedCmmt.profile.proname }님의 프로필 썸네일">
+													</c:if>
 													</a>
 													<!-- } # 프로필 이미지 없음 -->
 													<p class="cmt_content">
@@ -533,7 +569,12 @@
 								<c:if test="${login ne null }">
 									<form class="message_form">
 										<a class="pf_picture" href="${root }user/?pronum=${login.pronum}">
+										<c:if test="${!empty login.prophoto }">
 											<img src="${upload }/${login.prophoto}" alt="나의 프로필 썸네일">
+										</c:if>
+										<c:if test="${empty login.prophoto }">
+											<img src="${root }resources/images/thumb/no_profile.png" alt="나의 프로필 썸네일">
+										</c:if>
 										</a>
 										<p class="msg_input">
 											<textarea id="" name="mccontent" placeholder="메세지를 입력해주세요"></textarea>
@@ -572,7 +613,12 @@
 											<input type="hidden" value="${feedList.pronum }">
 											<input type="hidden" value="${feedList.gpnum }">
 											<input type="hidden" value="${feedList.grnum }">
-											<span class="pf_picture"><img src="${upload }/${feedList.profile.prophoto}" alt="${feedList.profile.proname }님의 프로필 썸네일"></span>
+											<c:if test="${!empty feedList.profile.prophoto }">
+												<span class="pf_picture"><img src="${upload }/${feedList.profile.prophoto}" alt="${feedList.profile.proname }님의 프로필 썸네일"></span>
+											</c:if>
+											<c:if test="${empty feedList.profile.prophoto }">
+												<span class="pf_picture"><img src="${root }resources/images/thumb/no_profile.png" alt="${feedList.profile.proname }님의 프로필 썸네일"></span>
+											</c:if>
 											<span class="fd_name">${feedList.gpauthor }</span>
 										</a>
 										<c:if test="${login ne null }">
@@ -658,7 +704,12 @@
 												<li>
 													<!-- # 프로필 이미지 없음 { -->
 													<a href="${root }user/?pronum=${groupFeedCmmt.pronum}" class="pf_picture">
+													<c:if test="${!empty groupFeedCmmt.profile.prophoto }">
 														<img src="${upload }/${groupFeedCmmt.profile.prophoto}" alt="${groupFeedCmmt.profile.proname }님의 프로필 썸네일">
+													</c:if>
+													<c:if test="${empty groupFeedCmmt.profile.prophoto }">
+														<img src="${root }resources/images/thumb/no_profile.png" alt="${groupFeedCmmt.profile.proname }님의 프로필 썸네일">
+													</c:if>
 													</a>
 													<!-- } # 프로필 이미지 없음 -->
 													<p class="cmt_content">
@@ -685,7 +736,12 @@
 								<c:if test="${login ne null }">
 									<form class="message_form">
 										<a class="pf_picture" href="${root }user/?pronum=${login.pronum}">
+										<c:if test="${!empty login.prophoto }">
 											<img src="${upload }/${login.prophoto}" alt="나의 프로필 썸네일">
+										</c:if>
+										<c:if test="${empty login.prophoto }">
+											<img src="${root }resources/images/thumb/no_profile.png" alt="나의 프로필 썸네일">
+										</c:if>
 										</a>
 										<p class="msg_input">
 											<textarea id="" name="gccontent" placeholder="메세지를 입력해주세요"></textarea>
@@ -721,59 +777,71 @@
 			<!-- } 컨텐츠영역 끝 -->
 			<!-- 우측 사이드영역 시작 { -->
 			<section class="side_area">
-				<div class="rcmm_list">
-					<h3><em class="snd_only">추천그룹 목록</em>나홀로 캠핑이 심심하신가요?</h3>
-					<ul>
-						<c:forEach items="${grouplist }" begin="0" end="2" var="grouplist">
-							<c:if test="${login ne null }">
-								<li>
-									<a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
-										<img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
-									</a>
+					<div class="rcmm_list">
+		               <h3><em class="snd_only">추천그룹 목록</em>나홀로 캠핑이 심심하신가요?</h3>
+		               <ul>
+		                  <c:forEach items="${grouplist }" begin="0" end="2" var="grouplist">
+		                     <c:if test="${login ne null }">
+		                        <li>
+		                        	<c:choose>
+		                        		<c:when test="${grouplist.grphoto eq null }">
+				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+				                              <img src="${root}resources/images/thumb/no_profile.png" alt="${grouplist.grname } 그룹 썸네일">
+				                           </a>
+		                        		</c:when>
+		                        		<c:otherwise>
+				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+				                              <img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
+				                           </a>
+		                        		</c:otherwise>
+		                        	</c:choose>
 									<a class="rc_text" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
-										<b class="rc_name">${grouplist.grname }</b>
-										<span class="rc_intro">${grouplist.grintro }</span>
+											<b class="rc_name">${grouplist.grname }</b>
+											<span class="rc_intro">${grouplist.grintro }</span>
 									</a>
 								</li>
-							</c:if>
-							<c:if test="${login eq null }">
-								<li>
-									<a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}">
-										<img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
-									</a>
-									<a class="rc_text" href="${root }group/?grnum=${grouplist.grnum}">
-										<b class="rc_name">${grouplist.grname }</b>
-										<span class="rc_intro">${grouplist.grintro }</span>
-									</a>
-								</li>
-							</c:if>
-						</c:forEach>
-					</ul>
-				</div>
-				<div class="rcmm_list">
-					<h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
-					<ul>
-						<c:forEach items="${camplist }" begin="0" end="2" var="camplist">
-							 <c:set var="image1" value="${fn:split(camplist.caphoto,',') }"/>
-							 <c:if test="${fn:length(image1) gt 1 }">
-							 	<c:set var="image" value="${fn:substringBefore(camplist.caphoto,',') }"/>
-							 </c:if>
-							 <c:if test="${fn:length(image1) eq 1 }">
-							 	<c:set var="image" value="${camplist.caphoto }"/>
-							 </c:if>
-							<li>
-								<a class="rc_thumb" href="${root }camp/detail?canum=${camplist.canum}">
-									<img src="${upload }/${image}" alt="${camplist.caname } 썸네일">
-								</a>
-								<a class="rc_text" href="${root }camp/detail?canum=${camplist.canum}">
-									<b class="rc_name">${camplist.caname }</b>
-									<span class="rc_hashtag">${camplist.caaddrsel }</span>
-								</a>
-							</li>
-						</c:forEach>
-					</ul>
-				</div>
-			</section>
+		                     </c:if>
+		                     <c:if test="${login eq null }">
+		                        <li>
+		                        	<c:choose>
+		                        		<c:when test="${grouplist.grphoto eq null }">
+				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}">
+				                              <img src="${root}resources/images/thumb/no_profile.png" alt="${grouplist.grname } 그룹 썸네일">
+				                           </a>
+		                        		</c:when>
+		                        		<c:otherwise>
+				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}">
+				                              <img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
+				                           </a>
+		                        		</c:otherwise>
+		                        	</c:choose>
+		                            <a class="rc_text" href="${root }group/?grnum=${grouplist.grnum}">
+		                                <b class="rc_name">${grouplist.grname }</b>
+		                                <span class="rc_intro">${grouplist.grintro }</span>
+		                            </a>
+		                        </li>
+		                     </c:if>
+		                  </c:forEach>
+		               </ul>
+		            </div>
+		            <div class="rcmm_list">
+		               <h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
+		               <ul>
+		                  <c:forEach items="${camplist }" begin="0" end="2" var="camplist">
+		                     <c:set var="image" value="${fn:substringBefore(camplist.caphoto,',') }"/>
+		                     <li>
+		                        <a class="rc_thumb" href="${root }camp/detail?canum=${camplist.canum}">
+		                           <img src="${upload }/${image}" alt="${camplist.caname } 썸네일">
+		                        </a>
+		                        <a class="rc_text" href="${root }camp/detail?canum=${camplist.canum}">
+		                           <b class="rc_name">${camplist.caname }</b>
+		                           <span class="rc_hashtag">${camplist.caaddrsel }</span>
+		                        </a>
+		                     </li>
+		                  </c:forEach>
+		               </ul>
+		            </div>
+		         </section>
 			<!-- } 우측 사이드영역 끝 -->
 		</div>
 	</div>

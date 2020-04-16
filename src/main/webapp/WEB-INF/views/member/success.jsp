@@ -22,7 +22,7 @@
 			var cookie = '${cookie.loginCookie.value}';
 		      var login = '${login}';
 		      
-		      if(cookie!=''&&login==''&&loginValue==true){
+		      if(cookie!=''&&login==''){
 		         openPop('loginCookie');
 		      }
 		      

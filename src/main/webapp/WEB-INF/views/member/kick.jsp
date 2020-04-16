@@ -22,7 +22,7 @@
 		var cookie = '${cookie.loginCookie.value}';
 	      var login = '${login}';
 	      
-	      if(cookie!=''&&login==''&&loginValue==true){
+	      if(cookie!=''&&login==''){
 	         openPop('loginCookie');
 	      }
 	      
@@ -40,6 +40,10 @@
 	               location.href = "${root}";
 	            }
 	         });
+	      });
+	      
+	      $('.btn_logout').on('click',function(){
+	    	 location.href="${root}"; 
 	      });
 	});
 </script>
@@ -80,7 +84,7 @@
 				<p>해당 계정은 아래와 같은 이유로 페스타를 이용할 수 없습니다.</p>
 				<div class="info_box">
 					<p>
-						이용약관을 준수하지 않아<br>페스타에서 <b>추방</b>되었습니다.
+						${kick.stopresult }
 					</p>
 				</div>
 				<p class="comm_buttons">

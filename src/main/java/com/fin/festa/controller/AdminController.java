@@ -317,4 +317,10 @@ public class AdminController {
 		adminService.adminReportSelectOne(model, reportListVo);
 		return "admin/report/detail";
 	}
+	
+	@RequestMapping(value = "camp/gl_camp", method = RequestMethod.GET)
+	public String adminCampLocation() {
+		
+		return "admin/camp/gl_camp";
+	}
 }

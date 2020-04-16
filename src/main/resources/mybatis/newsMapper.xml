@@ -17,6 +17,7 @@
 		<result column="httitle1" property="httitle1"/>
 		<result column="httitle2" property="httitle2"/>
 		<result column="httitle3" property="httitle3"/>
+		<result column="mptotal" property="mptotal"/>
 		<association property="profile" resultMap="profile"/>
 	</resultMap>
 	
@@ -33,6 +34,7 @@
 		<result column="httitle1" property="httitle1"/>
 		<result column="httitle2" property="httitle2"/>
 		<result column="httitle3" property="httitle3"/>
+		<result column="gptotal" property="gptotal"/>
 		<association property="profile" resultMap="profile"/>
 		<association property="group" resultMap="group"/>
 	</resultMap>
@@ -83,7 +85,7 @@
 	
 	<!-- 내 팔로잉유저 피드출력 최신순 -->
 	<select id="followingFeed" parameterType="MyFollowingVo" resultMap="mypost">
-		select * from ((select a.*,c.proid,c.prophoto,c.proname from mypost a inner join profile c on a.pronum12=c.pronum where pronum12 in (select pronum_sync from myfollowing where pronum11=#{pronum})) union all (select a.*,c.proid,c.prophoto,c.proname from mypost a inner join profile c on a.pronum12=c.pronum where pronum12=#{pronum})) d order by mpdate desc
+		select d.*, (select count(*) from mycomment where mpnum1=d.mpnum) as mptotal from (select a.*,c.proid,c.prophoto,c.proname from mypost a inner join profile c on a.pronum12=c.pronum where pronum12 in (select pronum_sync from myfollowing where pronum11=#{pronum}) union all (select a.*,c.proid,c.prophoto,c.proname from mypost a inner join profile c on a.pronum12=c.pronum where pronum12=#{pronum})) d order by mpdate desc
 	</select>
 	
 	<!-- 내 팔로잉유저 피드댓글출력 -->
@@ -97,7 +99,7 @@
 	
 	<!-- 내 가입그룹 피드출력 최신순 -->
 	<select id="joingroupFeed" parameterType="MyFollowingVo" resultMap="grouppost">
-		select a.*,c.proid,c.proname,c.prophoto,b.pronum1,b.grname from grouppost a inner join group1 b on a.grnum1=b.grnum inner join profile c on a.pronum3=c.pronum where grnum1 in (select grnum3 from joingroup where pronum8=#{pronum}) order by gpdate desc
+		select d.*, (select count(*) from groupcomment where gpnum1=d.gpnum) as gptotal from (select a.*, c.proid, c.proname, c.prophoto, b.pronum1, b.grname from grouppost a inner join group1 b on a.grnum1=b.grnum inner join profile c on a.pronum3=c.pronum where grnum1 in (select grnum3 from joingroup where pronum8=#{pronum})) d order by gpdate desc
 	</select>
 	
 	<!-- 내 가입그룹 피드댓글출력 -->
@@ -141,6 +143,16 @@
 	<delete id="groupFeedDelete" parameterType="GroupPostVo">
 		delete from grouppost where gpnum=#{gpnum}
 	</delete>
+	
+	<!-- 개인피드출력 -->
+	<select id="myFeedSelectOne" parameterType="MyPostVo" resultMap="mypost">
+		select a.*, b.prophoto, b.proname, b.proid from mypost a inner join profile b on a.pronum12=b.pronum where mpnum=#{mpnum}
+	</select>
+	
+	<!-- 그룹피드출력 -->
+	<select id="groupFeedSelectOne" parameterType="GroupPostVo" resultMap="grouppost">
+		select a.*, b.prophoto, b.proname, b.proid from grouppost a inner join profile b on a.pronum3=b.pronum where gpnum=#{gpnum}
+	</select>
 	
 	<!-- 개인피드수정 -->
 	<update id="myFeedUpdate" parameterType="MyPostVo">
@@ -197,24 +209,14 @@
 		delete from mygood where pronum6=#{pronum} and gpnum3=#{gpnum}
 	</delete>
 
-	<!-- 개인피드 좋아요등록시 개인피드좋아요 +1 -->
-	<update id="myFeedLikeOnePlus" parameterType="MyPostVo">
-		update mypost set mpgood=mpgood+1 where mpnum=#{mpnum}
+	<!-- 개인피드 좋아요등록/해제시 개인피드좋아요 갯수 업데이트 -->
+	<update id="myFeedLikeUpdate" parameterType="MyPostVo">
+		update mypost set mpgood=(select count(*) from mygood where mpnum2=#{mpnum}) where mpnum=#{mpnum}
 	</update>
 	
-	<!-- 그룹피드 좋아요등록시 그룹피드좋아요 +1 -->
-	<update id="groupFeedLikeOnePlus" parameterType="GroupPostVo">
-		update grouppost set gpgood=gpgood+1 where gpnum=#{gpnum}
-	</update>
-	
-	<!-- 개인피드 좋아요해제시 개인피드좋아요 -1 -->
-	<update id="myFeedLikeOneMinus" parameterType="MyPostVo">
-		update mypost set mpgood=mpgood-1 where mpnum=#{mpnum}
-	</update>
-	
-	<!-- 그룹피드 좋아요해제시 그룹피드좋아요 -1 -->
-	<update id="groupFeedLikeOneMinus" parameterType="GroupPostVo">
-		update grouppost set gpgood=gpgood-1 where gpnum=#{gpnum}
+	<!-- 그룹피드 좋아요등록/해제시 그룹피드좋아요 갯수 업데이트 -->
+	<update id="groupFeedLikeUpdate" parameterType="GroupPostVo">
+		update grouppost set gpgood=(select count(*) from mygood where gpnum3=#{gpnum}) where gpnum=#{gpnum}
 	</update>
 	
 	<!-- 내 좋아요목록 갱신 -->

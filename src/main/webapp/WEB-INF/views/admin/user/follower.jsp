@@ -6,9 +6,6 @@
 <c:url value="/resources/upload" var="upload"></c:url>
 <!DOCTYPE html>
 <!-- #팔로워/팔로우 팝업 -->
-<c:if test="${sessionScope.login eq null}">
-	<c:redirect url="/empty"/>
-</c:if>
 <html>
 <script type="text/javascript">
 var url = window.location.href;
@@ -25,7 +22,12 @@ if(url.indexOf('follower')>0){
 				<li>
 					<a href="${root }admin/user/detail?pronum=${myfollower.profile.pronum}">
 						<span class="pf_picture">
+						<c:if test="${!empty myfollower.profile.prophoto }">
 							<img src="${upload }/${myfollower.profile.prophoto}" alt="${myfollower.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 50)">
+						</c:if>
+						<c:if test="${empty myfollower.profile.prophoto }">
+							<img src="${root }resources/images/thumb/no_profile.png" alt="${myfollower.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 50)">
+						</c:if>
 						</span>
 						<b class="fw_name">${myfollower.profile.proname }</b>
 						<span class="fw_intro">${myfollower.profile.prointro }</span>
