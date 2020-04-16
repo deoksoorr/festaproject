@@ -297,26 +297,7 @@ public class GroupController {
 	@RequestMapping(value = "chat", method = RequestMethod.GET)
 	public String groupChat(HttpServletRequest req, GroupVo groupVo){
 		groupService.groupSelectOne(req, groupVo);
-		return "group/chat";
-	}
-	
-	//그룹 채팅 (새창 & 아직 작업보류)
-	@RequestMapping(value = "chat/chatSubmitServlet", method = RequestMethod.POST)
-	public String doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException{
-		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html; charset=utf-8");
-		String chatName = request.getParameter("chatName");
-		String chatContent = request.getParameter("chatContent");
-		if(chatContent.equals("")) {
-			chatContent=null;
-		}
-		PrintWriter out=response.getWriter();
-		int result=0;
-		if(chatContent==null) {
-			out.print(result);
-		} else {
-			//out.print(result=new ChatDao().submit(chatName, chatContent));
-		}
+		groupService.groupChatUser(req, groupVo);
 		return "group/chat";
 	}
 

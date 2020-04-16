@@ -537,6 +537,16 @@ public class GroupServiceImpl implements GroupService{
 		System.out.println("해제 : " + req.getSession().getAttribute("followlist"));
 	}
 
+	//채팅방 접속시 실행
+	@Override
+	public void groupChatUser(HttpServletRequest req, GroupVo groupVo) {
+		HttpSession session=req.getSession();
+		ProfileVo profile=(ProfileVo) session.getAttribute("login");
+		groupVo.setProfile(profile);
+		groupDao.groupChatUserUpdate(groupVo);
+		req.setAttribute("joinmember", groupDao.groupChatUser(groupVo));
+	}
+
 
 
 

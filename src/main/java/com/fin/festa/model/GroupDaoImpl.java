@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.fin.festa.model.entity.GroupChatVo;
 import com.fin.festa.model.entity.GroupCommentVo;
 import com.fin.festa.model.entity.GroupNoticeCommentVo;
 import com.fin.festa.model.entity.GroupNoticeVo;
@@ -392,4 +393,23 @@ public class GroupDaoImpl implements GroupDao{
 		return sqlSession.selectOne("group.groupFeedDetail", groupPostVo);
 	}
 
+	////////////////////////////////////////////////////////////////
+	//////////////////////////그룹채//////////////////////////////
+	////////////////////////////////////////////////////////////////
+	
+	//채팅방접속상태수정 
+	@Override
+	public int groupChatUserUpdate(GroupVo group) {
+		return sqlSession.update("group.groupChatUserUpdate", group);
+	}
+
+	//채팅방유저목록출력 
+	@Override
+	public List<GroupChatVo> groupChatUser(GroupVo group) {
+		return sqlSession.selectList("group.groupChatUser", group);
+	}
+
+	public int groupChatUserUpdateRe(GroupVo group) {
+		return sqlSession.update("group.groupChatUserUpdateRe", group);
+	}
 }

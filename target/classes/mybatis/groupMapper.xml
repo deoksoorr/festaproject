@@ -145,6 +145,16 @@
 	   <result column="mpnum2" property="mpnum"/>
 	</resultMap>
 	
+	<!--  채팅 관 -->
+	<resultMap type="GroupChatVo" id="groupchat">
+		<result column="grnum9" property="grnum"/>
+		<result column="pronum17" property="pronum"/>
+		<result column="mymsg" property="mymsg"/>
+		<result column="msgdate" property="msgdate"/>
+		<result column="joinstatus" property="joinstatus"/>
+		<association property="profile" resultMap="profile2"/>
+	</resultMap>
+	
 	<!-- 그룹화면출력 전 체크 start -->
 	
 	<!-- 공식그룹 유무 체크 -->
@@ -465,4 +475,21 @@
 
 	<!-- 그룹삭제 end -->
 	
+	<!-- 채팅 start -->
+	<!-- 채팅접속시 접속상태 on -->
+	<update id="groupChatUserUpdate" parameterType="GroupVo">
+		update groupchat set joinstatus=1 where pronum17=${profile.pronum} and grnum9=${grnum}
+	</update>
+	
+	<!--채팅퇴장시 접속상태 off -->
+	<update id="groupChatUserUpdateRe" parameterType="GroupVo">
+		update groupchat set joinstatus=0 where pronum17=${profile.pronum} and grnum9=${grnum}
+	</update>
+	
+	<!-- 접속상태 on인 그룹유저 출력 -->
+	<select id="groupChatUser" parameterType="GroupVo" resultMap="groupchat">
+		select * from groupchat a inner join profile b on a.pronum17=b.pronum where grnum9=${grnum} and joinstatus=1
+	</select>
+	
+	<!-- 채팅 end -->
 </mapper>

@@ -93,4 +93,6 @@ public interface GroupService {
 
 		List<GroupNoticeCommentVo> groupNoticeDetailCmmt(Model model, GroupNoticeVo groupnotice);
 
+		void groupChatUser(HttpServletRequest req, GroupVo groupVo);
+
 }

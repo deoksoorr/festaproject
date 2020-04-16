@@ -9,24 +9,10 @@ public class GroupChatVo {		//채팅
 	private int joinstatus;		//접속상태
 	private String mymsg;		//내 메세지
 	private Date msgdate;		//메세지등록일
-	
-	@Override
-	public String toString() {
-		return "GroupChatVo [grnum=" + grnum + ", pronum=" + pronum + ", joinstatus=" + joinstatus + ", mymsg=" + mymsg
-				+ ", msgdate=" + msgdate + "]";
-	}
+	private ProfileVo profile;
 	
 	public GroupChatVo() {
 		// TODO Auto-generated constructor stub
-	}
-
-	public GroupChatVo(int grnum, int pronum, int joinstatus, String mymsg, Date msgdate) {
-		super();
-		this.grnum = grnum;
-		this.pronum = pronum;
-		this.joinstatus = joinstatus;
-		this.mymsg = mymsg;
-		this.msgdate = msgdate;
 	}
 
 	public int getGrnum() {
@@ -68,6 +54,31 @@ public class GroupChatVo {		//채팅
 	public void setMsgdate(Date msgdate) {
 		this.msgdate = msgdate;
 	}
+
+	public ProfileVo getProfile() {
+		return profile;
+	}
+
+	public void setProfile(ProfileVo profile) {
+		this.profile = profile;
+	}
+
+	@Override
+	public String toString() {
+		return "GroupChatVo [grnum=" + grnum + ", pronum=" + pronum + ", joinstatus=" + joinstatus + ", mymsg=" + mymsg
+				+ ", msgdate=" + msgdate + ", profile=" + profile + "]";
+	}
+
+	public GroupChatVo(int grnum, int pronum, int joinstatus, String mymsg, Date msgdate, ProfileVo profile) {
+		super();
+		this.grnum = grnum;
+		this.pronum = pronum;
+		this.joinstatus = joinstatus;
+		this.mymsg = mymsg;
+		this.msgdate = msgdate;
+		this.profile = profile;
+	}
+	
 	
 	
 }

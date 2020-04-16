@@ -33,6 +33,7 @@
   		<typeAlias alias="AgeCountVo" type="com.fin.festa.model.entity.AgeCountVo" />
   		<typeAlias alias="DateCalculate" type="com.fin.festa.util.DateCalculate" />
   		<typeAlias alias="FeedVo" type="com.fin.festa.model.entity.FeedVo" />
+  		<typeAlias alias="GroupChatVo" type="com.fin.festa.model.entity.GroupChatVo" />
   	</typeAliases>
   	<mappers>
   		<mapper resource="mybatis/adminMapper.xml"/>

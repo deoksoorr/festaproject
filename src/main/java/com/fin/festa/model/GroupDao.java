@@ -2,6 +2,7 @@ package com.fin.festa.model;
 
 import java.util.List;
 
+import com.fin.festa.model.entity.GroupChatVo;
 import com.fin.festa.model.entity.GroupCommentVo;
 import com.fin.festa.model.entity.GroupNoticeCommentVo;
 import com.fin.festa.model.entity.GroupNoticeVo;
@@ -115,4 +116,7 @@ public interface GroupDao {
 	
 	int groupReportCountUpdate(ReportListVo report);
 	
+	int groupChatUserUpdate(GroupVo group);
+	
+	List<GroupChatVo> groupChatUser(GroupVo group);
 }

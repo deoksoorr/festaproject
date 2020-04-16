@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:url value="/" var="root" />
 <c:url value="/resources/upload" var="upload" />
 <!DOCTYPE html>
@@ -28,9 +29,15 @@
             		if(socket.readyState !== 1){
         				return;
         			}
+            		var grnum=$('#lastchance').val();
         			let msg=$('#chstmsg').val();
-        			socket.send(msg);
-        			$('#chstmsg').val('');
+        			if(msg==''||msg=='\n'||msg==undefined||msg==null||msg.isEmpty){
+						event.preventDefault();
+        			}else{
+        				socket.send(grnum+"="+msg);
+						event.preventDefault();
+        				$('#chstmsg').val('');
+        			}
             	}
             }
 		});
@@ -41,8 +48,12 @@
 			}
 			var grnum=$('#lastchance').val();
 			let msg=$('#chstmsg').val();
-			socket.send(grnum+"="+msg);
-			$('#chstmsg').val('');
+			if(msg==''||msg=='\n'||msg==undefined||msg==null||msg.isEmpty){
+	            $('#chstmsg').val('');
+			}else{
+				socket.send(grnum+"="+msg);
+				$('#chstmsg').val('');
+			}
 		});
 	});
 
@@ -50,7 +61,8 @@
 <script type="text/javascript">
 	var socket = null;
 	function connect(){
-		var ws=new WebSocket("ws://localhost:8080/festa/chat/echo?grnum=${detail.grnum}")
+		var host=location.host;
+		var ws=new WebSocket("ws://"+host+"${root}/chat/echo?grnum=${detail.grnum}")
 		socket=ws;
 		ws.onopen=function(event){
 			console.log('connection open');
@@ -61,50 +73,69 @@
 			var myid=$('#proid').val();
 			var chat=event.data.split('|');		// 아이디 + 이름 + 사진 + 메세지 + 시간 
 
-			if(chat[1]==null){
-				var chat=event.data.split('*');
+			if(chat[1]==null||chat[1]==undefined){
+				var usercnt=$('#joinmember');
+				var chat1=event.data.split('*');
 				console.log(chat[1]);
-				$('.chatarea').append(
-					'<li>'+
-						'<p class="ch_msg">'+chat[0]+'</p>'+
-					'</li>'
-				);
-				/*$('.ch_user').append(
-					'<li>'+
-						'<a class="pf_picture" href="" target="_blank">'+
-							'<img src="${upload}/'+chat[3]+'" alt="'+chat[2]+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
-						'</a>'+
-						'<a class="pf_name" href="" target="_blank">'+chat[2]+'('+chat[1]+')</a>'+
-					'</li>'
-				);*/
+				if(chat1[1]=='${detail.grnum}'){
+					if(event.data.indexOf('입장')>0){
+						if(chat1[5]!='${login.pronum}'){
+							usercnt.text(Number(usercnt.text())+1);
+							$('.ch_user.list').append(
+								'<li>'+
+		                           '<input type="hidden" value="'+chat1[5]+'">'+
+		                           '<a class="pf_picture" href="${root}user/?pronum='+chat1[5]+'" target="_blank">'+
+		                              '<img src="${upload}/'+chat1[4]+'" alt="'+chat1[3]+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
+		                           '</a>'+
+		                           '<a class="pf_name" href="${root}user/?pronum='+chat1[5]+'" target="_blank">'+chat1[3]+'('+chat1[2]+')</a>'+
+		                        '</li>'
+							);
+						}
+					}else{
+						usercnt.text(Number(usercnt.text())-1);
+						var userSize=$('.ch_user.list li');
+						for(var i=0; i<userSize.length; i++){
+							if(chat1[5]==userSize.eq(i).find('input[type="hidden"]').val()){
+								userSize.eq(i).remove();
+							}
+						}
+					}
+					$('.chatarea').append(
+							'<li>'+
+								'<p class="ch_msg">'+chat1[0]+'</p>'+
+							'</li>'
+					);
+				}
 			}else{
-				var chatid=chat[0];
-				if(myid==chatid){
-					$('.chatarea').append(
-						'<li>'+
-							'<div class="ch_msg me">'+
-							'<p>'+ chat[3] +
-							'<span>'+chat[4]+'</span>'+
-							'</p>'+
-							'</div>'+
-						'</li>'
-					);
-				}else{
-					$('.chatarea').append(
-						'<li>'+
-							'<div class="ch_msg ots">'+
-								'<ul class="ch_user">'+
-									'<li>'+
-										'<a class="pf_picture" href="" target="_blank">'+
-											'<img src="${upload }/'+chat[2]+'" alt="'+chat[1]+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
-										'</a>'+
-										'<a class="pf_name" href="" target="_blank">'+chat[1]+'('+chat[0]+')</a>'+
-									'</li>'+
-								'</ul>'+
-								'<p>'+chat[3]+'<span>'+chat[4]+'</span></p>'+
-							'</div>'+
-						'</li>'
-					);
+				if(chat[5]=='${detail.grnum}'){
+					var chatid=chat[0];
+					if(myid==chatid){
+						$('.chatarea').append(
+							'<li>'+
+								'<div class="ch_msg me">'+
+								'<p>'+ chat[3] +
+								'<span>'+chat[4]+'</span>'+
+								'</p>'+
+								'</div>'+
+							'</li>'
+						);
+					}else{
+						$('.chatarea').append(
+							'<li>'+
+								'<div class="ch_msg ots">'+
+									'<ul class="ch_user">'+
+										'<li>'+
+											'<a class="pf_picture" href="${root}user/?pronum='+chat[6]+'" target="_blank">'+
+												'<img src="${upload }/'+chat[2]+'" alt="'+chat[1]+'님의 프로필 썸네일" onload="squareTrim($(this), 30)">'+
+											'</a>'+
+											'<a class="pf_name" href="${root}user/?pronum='+chat[6]+'" target="_blank">'+chat[1]+'('+chat[0]+')</a>'+
+										'</li>'+
+									'</ul>'+
+									'<p>'+chat[3]+'<span>'+chat[4]+'</span></p>'+
+								'</div>'+
+							'</li>'
+						);
+					}
 				}
 			}
 		}
@@ -137,7 +168,9 @@
 					</c:choose>
 				</li>
 				<li class="ch_gpname">${detail.grname } </li>
-				<li><span class="gp_official"></span></li>
+				<c:if test="${detail.grventure eq 2 }">
+					<li><span class="gp_official"></span></li>
+				</c:if>
 			</ul>
 		</section>
 		
@@ -164,8 +197,19 @@
 		</section>
 		<section class="users_area">
 			<div class="chat_user box" id="userbox">
-				<p class="ch_number">현재 접속자 (999명)</p>
+				<p class="ch_number">현재 접속자 (<span id="joinmember">${fn:length(joinmember) }</span>명)</p>
 				<div class="scrBar">
+					<ul class="ch_user list">
+						<c:forEach items="${joinmember }" var="member">
+							<li>
+								<input type="hidden" value="${member.profile.pronum }" />
+								<a class="pf_picture" href="${root }user/?pronum=${member.profile.pronum}" target="_blank">
+									<img src="${upload}/${member.profile.prophoto}" alt="${member.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
+								</a>
+								<a class="pf_name" href="${root }user/?pronum=${member.profile.pronum}" target="_blank">${member.profile.proname } (${member.profile.proid })</a>
+							</li>
+						</c:forEach>
+					</ul>
 				</div>
 			</div>
 		</section>
