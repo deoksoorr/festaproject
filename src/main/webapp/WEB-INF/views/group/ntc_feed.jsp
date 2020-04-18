@@ -12,6 +12,16 @@
 	$(document).ready(function(){
 		//댓글입력 버튼
 		$('.message_form').on('submit', function(e) {
+
+			var gnctest=$('#ntcaddmsg').val().length;
+			if(gnctest>=500){
+				openPop("ntccmmtfull");
+				$('#ntccmmtfailed').on('click', function(){
+					$('#ntcaddmsg').focus();					
+				});
+				return false;
+			};
+			
 			e.preventDefault();	
 			$.ajax({
 		        type: 'post',
@@ -93,7 +103,6 @@
 		$('#delend2').on('click', function(){
 			window.location.reload();
 		});
-
 		
 		//댓글 더보기
 		$(document).on('click', '.cmt_btn_more.ndt', function() {
@@ -190,7 +199,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:url value="/" var="root" />
 
-<div>
+<div id="ntcframe">
 	<div class="feed_viewer<c:if test="${!empty ntcDetail.gnphoto}"> half</c:if>" id="feed_viewerntc">
 		<div class="tit box">
 			<dl class="feed_inform">
@@ -200,7 +209,16 @@
 						<input type="hidden" id="ntcaddPro" value="${login.pronum}" />
 						<input type="hidden" id="ntcaddGr" value="${ntcDetail.grnum}">
 						<input type="hidden" id="ntcaddGn" value="${ntcDetail.gnnum}">
-						<span class="pf_picture"><img src="${upload }/${ntcDetail.profile.prophoto}" alt="${ntcDetail.gnauthor}님의 프로필 썸네일"></span>
+						<span class="pf_picture">
+						<c:choose>
+							<c:when test="${ntcDetail.profile.prophoto eq null }">
+								<img src="${root}resources/images/thumb/no_profile.png" alt="${ntcDetail.gnauthor}님의 프로필 썸네일"  onload="squareTrim($(this), 60)">
+							</c:when>
+							<c:otherwise>
+								<img src="${upload }/${ntcDetail.profile.prophoto}" alt="${ntcDetail.gnauthor}님의 프로필 썸네일"  onload="squareTrim($(this), 60)">
+							</c:otherwise>
+						</c:choose>
+						</span>
 						<span class="fd_name">[그룹장] ${ntcDetail.gnauthor}</span>
 					</a>
 					<a href="" style="cursor: default;">
@@ -216,7 +234,7 @@
 					<li><button type="button" class="btn_report ntc" data-layer="${root }group/ntc_report?gnnum=${ntcDetail.gnnum}&profile.pronum=${detail.profile.pronum}&profile.proname=${detail.profile.proname}&profile.proid=${detail.profile.proid}" onclick="popup($(this))"><em class="snd_only">신고하기</em></button></li>
 				</c:if>
 				<c:if test="${login.pronum eq detail.pronum}">
-					<li><button type="button" class="btn_edit ntc" data-layer="${root }group/ntc_maker?gnnum=${ntcDetail.gnnum}" onclick="popup($(this))"><em class="snd_only">수정하기</em></button></li>		
+					<li><button type="button" class="btn_edit ntc" id="editntcfeed" data-layer="${root }group/ntc_maker?gnnum=${ntcDetail.gnnum}" onclick="popup($(this))"><em class="snd_only">수정하기</em></button></li>		
 					<li><button class="btn_delete btn_pop ntc" id="deletentcfeed" data-layer="deletentcfe" data-value="${ntcDetail.gnnum }"><em class="snd_only">삭제하기</em></button></li>
 				</c:if>
 			</ul>
@@ -236,11 +254,18 @@
 						<c:if test="${ntcDetail.gnnum eq ntcCmmt.gnnum}">
 							<c:if test="${not doneLoop }">
 								<li>
-									<!-- # 프로필 이미지 없음 { -->
-									<a href="${root }user/?pronum=${ntcCmmt.pronum}" class="pf_picture">
-										<img src="${upload }/${ntcCmmt.profile.prophoto}" alt="${ntcCmmt.gncauthor }님의 프로필 썸네일">
-									</a>
-									<!-- } # 프로필 이미지 없음 -->
+									<c:choose>
+										<c:when test="${ntcCmmt.profile.prophoto eq null }">
+											<a href="${root }user/?pronum=${ntcCmmt.pronum}" class="pf_picture">
+												<img src="${root}resources/images/thumb/no_profile.png" alt="${ntcCmmt.gncauthor }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
+											</a>
+										</c:when>
+										<c:otherwise>
+											<a href="${root }user/?pronum=${ntcCmmt.pronum}" class="pf_picture">
+												<img src="${upload }/${ntcCmmt.profile.prophoto}" alt="${ntcCmmt.gncauthor }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
+											</a>
+										</c:otherwise>
+									</c:choose>
 									<p class="cmt_content">
 										<a href="${root }user/?pronum=${ntcCmmt.pronum}" class="cmt_name">${ntcCmmt.gncauthor }</a>&nbsp;&nbsp;${ntcCmmt.gnccontent }
 										<span class="cmt_date">${ntcCmmt.gncdate1 }</span>
@@ -265,14 +290,12 @@
 				<c:choose>
 					<c:when test="${login.prophoto eq null}">
 						<a class="pf_picture" href="${root }user/?pronum=${login.pronum}">
-							<img src="${root}resources/images/thumb/no_profile.png"
-								alt="${login.proname } 님의 프로필 썸네일">
+							<img src="${root}resources/images/thumb/no_profile.png" alt="${login.proname } 님의 프로필 썸네일" onload="squareTrim($(this), 30)">
 						</a>
 					</c:when>
 					<c:otherwise>
 						<a class="pf_picture" href="${root }user/?pronum=${login.pronum}">
-							<img src="${upload }/${login.prophoto }"
-								alt="${login.proname } 님의 프로필 썸네일">
+							<img src="${upload }/${login.prophoto }" alt="${login.proname } 님의 프로필 썸네일" onload="squareTrim($(this), 30)">
 						</a>
 					</c:otherwise>
 				</c:choose>
@@ -350,15 +373,16 @@
 		</div>
 	</div>
 	
-	<div id="updateOk" class="fstPop">
+	
+	<!-- #댓글 초과 -->
+	<div id="ntccmmtfull" class="fstPop">
 		<div class="confirm_wrap pop_wrap">
-			<p class="pop_tit">수정이 완료되었습니다.</p>
+			<p class="pop_tit">댓글은 500자 이상 입력할 수 없습니다.</p>
 			<ul class="comm_buttons">
-				<li><button type="button" id="finish_update" name="finish_update" class="btn_close comm_btn cfm">확인</button></li>
+				<li><button type="button" id="ntccmmtfailed" class="btn_close comm_btn cfm">확인</button></li>
 			</ul>
 		</div>
 	</div>
-	
 <script type="text/javascript">
 	btnToggle('btn_liked');
 </script>

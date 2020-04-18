@@ -8,7 +8,34 @@
 <script type="text/javascript">
 	$('.maker_form').on('submit', function(e){
 		e.preventDefault();
-	});
+		var content=$('#gpcontent1').val().length;
+		if(content>=500){
+			openPop("ntceditfull");
+			$('#editntcfailed').on('click', function(){
+				$('#gpcontent1').focus();					
+			});
+			return false;
+		};
+		var files = new FormData($('#ntcupdate_feed')[0]);
+		$.ajax({
+			type: "POST",
+			enctype: 'multipart/form-data',
+			url: '${root}group/ntc_maker',
+			data: files,
+			processData: false,
+			contentType: false,
+			cache: false,
+	        success : function(data) {
+				openPop('ntcupdateOk');
+				$('#finish_ntcupdate').on('click', function(){
+					location.reload();
+				});
+	        },
+			error: function (e) { 
+				openPop('fail');
+			}
+		});
+	})
 </script>
 <div id="ntcmaker" class="feed_maker">
 	<h3>공지사항 수정하기</h3>
@@ -18,10 +45,10 @@
 			<p class="pf_picture">
 				<c:choose>
 					<c:when test="${login.prophoto eq null }">
-						<img src="http://placehold.it/55x55" alt="${login.proname }님의 프로필 썸네일">
+						<img src="http://placehold.it/55x55" alt="${login.proname }님의 프로필 썸네일" onload="squareTrim($(this), 60)">
 					</c:when>
 					<c:otherwise>
-						<img src="${upload }/${login.prophoto}" alt="${login.proname }님의 프로필 썸네일">					
+						<img src="${upload }/${login.prophoto}" alt="${login.proname }님의 프로필 썸네일" onload="squareTrim($(this), 60)">					
 					</c:otherwise>
 				</c:choose>
 			</p>
@@ -68,6 +95,26 @@
 	</form>
 </div>	
 <button type="button" class="btn_close"><em class="snd_only">창 닫기</em></button>
+
+<div id="ntcupdateOk" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">수정이 완료되었습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" id="finish_ntcupdate" name="finish_update" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
+
+<!-- #게시글 초과 -->
+<div id="ntceditfull" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">게시글은 500자 이상 입력할 수 없습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" id="editntcfailed" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
+
 <script type="text/javascript">
 	setFile();
 </script>

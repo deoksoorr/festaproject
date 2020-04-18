@@ -42,8 +42,17 @@
 		var login = '${login ne null}';
 
 		if(cookie!=''&&login=='false'){
-			openPop('loginCookie',none,btn_close);
+		   openPop('loginCookie',none,btn_close);
 		}
+
+		setInterval(function(){
+		   $.post('${root}member/loginSession','',function(data){
+		      if(data==''&&document.cookie!=''){
+		         clearInterval();
+		         openPop('loginCookie',none,btn_close);
+		      }
+		   });
+		},1000*60*10);
 
 		$('#btnCookie').on('click',function(){
 			$.post('${root}member/loginCookie','id='+cookie,function(data){
@@ -1090,6 +1099,7 @@
 			</ul>
 		</div>
 	</div>
+	
 	<!-- #해시태그 초과 -->
 	<div id="htfull" class="fstPop">
 		<div class="confirm_wrap pop_wrap">
