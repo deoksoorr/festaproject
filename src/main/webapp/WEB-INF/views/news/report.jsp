@@ -11,25 +11,28 @@
 			bg = wrap.prev('.b-modal');
 		
 		var files = new FormData($('#reportForm')[0]);
-		$.ajax({
-			type: 'POST',
-			enctype: 'multipart/form-data',
-			url: '${root}news/report',
-			data: files,
-			processData: false,
-			contentType: false,
-			cache: false,
-			success: function() {
-				wrap.hide();
-				bg.hide();
-				alertMsg('신고가 정상적으로 접수되었습니다.');
-				openPop('alert', none, refresh);
-			},
-			error: function() { 
-				alertMsg('올바른 방법으로 다시 시도해주세요.');
-				openPop('alert');
-			}
-		});
+		var strSize = stringValue($(this));
+		if (strSize == true) {
+			$.ajax({
+				type: 'POST',
+				enctype: 'multipart/form-data',
+				url: '${root}news/report',
+				data: files,
+				processData: false,
+				contentType: false,
+				cache: false,
+				success: function() {
+					wrap.hide();
+					bg.hide();
+					alertMsg('신고가 정상적으로 접수되었습니다.');
+					openPop('alert', none, refresh);
+				},
+				error: function() { 
+					alertMsg('올바른 방법으로 다시 시도해주세요.');
+					openPop('alert');
+				}
+			});
+		}
 		e.preventDefault();
 	});
 	function alertMsg(message) {

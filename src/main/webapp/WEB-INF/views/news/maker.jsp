@@ -11,25 +11,31 @@
 	$('#editForm').on('submit', function(e) {
 		var parent = $(this).parents('.fstPop');
 		var files = new FormData($('#editForm')[0]);
-		$.ajax({
-			type: "POST",
-			enctype: 'multipart/form-data',
-			url: '${root}news/edit',
-			data: files,
-			processData: false,
-			contentType: false,
-			cache: false,
-			success: function() {
-				$('#alert .pop_tit').text('수정이 완료되었습니다.');
-			},
-			error: function() { 
-				$('#alert .pop_tit').text('올바른 방법으로 다시 시도해주세요.');
-			},
-			complete: function() {
-				parent.bPopup().close();
-				openPop('alert', none, refresh);
-			}
-		});
+		
+		var strSize = stringValue($(this));
+		
+		if (strSize == true) {
+			$.ajax({
+				type: "POST",
+				enctype: 'multipart/form-data',
+				url: '${root}news/edit',
+				data: files,
+				processData: false,
+				contentType: false,
+				cache: false,
+				success: function() {
+					$('#alert .pop_tit').text('수정이 완료되었습니다.');
+				},
+				error: function() { 
+					$('#alert .pop_tit').text('올바른 방법으로 다시 시도해주세요.');
+				},
+				complete: function() {
+					parent.bPopup().close();
+					openPop('alert', none, refresh);
+				}
+			});
+		}
+		
 		e.preventDefault();
 	});
 </script>

@@ -175,7 +175,6 @@ function feedList(data,view,pronum,prophoto,logincheck){
 			var feedLi;
 			var prophoto = data[index].profile.prophoto;
 			var prophototag;
-			
 			if(prophoto==null||prophoto==''||prophoto==undefined||prophoto.isEmpty){
 				prophototag='<img src="/festa/resources/images/thumb/no_profile.png" alt="피드 썸네일" onload="squareTrim($(this), 30)">';
 			}else{
@@ -304,15 +303,19 @@ function feedList(data,view,pronum,prophoto,logincheck){
 				msgTag='<input type="text" class="msg_txt" name="mccontent" placeholder="메세지를 입력해주세요" required="required">';
 				//로그인상태일때
 				if(logincheck!=''){
-					$(data[3]).each(function(idx){
-						//좋아요목록의 개인피드번호와 가져온개인피드번호가 같을때 하트버튼생성
-						if(data[3][idx].mpnum==num){
-							likeBtn='<li><button class="btn_liked act"><em class="snd_only">하트</em></button></li>';
-						//아닐때 빈하트
-						}else{
-							likeBtn='<li><button class="btn_liked"><em class="snd_only">하트</em></button></li>';;
-						}										
-					});
+					if(data[3]!=''){
+						$(data[3]).each(function(idx){
+							//좋아요목록의 개인피드번호와 가져온개인피드번호가 같을때 하트버튼생성
+							if(data[3][idx].mpnum==num){
+								likeBtn='<li><button class="btn_liked act"><em class="snd_only">하트</em></button></li>';
+							//아닐때 빈하트
+							}else{
+								likeBtn='<li><button class="btn_liked"><em class="snd_only">하트</em></button></li>';
+							}										
+						});
+					}else{
+						likeBtn='<li><button class="btn_liked"><em class="snd_only">하트</em></button></li>';
+					}
 				}
 				//게시글갯수가 3개초과일때 댓글더보기버튼 생성
 				if(data[0][index].mptotal>3){
@@ -370,22 +373,26 @@ function feedList(data,view,pronum,prophoto,logincheck){
 					grname='<a href="/festa/group/?grnum='+data[0][index].grnum+'&pronum='+pronum+'">'
 						+'<span class="fd_group">'+data[0][index].group.grname+'</span>'
 						+'</a>';
-					$(data[3]).each(function(idx){
-						//좋아요목록의 개인피드번호와 가져온개인피드번호가 같을때 하트버튼생성
-						if(data[3][idx].gpnum==num){
-							likeBtn='<li><button class="btn_liked act"><em class="snd_only">하트</em></button></li>';
-						//아닐때 빈하트
-						}else{
-							likeBtn='<li><button class="btn_liked"><em class="snd_only">하트</em></button></li>';
-						}
-					});
+					if(data[3]!=''){
+						$(data[3]).each(function(idx){
+							//좋아요목록의 개인피드번호와 가져온개인피드번호가 같을때 하트버튼생성
+							if(data[3][idx].gpnum==num){
+								likeBtn='<li><button class="btn_liked act"><em class="snd_only">하트</em></button></li>';
+							//아닐때 빈하트
+							}else{
+								likeBtn='<li><button class="btn_liked"><em class="snd_only">하트</em></button></li>';
+							}
+						});
+					}else{
+						likeBtn='<li><button class="btn_liked"><em class="snd_only">하트</em></button></li>';
+					}
 					
 				//로그인상태가 아닐때 댓글작성태그 삭제
 				//비로그인 그룹접속시 프로필번호삭제
 				}else{
 					grname='<a href="/festa/group/?grnum='+data[0][index].grnum+'">'
 						+'<span class="fd_group">'+data[0][index].group.grname+'</span>'
-						+'</a>'
+						+'</a>';
 				}
 				//게시글갯수가 3개초과일때 댓글더보기버튼 생성
 				if(data[0][index].gptotal>3){

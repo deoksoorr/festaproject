@@ -84,6 +84,30 @@
 			      }
 			   });
 			});
+			
+			$('#grsayone').on('propertychange change keyup paste input', function(){
+				var httag=$('#grsayone').val().length;
+				if(httag>=50){
+					$('#grfail').show();
+		 			$('#request').attr("disabled", "disabled");
+		 			$('#request').addClass('sbm');
+		 			$('#request').removeClass('cfm');
+				} else if(httag==0){
+					$('#grfail').hide();
+		 			$('#request').attr("disabled", "disabled");
+		 			$('#request').addClass('sbm');
+		 			$('#request').removeClass('cfm');
+				} else{
+					$('#grfail').hide();
+					var info=$('#grintrofail').is(':visible');
+					if(info==false){
+			 			$('#request').removeAttr("disabled");
+			 			$('#request').removeClass('sbm');
+			 			$('#request').addClass('cfm');
+					}
+				}
+		 	});
+			
 			$('#request').on('click', function(){
 				var grnum=$('#grnum').val();
 				var grname=$('#grname').val();
@@ -91,12 +115,6 @@
 				var pronum=$('#pronum').val();
 				var proname=$('#proname').val();
 				
-				if(grsayone == ''){
-					openPop("fail");
-					$('#failed').on('click', function(){
-						window.location.reload();
-					});
-				}
 				$.post('${root}group/join', 'grnum='+grnum+'&grname='+grname+
 						'&grsayone='+grsayone+'&pronum='+pronum+'&proname='+proname, function(){
 					openPop("ok");
@@ -448,49 +466,34 @@
 		</div>
 	</div>
 </div>
-<!-- #팝업 그룹 가입신청 { -->
-<div id="gpJoin" class="fstPop">
-	<div class="gp_join_wrap pop_wrap">
-		<h4 class="pop_tit">페스타 개인정보 제 3자 제공 동의</h4>
-		<div class="info_box">
-			<p>이 서비스는 아래 개인정보를 요청합니다.</p>
-			<ul>
-				<li>제공받는 자 : 그룹장</li>
-				<li>제공받는 정보 : 프로필 정보(이름, 관심지역,  프로필 사진, 성별)</li>
-				<li>제공받는 목적 : 그룹 서비스 제공</li>
-				<li>보유기간 : 해당 그룹 탈퇴 시 지체없이 파기</li>
-			</ul>
-		</div>
-		<form class="comm_form">
-			<div class="ip_box">
-				<input type="text" id="grsayone" name="" required="required">
-				<label for="festa1" class="comm_label"><span>(필수)</span> <span>가입신청 동기 또는 </span>하고싶은 말<span>을 입력해주세요.</span></label>
-			</div>
-			<div class="btn_box">
-				<ul class="comm_buttons">
-					<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
-					<li><button type="button" id="request" class="btn_close comm_btn cfm" data-layer="hello">신청하기</button></li>
-				</ul>
-			</div>
-		</form>
-	</div>
-</div>
 
-	<div id="hello" class="fstPop">
-		<div class="out_wrap pop_wrap">
-			<h3 class="pop_tit">그룹에 가입하시겠습니까?</h3>
-			<input type="hidden" id="grtotal" value="">
-			<input type="hidden" id="grnum" value="">
-			<div class="btn_box">
-				<ul class="comm_buttons">
-					<li><button type="button" class="btn_close comm_btn cnc">취소</button></li>
-					<li><button type="button" id="hi" class="btn_close comm_btn cfm">확인</button></li>
+	<!-- #팝업 그룹 가입신청 { -->
+	<div id="gpJoin" class="fstPop">
+		<div class="gp_join_wrap pop_wrap">
+			<h4 class="pop_tit">페스타 개인정보 제 3자 제공 동의</h4>
+			<div class="info_box">
+				<p>이 서비스는 아래 개인정보를 요청합니다.</p>
+				<ul>
+					<li>제공받는 자 : 그룹장</li>
+					<li>제공받는 정보 : 프로필 정보(이름, 관심지역,  프로필 사진, 성별)</li>
+					<li>제공받는 목적 : 그룹 서비스 제공</li>
+					<li>보유기간 : 해당 그룹 탈퇴 시 지체없이 파기</li>
 				</ul>
 			</div>
+			<form class="comm_form">
+				<div class="ip_box">
+					<input type="text" id="grsayone" name="" required="required">
+					<label for="festa1" class="comm_label"><span>(필수)</span> <span>가입신청 동기 또는 </span>하고싶은 말<span>을 입력해주세요.</span></label>
+				</div>
+				<p hidden="hidden" id="grfail" class="f_message rst">50자 이내로 작성해주세요</p>
+				<div class="btn_box">
+					<ul class="comm_buttons">
+						<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+						<li><button type="button" id="request" class="btn_close comm_btn sbm" disabled="disabled">신청하기</button></li>
+					</ul>
+				</div>
+			</form>
 		</div>
-		<button type="button" class="btn_close">
-			<em class="snd_only">창 닫기</em>
-		</button>
 	</div>
 	
 	<!-- #팝업 처리완료 { -->

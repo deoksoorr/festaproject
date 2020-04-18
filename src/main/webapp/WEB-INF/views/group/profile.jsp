@@ -201,7 +201,7 @@
 		 		var grtotal=$('#grtotal')
 		 		if(keymsg == sucmsg){
 		 			$('#delcheck').removeAttr("disabled");
-		 			$('#delcheck').removeClass('cnc');
+		 			$('#delcheck').removeClass('sbm');
 		 			$('#delcheck').addClass('cfm');
 
 		 			var grnum=$('#grnum').val();
@@ -227,7 +227,7 @@
 		 		}else{
 		 			$('#delcheck').attr("disabled", "disabled");
 		 			$('#delcheck').removeClass('cfm');
-		 			$('#delcheck').addClass('cnc');
+		 			$('#delcheck').addClass('sbm');
 		 		}
 		 	});
 	 	});
@@ -594,8 +594,8 @@
 	</div>
 	
 	
-	<div class="fstPop">
-		<div class="out_wrap pop_wrap" id="del">
+	<div class="fstPop" id="del">
+		<div class="out_wrap pop_wrap" >
 			<h3 class="pop_tit">그룹을 삭제하시겠습니까?</h3>
 			<div class="info_box">
 				<ul>
@@ -616,13 +616,15 @@
 					<input type="hidden" id="pronum" value="" />
 					<ul class="comm_buttons">
 						<li><button type="button" class="btn_close comm_btn cnc">취소</button></li>
-						<li><button type="button" id="delcheck" class="btn_close comm_btn cnc" disabled="disabled">확인</button></li>
+						<li><button type="button" id="delcheck" class="btn_close comm_btn sbm" disabled="disabled">확인</button></li>
 					</ul>
 				</div>
 			</form>
 		</div>
-		<button type="button" class="btn_close"><em class="snd_only">창 닫기</em></button>
 	</div>
+	<button type="button" class="btn_close">
+		<em class="snd_only">창 닫기</em>
+	</button>
 	
 	<div id="groupfail" class="fstPop">
 		<div class="confirm_wrap pop_wrap">

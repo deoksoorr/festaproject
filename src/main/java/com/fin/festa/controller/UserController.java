@@ -1,4 +1,4 @@
-package com.fin.festa.controller;
+﻿package com.fin.festa.controller;
 
 import java.util.List;
 
@@ -147,12 +147,30 @@ public class UserController {
 		return "user/following";
 	}
 	
+	//팔로우 (user/index에서)
+	@RequestMapping(value="indexFollow", method=RequestMethod.POST)
+	@ResponseBody
+	public MyFollowingVo indexFollowInsertOne(HttpServletRequest req,MyFollowingVo myFollowingVo) {
+		userSerivce.followInsertOne(req, myFollowingVo);
+		System.out.println(myFollowingVo.getPronum_sync());
+		return myFollowingVo;
+	}
+	
 	//팔로우 취소 (팝업>팝업 내 기능)
 	@RequestMapping(value = "unfollow", method = RequestMethod.POST)
 	public String followDeleteOne(HttpServletRequest req, MyFollowingVo myFollowingVo) {
 		System.out.println(myFollowingVo);
 		userSerivce.followDeleteOne(req, myFollowingVo);
 		return "user/following";
+	}
+	
+	//팔로우 취소(user/index에서)
+	@RequestMapping(value="indexUnfollow",method= RequestMethod.POST)
+	@ResponseBody
+	public MyFollowingVo indexFollowDeleteOne(HttpServletRequest req, MyFollowingVo myFollowingVo) {
+		userSerivce.followDeleteOne(req, myFollowingVo);
+		System.out.println(myFollowingVo.getPronum_sync());
+		return myFollowingVo;
 	}
 
 	//유저 신고 (팝업)

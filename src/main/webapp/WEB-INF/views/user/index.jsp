@@ -39,8 +39,17 @@ function btn_close(){
 		var login = '${login ne null}';
 
 		if(cookie!=''&&login=='false'){
-			openPop('loginCookie',none,btn_close);
+		   openPop('loginCookie',none,btn_close);
 		}
+
+		setInterval(function(){
+		   $.post('${root}member/loginSession','',function(data){
+		      if(data==''&&document.cookie!=''){
+		         clearInterval();
+		         openPop('loginCookie',none,btn_close);
+		      }
+		   });
+		},1000*60*10);
 
 		$('#btnCookie').on('click',function(){
 			$.post('${root}member/loginCookie','id='+cookie,function(data){
@@ -70,25 +79,21 @@ function btn_close(){
 			}
 		});
 		
-/* 		$('#follow').on('click',function(){
+ 		$('#follow').on('click',function(){
 			var unFollow = $(this).hasClass('act');
 			//등록
 			if(unFollow){
-				$.get('${root}user/follow','pronum='+ ${login.pronum}+'&mfgname='+"${login.proname}"+'&pronum_sync='+${profile.pronum}+'&myFollower.mfrname='+"${profile.proname}",function(){
-					var follow = $('#myFollowingCount');
-					//console.log(follow.text());
-					//window.location.reload();
+				$.post('${root}user/indexFollow','pronum='+ ${login.pronum}+'&mfgname='+"${login.proname}"+'&pronum_sync='+${profile.pronum}+'&myFollower.mfrname='+"${profile.proname}",function(data){
+					location.href = "${root}user/?pronum="+data.pronum_sync;
 				});
 			}
 			//해제
-			else{
-				$.get('${root}user/unfollow','pronum='+${login.pronum}+'&mfgname='+"${login.proname}"+'&pronum_sync='+${profile.pronum},function(){
-					var follow = $('#myFollowingCount');
-					//console.log(follow.text());
-					//window.location.reload();
+			else{ 
+				$.post('${root}user/indexUnfollow','pronum='+${login.pronum}+'&mfgname='+"${login.proname}"+'&pronum_sync='+${profile.pronum},function(data){
+					location.href = "${root}user/?pronum="+data.pronum_sync;
 				});
 			}
-		}); */
+		});
 		
 		$('.feed_viewer').each(function(index) {
 			if (index > 1) {
@@ -110,15 +115,24 @@ function btn_close(){
 				}
 		});
 			//댓글 입력하기
-			$('.btn_send.cmmt').on('click',function() {
-				console.log('접속');
+			$(document).on('submit','.message_form',function(e) {
+				e.preventDefault();
 				btn = $(this);
 				var feed = btn.parents('.feed_viewer.ind');
 				var mccontent = feed.find('#mccontent').val();
+				
 				var mcauthor = feed.find('#mcauthor').val();
 				var mpnum = feed.find('#mpnum').val();
 				var pronum = feed.find('#pronum').val();
 				var pronum_sync = feed.find('#pronum_sync').val();
+				var tmp = mccontent.length;
+				if(tmp>=500){
+					openPop('cmmtfull');
+					$('#cmmtfailed').on('click',function(){
+						$('#mccontent').focus();
+					});
+					return false;
+				}
 				$.post('${root}user/cmmtadd','mccontent=' + mccontent+ '&mcauthor='+ mcauthor+ '&mpnum=' + mpnum+ '&pronum='+ pronum +'&pronum_sync='+pronum_sync, function(data) {
 					window.location.reload();
 				});
@@ -218,9 +232,11 @@ function btn_close(){
 	});
 	
 	//피드삭제>확인
-	$('#deletefeed').on('click',function() {
+	$('#deletefeedForm').on('submit',function(e) {
+		e.preventDefault();
 		var mpnum = $('#fnum').val();
 		$.post('${root}user/del','mpnum='+mpnum,function(data) {
+			openPop('ok');
 			$('.btn_close.comm_btn.cfm').on('click',function() {
 				location.reload();
 			});
@@ -258,17 +274,42 @@ function btn_close(){
 	    }
 	}
 	
-	//팔로우
-	$(document).on('click','#follow',function(){
-		var pronum = "${login.pronum}";
-		var pronum_sync = "${profile.pronum}";
-		var mfgname = "${profile.proname}";
-		var mfrname = "${login.proname}";
-		$.post('${root}user/follow',"pronum="+pronum+"&pronum_sync="+pronum_sync+"&mfgname="+mfgname+"&mfrname"+mfrname,function(){
-			
-		});
+	//피드 등록 유효성
+	
+	$(document).on('click','#contentsend',function(){
+		console.log('접속');
+		if($('#mpcontent').val().length>=500){
+			openPop("cnfull");
+			$('#cnfailed').on('click',function(){
+				$('#mpcontent').focus();
+			});
+			return false;
+		};
+		if($('#httitle1').val().length>=20){
+			openPop("htfull");
+			$('#htfailed').on('click',function(){
+				$('#httitle1').focus();
+			});
+			return false;
+		};
+		if($('#httitle2').val().length>=20){
+			openPop("htfull");
+			$('#htfailed').on('click',function(){
+				$('#httitle2').focus();
+			});
+			return false;
+		};
+		if($('#httitle3').val().length>=20){
+			openPop("htfull");
+			$('#htfailed').on('click',function(){
+				$('#httitle3').focus();
+			});
+			return false;
+		};
 	});
+	
 });
+	
 	
 </script>
 </head>
@@ -532,7 +573,7 @@ function btn_close(){
 										<li><label for="file1" class="btn_file"><em
 												class="snd_only">사진/동영상 업로드하기</em></label></li>
 										<li>
-											<button type="submit" class="btn_send">
+											<button type="submit" class="btn_send" id="contentsend">
 												<em class="snd_only">피드 게시하기</em>
 											</button>
 										</li>
@@ -678,8 +719,8 @@ function btn_close(){
 								</c:if>
 									</a>
 									<p class="msg_input">
-										<input type="text" class="msg_txt" name="mccontent" placeholder="메세지를 입력해주세요" required="required">
-										<button type="button" class="btn_send cmmt">
+										<input type="text" class="msg_txt" id="mccontent" name="mccontent" placeholder="메세지를 입력해주세요" required="required">
+										<button type="submit" class="btn_send cmmt">
 											<em class="snd_only">전송</em>
 										</button>
 									</p>
@@ -839,13 +880,15 @@ function btn_close(){
 		<div class="out_wrap pop_wrap">
 			<h3 class="pop_tit">피드를 삭제하시겠습니까?</h3>
 			<input type="hidden" id="fnum" value="">
+			<form id="deletefeedForm">
 			<div class="btn_box">
 				<ul class="comm_buttons">
 					<li><button type="button" class="btn_close comm_btn cnc">취소</button></li>
-					<li><button type="button" id="deletefeed"
-							class="btn_pop2 comm_btn sbm" data-layer="ok">확인</button></li>
+					<li><button type="submit" id="deletefeed"
+							class="btn_pop2 comm_btn sbm">확인</button></li>
 				</ul>
 			</div>
+			</form>
 		</div>
 		<button type="button" class="btn_close">
 			<em class="snd_only">창 닫기</em>
@@ -890,6 +933,36 @@ function btn_close(){
 		btnPop('btn_pop2');
 		setFile();
 	</script>
+	
+	<!-- #게시글 초과 -->
+	<div id="cnfull" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">게시글은 500자 이상 입력할 수 없습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" id="cnfailed" class="btn_close comm_btn cfm">확인</button></li>
+			</ul>
+		</div>
+	</div>
+	
+	<!-- #해시태그 초과 -->
+	<div id="htfull" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">해시태그는 20자 이상 입력할 수 없습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" id="htfailed" class="btn_close comm_btn cfm">확인</button></li>
+			</ul>
+		</div>
+	</div>
+	
+	<!-- #댓글 초과 -->
+	<div id="cmmtfull" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">댓글은 500자 이상 입력할 수 없습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" id="cmmtfailed" class="btn_close comm_btn cfm">확인</button></li>
+			</ul>
+		</div>
+	</div>
 </html>
 
 

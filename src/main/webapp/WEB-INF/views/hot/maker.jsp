@@ -196,7 +196,7 @@
 <!-- #댓글 초과팝업 { -->
 <div id="excess_hash" class="fstPop">
 	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">20자 이상 입력할수 없습니다.</p>
+		<p class="pop_tit">해시태그는 20자 이상 입력할수 없습니다.</p>
 		<ul class="comm_buttons">
 			<li><button type="button" class="btn_close comm_btn cfm">확인</button></li>
 		</ul>
@@ -205,7 +205,7 @@
 <!-- #댓글 초과팝업 { -->
 <div id="excess" class="fstPop">
 	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">500자 이상 입력할수 없습니다.</p>
+		<p class="pop_tit">게시글은 500자 이상 입력할수 없습니다.</p>
 		<ul class="comm_buttons">
 			<li><button type="button" class="btn_close comm_btn cfm">확인</button></li>
 		</ul>

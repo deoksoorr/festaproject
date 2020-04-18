@@ -199,18 +199,19 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void followInsertOne(HttpServletRequest req, MyFollowingVo myFollowingVo) {
 		System.out.println("파라미터 : "+myFollowingVo);
-		/*
-		 * int result = userDao.isFollow(myFollowingVo);
-		 * System.out.println("result : "+result); if(result == 0) {
-		 * userDao.myFollowingInsertOne(myFollowingVo);
-		 * userDao.yourFollowerInsertOne(myFollowingVo); } else {
-		 * System.out.println("이미 팔로우"); }
-		 */
 		HttpSession session = req.getSession();
-		System.out.println(myFollowingVo.getPronum());
-		System.out.println(myFollowingVo.getPronum_sync());
+		userDao.myFollowingInsertOne(myFollowingVo);
+		userDao.yourFollowerInsertOne(myFollowingVo);
+		
+		ProfileVo profile = new ProfileVo();
+		profile.setPronum(myFollowingVo.getPronum_sync());
+		int myFollowerCount = userDao.myFollowerCount(profile);
+		int myFollowingCount = userDao.myFollowingCount(profile);
+		System.out.println("myFollowerCount: "+myFollowerCount);
+		System.out.println("myFollowingCount: "+myFollowingCount);
+		session.setAttribute("myFollowerCount", myFollowerCount);
+		session.setAttribute("myFollowingCount", myFollowingCount);
 		session.setAttribute("followlist", userDao.myFollowingRenewal(myFollowingVo));
-		System.out.println("등록 : " +req.getSession().getAttribute("followlist"));
 	}
 
 	// 내팔로잉목록에 삭제
@@ -224,7 +225,8 @@ public class UserServiceImpl implements UserService {
 		userDao.yourFollowerDeleteOne(myFollowingVo);
 		
 		HttpSession session = req.getSession();
-		ProfileVo profile = (ProfileVo) session.getAttribute("profile");
+		ProfileVo profile = new ProfileVo();
+		profile.setPronum(myFollowingVo.getPronum_sync());
 		int myFollowerCount = userDao.myFollowerCount(profile);
 		int myFollowingCount = userDao.myFollowingCount(profile);
 

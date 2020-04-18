@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.google.connect.GoogleOAuth2Template;
@@ -189,5 +190,10 @@ public class MemberController {
 			return memberService.loginCookie(req, resp, loginVo);
 		}
 
-	
+	 //세션체크
+	@RequestMapping(value = "loginSession", method = RequestMethod.POST)
+	public @ResponseBody ProfileVo loginSession(HttpServletRequest req,HttpSession session) {
+	         
+	   return (ProfileVo) session.getAttribute("login");
+	}
 }

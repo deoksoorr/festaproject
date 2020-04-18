@@ -611,6 +611,54 @@ function inputAllChecked() {
 	});
 }
 
+function stringValue(form) {
+	var over = false;
+	var textArr = [
+		form.find('textarea'),
+		form.find('input[type=text]'),
+	];
+	
+	for (var i=0; i<textArr.length; i++) {
+		for (var j=0; j<textArr[i].length; j++) {
+			var t = $(textArr[i][j]),
+				n = t.attr('name'),
+				v = t.val();
+			var max, errFocus, message;
+			
+			if (n == 'mccontent' || n == 'gccontent') {
+				max = 500;
+				message = '댓글은 500자 이상 입력할 수 없습니다.';
+			} else if (n == 'mpcontent' || n == 'gpcontent') {
+				max = 500;
+				message = '게시글은 500자 이상 입력할 수 없습니다.';
+			} else if (n == 'rlreport') {
+				max = 500;
+				message = '신고사유는 500자 이상 입력할 수 없습니다.';
+			} else if (n == 'httitle1' || n == 'httitle2' || n == 'httitle3') {
+				max = 20;
+				message = '해시태그는 20자 이상 입력할 수 없습니다.';
+			} else if (n == 'crcontent') {
+				max = 1000;
+				message = '한줄평은 1000자 이상 입력할 수 없습니다.';
+			}
+			
+			if (v.length > max) {
+				$('#alert .pop_tit').text(message);
+				errFocus = function (){
+					t.focus();
+				};
+				openPop('alert', none, errFocus);
+				over = true;
+				break;
+			}
+		}
+		if (over) break;
+	}
+	
+	if (over) return false;
+	else return true;
+}
+
 // 필수값 유효성검사
 function formRequired(form) {
 	var form = $('.'+form);

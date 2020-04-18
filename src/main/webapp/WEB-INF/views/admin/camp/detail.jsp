@@ -72,6 +72,15 @@
 					openPop('loginCookie',none,btn_close);
 				}
 				
+				setInterval(function(){
+					$.post('${root}member/loginSession','',function(data){
+						if(data==''&&document.cookie!=''){
+							clearInterval();
+							openPop('loginCookie',none,btn_close);
+						}
+					});
+				},1000*60*10);
+				
 				$('#btnCookie').on('click',function(){
 					$.post('${root}member/loginCookie','id='+cookie,function(data){
 						if (data.prorn == '0') {
@@ -210,37 +219,9 @@
 					</div>
 				</div>
 				<div class="intro box">
-					<h4 class="snd_only">캠핑장 사진</h4>
-					<div class="thumb_slide">
-					<div class="thumb_slide">
-					<div class="swiper-slide">
-						<iframe id="reali" src="${root }admin/camp/gl_camp" width="1000" height="500" scrolling="no" frameborder="1"></iframe>
+					<div class="thumb_3d">
+						<iframe id="reali" src="${root }admin/camp/gl_camp" width="720" height="380" scrolling="no" frameborder="1"></iframe>
 					</div>
-					</div>
-					</div>
-					<%-- <c:if test="${!empty campdetail.caphoto }">
-						<div class="thumb_slide">
-							<div class="thumb_slide">
-								<c:set var="caphoto" value="${campdetail.caphoto }" />
-								<c:forTokens items="${caphoto }" delims="," var="item">
-									<div class="swiper-slide">
-										<img src="${upload }/${item }" alt="">
-									</div>
-								</c:forTokens>
-							</div>
-							<div class="swiper-pagination"></div>
-						</div>
-					</c:if>
-					<c:if test="${empty campdetail.caphoto }">
-						<div class="thumb_slide">
-							<div class="swiper-wrapper">
-								<div class="swiper-slide">
-									<img src="${root }resources/images/thumb/no_profile.png" alt="">
-								</div>
-							</div>
-							<div class="swiper-pagination"></div>
-						</div>
-					</c:if> --%>
 					<div class="text_box">
 						<h4 class="sub_tit">캠핑장 소개</h4>
 						<c:if test="${venturecheck eq 1 }">
@@ -272,8 +253,34 @@
 				</div>
 			</div>
 		</section>
-		
-		
+		<section class="photo_area">
+			<div class="container">
+				<h4 class="sub_tit">캠핑장 사진</h4>
+				<c:if test="${!empty campdetail.caphoto }">
+					<div class="thumb_slide">
+						<div class="thumb_slide">
+							<c:set var="caphoto" value="${campdetail.caphoto }" />
+							<c:forTokens items="${caphoto }" delims="," var="item">
+								<div class="swiper-slide">
+									<img src="${upload }/${item }" alt="">
+								</div>
+							</c:forTokens>
+						</div>
+						<div class="swiper-pagination"></div>
+					</div>
+				</c:if>
+				<c:if test="${empty campdetail.caphoto }">
+					<div class="thumb_slide">
+						<div class="swiper-wrapper">
+							<div class="swiper-slide">
+								<img src="${root }resources/images/thumb/no_profile.png" alt="">
+							</div>
+						</div>
+						<div class="swiper-pagination"></div>
+					</div>
+				</c:if>
+			</div>
+		</section>
 		<section class="location_area">
 			<div class="container">
 				<h4 class="sub_tit">오시는 길</h4>

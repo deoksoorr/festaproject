@@ -3237,7 +3237,7 @@ form .f_message.ok {
 }
 
 #main .group_area .group_list .gp_text {
-  width: 322px;
+  width: 321px;
   padding-right: 40px;
 }
 
@@ -3773,6 +3773,7 @@ form .f_message.ok {
 }
 
 .camp_wrap.detail .thumb_3d {
+  position: relative;
   float: left;
   width: 720px;
   height: 100%;
@@ -3782,6 +3783,14 @@ form .f_message.ok {
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   background: #fff;
   overflow: hidden;
+}
+
+.camp_wrap.detail .thumb_3d iframe {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
 }
 
 .camp_wrap.detail .info_list li {

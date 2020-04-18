@@ -264,7 +264,7 @@
 		 		var sucmsg='여행하는 과정에서 행복을 느낀다'
 		 		if(keymsg == sucmsg){
 		 			$('#outgroup').removeAttr("disabled");
-		 			$('#outgroup').removeClass('cnc');
+		 			$('#outgroup').removeClass('sbm');
 		 			$('#outgroup').addClass('cfm');
 
 		 			var grnum=$('#grnum').val();
@@ -282,7 +282,7 @@
 		 		}else{
 		 			$('#outgroup').attr("disabled", "disabled");
 		 			$('#outgroup').removeClass('cfm');
-		 			$('#outgroup').addClass('cnc');
+		 			$('#outgroup').addClass('sbm');
 		 		}
 		 	});
 		});
@@ -1039,16 +1039,16 @@
 				<div class="btn_box">
 					<ul class="comm_buttons">
 						<li><button type="button" class="btn_close comm_btn cnc">취소</button></li>
-						<li><button type="button" id="outgroup" class="btn_close comm_btn cnc" disabled="disabled">확인</button></li>
+						<li><button type="button" id="outgroup" class="btn_close comm_btn sbm" disabled="disabled">확인</button></li>
 					</ul>
 				</div>
 			</form>
 		</div>
-		<button type="button" class="btn_close">
-			<em class="snd_only">창 닫기</em>
-		</button>
 	</div>
-
+	<button type="button" class="btn_close">
+		<em class="snd_only">창 닫기</em>
+	</button>
+		
 	<!-- #팝업 처리완료 { -->
 	<div id="ok" class="fstPop">
 		<div class="confirm_wrap pop_wrap"> 

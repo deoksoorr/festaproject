@@ -24,14 +24,32 @@
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
 	<title>FESTA</title>
 	<script type="text/javascript">
+	
+	function btn_close(){
+        document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+        var url = window.location.href;
+    	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+    		window.location.href='${root}';
+    	}
+	}
+	
 		$(document).ready(function(){
 			
 			var cookie = '${cookie.loginCookie.value}';
 			var login = '${login ne null}';
-			
+
 			if(cookie!=''&&login=='false'){
-				openPop('loginCookie');
+				openPop('loginCookie',none,btn_close);
 			}
+			
+			setInterval(function(){
+				$.post('${root}member/loginSession','',function(data){
+					if(data==''&&document.cookie!=''){
+						clearInterval();
+						openPop('loginCookie',none,btn_close);
+					}
+				});
+			},1000*60*10);
 			
 			$('#btnCookie').on('click',function(){
 				$.post('${root}member/loginCookie','id='+cookie,function(data){
@@ -242,7 +260,14 @@
 								<li class="swiper-slide">
 									<a class="cp_thumb" href="${root }camp/detail?canum=${searchCamp.canum}">
 									<c:if test="${!empty searchCamp.caphoto }">
-									<c:set var="image" value="${fn:substringBefore(searchCamp.caphoto,',') }"/>
+									<c:set var="image1" value="${fn:split(searchCamp.caphoto,',') }" />
+									<c:if test="${fn:length(image1) gt 1 }">
+										<c:set var="image"
+											value="${fn:substringBefore(searchCamp.caphoto,',') }" />
+									</c:if>
+									<c:if test="${fn:length(image1) eq 1 }">
+										<c:set var="image" value="${searchCamp.caphoto }" />
+									</c:if>
 										<img src="${upload }/${image}" alt="${searchCamp.caname } 캠핑장 썸네일">
 									</c:if>
 									<c:if test="${empty searchCamp.caphoto }">

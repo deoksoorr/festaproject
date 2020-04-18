@@ -39,8 +39,17 @@ function btn_close(){
 		var login = '${login ne null}';
 
 		if(cookie!=''&&login=='false'){
-			openPop('loginCookie',none,btn_close);
+		   openPop('loginCookie',none,btn_close);
 		}
+		
+		setInterval(function(){
+	 		   $.post('${root}member/loginSession','',function(data){
+	 		      if(data==''&&document.cookie!=''){
+	 		         clearInterval();
+	 		         openPop('loginCookie',none,btn_close);
+	 		      }
+	 		   });
+	 		},1000*60);
 
 		$('#btnCookie').on('click',function(){
 			$.post('${root}member/loginCookie','id='+cookie,function(data){
@@ -72,8 +81,6 @@ function btn_close(){
 			$('#imgCaphoto').attr('src','${upload }/'+tmp[tmp.length-1]);
 		}
 		
-		//canum, caname, caaddr, caintro  , caaddrsuv is not null
-		
 		var caname = $('#caname').val();
 		var caaddr = $('#caaddr').val();
 		var caintro = $('#caintro').val();
@@ -82,32 +89,205 @@ function btn_close(){
 			$('#apply').prop('type','submit');
 		}
 		
-		//한줄평 유효성
+		//메인소개 유효성
 		$("#caintro").on('propertychange change keyup paste input',function() {
-			if($('#canum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!=""){
-				$('#apply').prop('type','submit');
-			}
-			else{
+			if($('#caintro').val().length>500){
+				$('#caintroCheck').show();
 				$('#apply').prop('type','button');
 			}
-		});//한줄평 유효성 종료
+			else{
+				$('#caintroCheck').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});//메인소개 유효성 종료
+		
+		//한줄소개 유효성
+		$('#caintroone').on('propertychange change keyup paste input',function() {
+			if($('#caintroone').val().length>20){
+				$('#caintrooneCheck').show();
+				$('#apply').prop('type','button');
+			}
+			else{
+				$('#caintrooneCheck').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});//한줄소개 유효성 종료
+		
+		//해시태그 유효성
+		$('#httitle1').on('propertychange change keyup paste input',function() {
+			if($('#httitle1').val().length>20){
+				$('#httitleCheck').show();
+				$('#apply').prop('type','button');
+			}
+			else{
+				$('#httitleCheck').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});
+		$('#httitle2').on('propertychange change keyup paste input',function() {
+			if($('#httitle2').val().length>20){
+				$('#httitleCheck').show();
+				$('#apply').prop('type','button');
+			}
+			else{
+				$('#httitleCheck').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});
+		$('#httitle3').on('propertychange change keyup paste input',function() {
+			if($('#httitle3').val().length>20){
+				$('#httitleCheck').show();
+				$('#apply').prop('type','button');
+			}
+			else{
+				$('#httitleCheck').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});
+		//해시태그 유효성 종료
+		
+		//시설안내 유효성
+		$('#caguide1').on('propertychange change keyup paste input',function() {
+			if($('#caguide1').val().length>30){
+				$('#caguide1Check').show();
+				$('#apply').prop('type','button');
+			}
+			else{
+				$('#caguide1Check').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});
+		
+		$('#caguide2').on('propertychange change keyup paste input',function() {
+			if($('#caguide2').val().length>30){
+				$('#caguide2Check').show();
+				$('#apply').prop('type','button');
+			}
+			else{
+				$('#caguide2Check').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});
+		
+		$('#caguide3').on('propertychange change keyup paste input',function() {
+			if($('#caguide3').val().length>30){
+				$('#caguide3Check').show();
+				$('#apply').prop('type','button');
+			}
+			else{
+				$('#caguide3Check').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});
+		
+		$('#caguide4').on('propertychange change keyup paste input',function() {
+			if($('#caguide4').val().length>30){
+				$('#caguide4Check').show();
+				$('#apply').prop('type','button');
+			}
+			else{
+				$('#caguide4Check').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});
+		
+		$('#caguide5').on('propertychange change keyup paste input',function() {
+			if($('#caguide5').val().length>30){
+				$('#caguide5Check').show();
+				$('#apply').prop('type','button');
+			}
+			else{
+				$('#caguide5Check').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});
+		
+		$('#caguide6').on('propertychange change keyup paste input',function() {
+			if($('#caguide6').val().length>30){
+				$('#caguide6Check').show();
+				$('#apply').prop('type','button');
+			}
+			else{
+				$('#caguide6Check').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});
+		
+		$('#caguide7').on('propertychange change keyup paste input',function() {
+			if($('#caguide7').val().length>30){
+				$('#caguide7Check').show();
+				$('#apply').prop('type','button');
+			}
+			else{
+				$('#caguide7Check').hide();
+				if($('#mvnum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!="" && $('#caintroCheck').attr("style")=="display: none;" && $('#caintrooneCheck').attr("style")=="display: none;" && $('#httitleCheck').attr("style")=="display: none;" && $('#caguide1Check').attr("style")=="display: none;" && $('#caguide2Check').attr("style")=="display: none;" && $('#caguide3Check').attr("style")=="display: none;" && $('#caguide4Check').attr("style")=="display: none;" && $('#caguide5Check').attr("style")=="display: none;"  && $('#caguide6Check').attr("style")=="display: none;"  && $('#caguide7Check').attr("style")=="display: none;"){
+					$('#apply').prop('type','submit');
+				}
+				else{
+					$('#apply').prop('type','button');
+				}
+			}
+		});
+		//시설안내 유효성 종료
 		
 		$('#rst').on('submit',function(e){
 			e.preventDefault();
-/* 			var canum = $('#canum').val();
-			var caphoto = $('#caphoto').val();
-			var caintroone = $('#caintroone').val();
-			var httitle1 = $('#httitle1').val();
-			var httitle2 = $('#httitle2').val();
-			var httitle3 = $('#httitle3').val();
-			var caguide1 = $('#caguide1').val();
-			var caguide2 = $('#caguide2').val();
-			var caguide3 = $('#caguide3').val();
-			var caguide4 = $('#caguide4').val();
-			var caguide5 = $('#caguide5').val();
-			var caguide6 = $('#caguide6').val();
-			var caguide7 = $('#caguide7').val(); */
-			
+
 			var files = new FormData($('#rst')[0]);
 			$.ajax({
 				type:"POST",
@@ -352,7 +532,7 @@ function btn_close(){
 						<!-- 사업자이면서 캠핑장 있는 경우 -->
 						<c:if test="${myVenture ne null }">
 							<c:if test="${campCheck == 1 }">
-								<li><a href="${root }user/camp/" >캠핑장 관리</a></li>
+								<li><a href="${root }user/camp/">캠핑장 관리</a></li>
 							</c:if>
 						</c:if>
 						<!-- 사업자이지만 캠핑장이 없는 경우 -->
@@ -461,11 +641,12 @@ function btn_close(){
 							</li>
 							<li class="box">
 								<p>
-									<label for="festa7">한줄 소개</label>
+									<label for="festa7">한줄 소개 </label>
 								</p>
 								<div>
 									<input type="text" id="caintroone" name="caintroone" value="${myCamp.caintroone }"
 										placeholder="한줄 소개글을 입력해주세요">
+									<p hidden="hidden" id="caintrooneCheck" class="f_message rst" style="display: none;">20자를 초과하였습니다.</p>
 								</div>
 							</li>
 							<li class="box">
@@ -475,6 +656,7 @@ function btn_close(){
 								<div>
 									<textarea id="caintro" name="caintro"
 										placeholder="500자 이내로 작성해주세요">${myCamp.caintro }</textarea>
+									<p hidden="hidden" id="caintroCheck" class="f_message rst" style="display: none;">500자를 초과하였습니다.</p>
 								</div>
 							</li>
 							<li class="set_tags box">
@@ -483,8 +665,10 @@ function btn_close(){
 									<ul>
 										<li><input type="text" id="httitle1" name="httitle1" value="${myCamp.httitle1 }"></li>
 										<li><input type="text" id="httitle2" name="httitle2" value="${myCamp.httitle2 }"></li>
-										<li><input type="text" id="httitle3" name="httitle3" value="${myCamp.httitle3 }"></li>
+										<li><input type="text" id="httitle3" name="httitle3" value="${myCamp.httitle3 }">
+										</li>
 									</ul>
+									<p hidden="hidden" id="httitleCheck" class="f_message rst" style="display: none;">20자를 초과하였습니다.</p>
 								</div>
 							</li>
 							
@@ -501,13 +685,27 @@ function btn_close(){
 											<li class="fstEmpty">등록된 시설 안내 사항이 없습니다</li>
 										</c:when>
 										<c:otherwise>
-											<ul><li><input type="text" id="caguide1" name="caguide1" value="${myCamp.caguide1 }"></li></ul>
-											<ul><li><input type="text" id="caguide2" name="caguide2" value="${myCamp.caguide2 }"></li></ul>
-											<ul><li><input type="text" id="caguide3" name="caguide3" value="${myCamp.caguide3 }"></li></ul>
-											<ul><li><input type="text" id="caguide4" name="caguide4" value="${myCamp.caguide4 }"></li></ul>
-											<ul><li><input type="text" id="caguide5" name="caguide5" value="${myCamp.caguide5 }"></li></ul>
-											<ul><li><input type="text" id="caguide6" name="caguide6" value="${myCamp.caguide6 }"></li></ul>
-											<ul><li><input type="text" id="caguide7" name="caguide7" value="${myCamp.caguide7 }"></li></ul>
+											<ul><li><input type="text" id="caguide1" name="caguide1" value="${myCamp.caguide1 }">
+											<p hidden="hidden" id="caguide1Check" class="f_message rst" style="display: none;">30자를 초과하였습니다.</p>
+											</li></ul>
+											<ul><li><input type="text" id="caguide2" name="caguide2" value="${myCamp.caguide2 }">
+											<p hidden="hidden" id="caguide2Check" class="f_message rst" style="display: none;">30자를 초과하였습니다.</p>
+											</li></ul>
+											<ul><li><input type="text" id="caguide3" name="caguide3" value="${myCamp.caguide3 }">
+											<p hidden="hidden" id="caguide3Check" class="f_message rst" style="display: none;">30자를 초과하였습니다.</p>
+											</li></ul>
+											<ul><li><input type="text" id="caguide4" name="caguide4" value="${myCamp.caguide4 }">
+											<p hidden="hidden" id="caguide4Check" class="f_message rst" style="display: none;">30자를 초과하였습니다.</p>
+											</li></ul>
+											<ul><li><input type="text" id="caguide5" name="caguide5" value="${myCamp.caguide5 }">
+											<p hidden="hidden" id="caguide5Check" class="f_message rst" style="display: none;">30자를 초과하였습니다.</p>
+											</li></ul>
+											<ul><li><input type="text" id="caguide6" name="caguide6" value="${myCamp.caguide6 }">
+											<p hidden="hidden" id="caguide6Check" class="f_message rst" style="display: none;">30자를 초과하였습니다.</p>
+											</li></ul>
+											<ul><li><input type="text" id="caguide7" name="caguide7" value="${myCamp.caguide7 }">
+											<p hidden="hidden" id="caguide7Check" class="f_message rst" style="display: none;">30자를 초과하였습니다.</p>
+											</li></ul>
 										</c:otherwise>
 									</c:choose>
 									<p class="txt_explan">시설안내는 최대 7개까지 등록 가능합니다.</p>
@@ -516,7 +714,7 @@ function btn_close(){
 						</ul>
 						<ul class="comm_buttons">
 							<li><button type="reset" class="btn_close comm_btn cnc">취소</button></li>
-							<li id="save" ><button type="button" id="apply" class="comm_btn sbm">저장</button></li>
+							<li><button type="button" id="apply" class="comm_btn sbm">저장</button></li>
 						</ul>
 						<input type="hidden" name="mvnum" value="${myVenture.mvnum }"/>
 					</form>
@@ -553,7 +751,7 @@ function btn_close(){
 </body>
 <div id="updateOk" class="fstPop pop2">
 	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">등록이 완료되었습니다.</p>
+		<p class="pop_tit">수정이 완료되었습니다.</p>
 		<ul class="comm_buttons">
 			<li><button type="button" id="finish_update" name="finish_update" class="btn_close comm_btn cfm">확인</button></li>
 		</ul>

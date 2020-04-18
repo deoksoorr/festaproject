@@ -25,29 +25,28 @@
 	        var url = window.location.href;
 	    	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
 	    		window.location.href='${root}';
+	    	}else{
+	    		location.reload();
 	    	}
-		}
-		
-		function timeOut(){
-			
 		}
 		
 		$(document).ready(function(){
 			
 			var cookie = '${cookie.loginCookie.value}';
 			var login = '${login ne null}';
+			
 			if(cookie!=''&&login=='false'){
-				clearInterval();
 				openPop('loginCookie',none,btn_close);
 			}
+			
 			setInterval(function(){
 				$.post('${root}member/loginSession','',function(data){
-					if(data==''){
+					if(data==''&&document.cookie!=''){
 						clearInterval();
 						openPop('loginCookie',none,btn_close);
 					}
 				});
-			},2000);
+			},1000*60*10);
 			
 			
 			$('#btnCookie').on('click',function(){
@@ -334,7 +333,7 @@
 					}
 				//해당 input[type=text].val.length
 				}else if(sendBtn.siblings('.msg_txt').val().length>=500){
-					openPop('excess');
+					openPop('excess_comm');
 				}
 			});
 			
@@ -914,9 +913,18 @@
 	</div>
 </div>
 <!-- #댓글 초과팝업 { -->
+<div id="excess_comm" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">댓글은 500자 이상 입력할수 없습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
+<!-- #댓글 초과팝업 { -->
 <div id="excess" class="fstPop">
 	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">500자 이상 입력할수 없습니다.</p>
+		<p class="pop_tit">게시글은 500자 이상 입력할수 없습니다.</p>
 		<ul class="comm_buttons">
 			<li><button type="button" class="btn_close comm_btn cfm">확인</button></li>
 		</ul>

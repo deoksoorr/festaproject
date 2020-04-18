@@ -13,6 +13,9 @@
 	<script type="text/javascript" src="${root}resources/js/jquery-1.12.4.js"></script>
 	<script type="text/javascript" src="${root}resources/js/util.js"></script>
 	<script type="text/javascript" src="${root}resources/js/site.js"></script>
+    <script type="text/javascript" src="${root }resources/js/jh.js"></script>
+    <script type="text/javascript" src="${root }resources/js/three.js"></script>
+    <script type="text/javascript" src="${root }resources/js/three.module.js"></script>
 	<link type="text/css" rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css">
 	<link type="text/css" rel="stylesheet" href="${root}resources/css/site.css">
 	<link rel="shortcut icon" href="${root}resources/favicon.ico">
@@ -20,6 +23,9 @@
 	<style type="text/css">
 		#iframe{
 			text-align: center;
+		}
+		iframe body {
+			margin: 0 !important;
 		}
 	</style>
 	<script type="text/javascript">
@@ -87,7 +93,6 @@
 		// 한줄평 등록
 		var rvForm = $('.rate_form');
 		rvForm.on('submit', function(e) {
-			e.preventDefault();
 			var rvParam = {
 				'crauthor': $('[name=crauthor]').val(),
 				'crcontent': $('[name=crcontent]').val(),
@@ -96,8 +101,13 @@
 				'camp.caavg': $('[name=caavg]').val(),
 				'pronum': $('[name=pronum]').val(),
 			};
-			$.post('${root}camp/detail/revadd', rvParam)
-				.done(refresh);
+			
+			var strSize = stringValue($(this));
+			if (strSize == true) {
+				$.post('${root}camp/detail/revadd', rvParam)
+					.done(refresh);
+			}
+			e.preventDefault();
 		});
 		
 		// 삭제하기
@@ -354,21 +364,9 @@
 					</div>
 				</div>
 				<div class="intro box">
-					<h4 class="snd_only">캠핑장 사진</h4>
-					<div class="thumb_slide">
-						<div class="swiper-wrapper">
-						<c:choose>
-							<c:when test="${!empty camp.caphoto}">
-								<c:forTokens items="${camp.caphoto}" var="images" delims=",">
-									<div class="swiper-slide"><img src="${upload}/${images}" alt="${camp.caname}"></div>
-								</c:forTokens>
-							</c:when>
-							<c:otherwise>
-								<div class="swiper-slide"><img src="${root}resources/images/thumb/no_profile.png" alt="${camp.caname}"></div>
-							</c:otherwise>
-						</c:choose>
-						</div>
-						<div class="swiper-pagination"></div>
+					<h4 class="snd_only">캠핑장 썸네일</h4>
+					<div class="thumb_3d">
+						<iframe id="reali" src="${root}admin/camp/gl_camp" width="720" height="380" scrolling="no" frameborder="1"></iframe>
 					</div>
 					<div class="text_box">
 						<h4 class="sub_tit">캠핑장 소개</h4>
@@ -397,9 +395,25 @@
 				</div>
 			</div>
 		</section>
-		<div id="iframe">
-			<iframe id="reali" src="${root }admin/camp/gl_camp" width="1000" height="500" scrolling="no" frameborder="1"></iframe>
-		</div>
+		<section class="photo_area">
+			<div class="container">
+				<div class="thumb_slide">
+					<div class="swiper-wrapper">
+					<c:choose>
+						<c:when test="${!empty camp.caphoto}">
+							<c:forTokens items="${camp.caphoto}" var="images" delims=",">
+								<div class="swiper-slide"><img src="${upload}/${images}" alt="${camp.caname}"></div>
+							</c:forTokens>
+						</c:when>
+						<c:otherwise>
+							<div class="swiper-slide"><img src="${root}resources/images/thumb/no_profile.png" alt="${camp.caname}"></div>
+						</c:otherwise>
+					</c:choose>
+					</div>
+					<div class="swiper-pagination"></div>
+				</div>
+			</div>
+		</section>
 		<section class="location_area">
 			<div class="container">
 				<h4 class="sub_tit">오시는 길</h4>

@@ -15,24 +15,29 @@
 	$(document).ready(function(){
 		//신고하기버튼 클릭
 		$('#form_data').on('submit',function(e){
-			var files = new FormData($('#form_data')[0]);
-			$.ajax({
-				type: "POST",
-				enctype: 'multipart/form-data',
-				url: '${root}user/report',
-				data: files,
-				processData: false,
-				contentType: false,
-				cache: false,
-				success: function (data) {
-					$('.comm_buttons .btn_close').click();
-					openPop('ok');
-				},
-				error: function (e) { 
-					openPop('fail');
-				}
-			});
 			e.preventDefault();
+			if($('#festaRs10:checked').val()=="기타" && $('.report_11').val().length>=500){
+				openPop('excess1');
+			}
+			else{
+				var files = new FormData($('#form_data')[0]);
+				$.ajax({
+					type: "POST",
+					enctype: 'multipart/form-data',
+					url: '${root}user/report',
+					data: files,
+					processData: false,
+					contentType: false,
+					cache: false,
+					success: function (data) {
+						$('.comm_buttons .btn_close').click();
+						openPop('ok');
+					},
+					error: function (e) { 
+						openPop('fail');
+					}
+				});
+			}
 		});
 	});
 </script>
@@ -110,6 +115,15 @@
 		</div>
 	</form>
 </div>
+<!-- #댓글 초과팝업 { -->
+<div id="excess1" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">500자 이상 입력할수 없습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
 <div id="ok" class="fstPop">
 	<div class="confirm_wrap pop_wrap">
 		<p class="pop_tit">신고가 정상적으로 접수되었습니다.</p>
@@ -128,10 +142,10 @@
 </div>
 <button type="button" class="btn_close"><em class="snd_only">창 닫기</em></button>
 <script type="text/javascript">
-	btnPop('btn_pop2');
+btnPop('btn_pop2');
 
-	reportForm();
-	fileName();
+reportForm();
+fileName();
 </script>
 
 </html>

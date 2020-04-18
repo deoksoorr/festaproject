@@ -36,8 +36,17 @@
 			var login = '${login ne null}';
 
 			if(cookie!=''&&login=='false'){
-				openPop('loginCookie',none,btn_close);
+			   openPop('loginCookie',none,btn_close);
 			}
+
+			setInterval(function(){
+			   $.post('${root}member/loginSession','',function(data){
+			      if(data==''&&document.cookie!=''){
+			         clearInterval();
+			         openPop('loginCookie',none,btn_close);
+			      }
+			   });
+			},1000*60*10);
 
 			$('#btnCookie').on('click',function(){
 				$.post('${root}member/loginCookie','id='+cookie,function(data){
@@ -78,12 +87,21 @@
 			
 			//캠핑장 이름 유효성 검사
 			$("#mvname").on('propertychange change keyup paste input',function() {
-				if($('#mvnumber').val() != "" && $('#ventureNo').text() != "사업자등록증 사본을 첨부해주세요" && $('#mvname').val() != "" && $('#mvaddr').val() != "" && $('#mvaddrsuv').val() != "" && $('input:checkbox[id=festa1]').is(':checked')==true){
-					$('#ventureSend').prop('type','submit');
+				if($('#mvname').val().length<=20){
+					$('#mvnameCheck').hide();
+					if($('#mvnumber').val() != "" && $('#ventureNo').text() != "사업자등록증 사본을 첨부해주세요" && $('#mvname').val() != "" && $('#mvaddr').val() != "" && $('#mvaddrsuv').val() != "" && $('input:checkbox[id=festa1]').is(':checked')==true){
+						$('#ventureSend').prop('type','submit');
+					}
+					/* else{
+						$('#mvnameCheck').show();
+						$('#ventureSend').prop('type','button');
+					} */
 				}
 				else{
+					$('#mvnameCheck').show();
 					$('#ventureSend').prop('type','button');
 				}
+				
 			});//캠핑장이름 유효성 검사 종료
 			
 			//캠핑장 주소 유효성 검사
@@ -98,10 +116,18 @@
 			
 			//캠핑장 서브주소 유효성 검사
 			$("#mvaddrsuv").on('propertychange change keyup paste input',function() {
-				if($('#mvnumber').val() != "" && $('#ventureNo').text() != "사업자등록증 사본을 첨부해주세요" && $('#mvname').val() != "" && $('#mvaddr').val() != "" && $('#mvaddrsuv').val() != "" && $('input:checkbox[id=festa1]').is(':checked')==true){
-					$('#ventureSend').prop('type','submit');
+				if($('#mvaddrsuv').val().length<=40){
+					$('#mvaddrsuvCheck').hide();
+					if($('#mvnumber').val() != "" && $('#ventureNo').text() != "사업자등록증 사본을 첨부해주세요" && $('#mvname').val() != "" && $('#mvaddr').val() != "" && $('#mvaddrsuv').val() != "" && $('input:checkbox[id=festa1]').is(':checked')==true){
+						$('#ventureSend').prop('type','submit');
+					}
+					/* else{
+						$('#mvaddrsuvCheck').show();
+						$('#ventureSend').prop('type','button');
+					} */
 				}
 				else{
+					$('#mvaddrsuvCheck').show();
 					$('#ventureSend').prop('type','button');
 				}
 			});//캠핑장서브주소 유효성 검사 종료
@@ -151,103 +177,6 @@
 							<li><a href="${root}user/?pronum=${login.pronum}">마이페이지</a></li>
 						</c:if>
 					</ul>
-					<c:if test="${login ne null }">
-						<div id="userMenu" class="fstLyr">
-							<button class="btn_menu">
-								<em class="snd_only">나의 메뉴 더보기</em>
-							</button>
-							<dl class="menu_box" tabindex="0">
-								<dt>
-									<b>${login.proname }</b>
-								</dt>
-								<dd>
-									<span class="btn_mylist">나의 그룹</span>
-									<div class="my_list">
-										<ul>
-											<c:forEach items="${joinGroup }" var="joinGroup">
-												<c:choose>
-													<c:when test="${joinGroup.group.grphoto eq null }">
-														<li><a
-															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-																<span><img src="${root }resources/upload/thumb/no_profile.png"
-																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
-														</a></li>
-													</c:when>
-													<c:otherwise>
-														<li><a
-															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-																<span><img src="${upload }/${joinGroup.group.grphoto}"
-																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
-														</a></li>
-													</c:otherwise>
-												</c:choose>
-											</c:forEach>
-										</ul>
-									</div>
-								</dd>
-								<dd>
-									<span class="btn_mylist">나의 채팅</span>
-									<div class="my_list">
-										<ul>
-											<c:forEach items="${joinGroup }" var="joinGroup">
-												<c:choose>
-													<c:when test="${joinGroup.group.grphoto eq null }"> 
-														<li>
-															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
-																<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
-																<b>${joinGroup.group.grname }</b>
-															</a>
-														</li>
-													</c:when>
-													<c:otherwise>
-														<li>
-															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
-																<span><img src="${upload }/${joinGroup.group.grphoto}" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
-																<b>${joinGroup.group.grname }</b>
-															</a>
-														</li>
-													</c:otherwise>
-												</c:choose>
-											</c:forEach>
-										</ul>
-									</div>
-								</dd>
-								<dd>
-									<span class="btn_mylist">나의 캠핑장</span>
-									<div class="my_list">
-										<ul>
-											<c:forEach items="${bookMark}" var="bookMark">
-												<li><a
-													href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
-														<span> <c:set var="image"
-																value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
-															<c:if
-																test="${!empty bookMark.camp.caphoto && empty image}">
-																<img src="${upload}/${bookMark.camp.caphoto}"
-																	alt="${bookMark.camp.caname}">
-															</c:if> <c:if
-																test="${!empty bookMark.camp.caphoto && !empty image}">
-																<img src="${upload}/${image}"
-																	alt="${bookMark.camp.caname}">
-															</c:if> <c:if
-																test="${empty bookMark.camp.caphoto && empty image}">
-																<img src="${root}resources/images/thumb/no_profile.png"
-																	alt="${bookMark.camp.caname}">
-															</c:if>
-													</span> <b>${bookMark.camp.caname}</b>
-												</a></li>
-											</c:forEach>
-										</ul>
-									</div>
-								</dd>
-								<dd class="btn_logout">
-									<form>
-										<a href="${root}member/logout" class="btn_pop">로그아웃</a>
-									</form>
-								</dd>
-							</dl>
-						</div>
-					</c:if>
 					<c:if test="${login ne null }">
 						<div id="userMenu" class="fstLyr">
 							<button class="btn_menu">
@@ -448,6 +377,7 @@
 							<p><label for="festa5">캠핑장 이름</label></p>
 							<div>
 								<input type="text" id="mvname" name="mvname" placeholder="캠핑장 이름을 입력해주세요">
+								<p hidden="hidden" id="mvnameCheck" class="f_message rst" style="display: none;">20자를 초과하였습니다.</p>
 							</div>
 						</li>
 						<li class="set_half box">
@@ -463,6 +393,7 @@
 						<li class="box">
 							<div>
 								<input type="text" class="kko_addr2" id="mvaddrsuv" name="mvaddrsuv" placeholder="상세주소를 입력해주세요">
+								<p hidden="hidden" id="mvaddrsuvCheck" class="f_message rst" style="display: none;">40자를 초과하였습니다.</p>
 							</div>
 						</li>
 					</ul>
@@ -503,6 +434,9 @@
 <script type="text/javascript">
 	kakaoAddr();
 	fileName();
+	addInputs();
+	setOneFile();
+	setFile();
 </script>
 </body>
 <!-- #팝업 처리완료 { -->

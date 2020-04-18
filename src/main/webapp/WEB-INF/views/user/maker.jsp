@@ -9,14 +9,48 @@ var url = window.location.href;
 if(url.indexOf('maker')>0){
 	window.location.href='${root}empty';
 }
-	$('#feedUpdate').on('click',function(){
+	$('#update_feed').on('submit',function(e){
+		e.preventDefault();
 		var mpcontent = $('#mpcontent1').val();
 		
 		var httitle1= $('#httitle1_1').val();
 		var httitle2= $('#httitle2_1').val();
 		var httitle3= $('#httitle3_1').val();
 		var mpnum = "${feedDetail.mpnum}";
-			
+		
+		if(mpcontent =='' || mpcontent == null){
+			return false;
+		}
+
+		if(mpcontent.length>=500 ){
+			openPop("cneditfull");
+			$('#editcnfailed').on('click', function(){
+				$('#mpcontent1').focus();					
+			});
+			return false;
+		};
+		if(httitle1.length>=20){
+			openPop("hteditfull");
+			$('#edithtfailed').on('click', function(){
+				$('#httitle1_1').focus();		
+			})
+			return false;
+		}
+		if(httitle2.length>=20){
+			openPop("hteditfull");
+			$('#edithtfailed').on('click', function(){
+				$('#httitle2_1').focus();		
+			})
+			return false;
+		}
+		if(httitle3.length>=20){
+			openPop("hteditfull");
+			$('#edithtfailed').on('click', function(){
+				$('#httitle3_1').focus();		
+			})
+			return false;
+		}
+		
 		var files = new FormData($('#update_feed')[0]);
 		$.ajax({
 			type: "POST",
@@ -61,7 +95,7 @@ if(url.indexOf('maker')>0){
 									<img src="${root }resources/upload/thumb/no_profile.png" alt="${profile.proname }님의 프로필 썸네일" >
 								</c:if>
 			</p>
-			<textarea id="mpcontent1" name="mpcontent" placeholder="${login.proname } 님, 무슨 생각을 하고 계신가요?" >${feedDetail.mpcontent}</textarea>
+			<textarea id="mpcontent1" name="mpcontent" placeholder="${login.proname } 님, 무슨 생각을 하고 계신가요?" required="required" >${feedDetail.mpcontent}</textarea>
 		</div>
 		<div class="file_thumbnail mk_thumb box" style="display: block">
 			<ul>
@@ -102,12 +136,32 @@ if(url.indexOf('maker')>0){
 					<label for="file1_1" class="btn_file"><em class="snd_only">사진/동영상 업로드하기</em></label>
 				</li>
 				<li>
-					<button type="button" class="btn_send" id="feedUpdate" name="feedUpdate"><em class="snd_only">피드 게시하기</em></button>
+					<button type="submit" class="btn_send" id="feedUpdate" name="feedUpdate" ><em class="snd_only">피드 게시하기</em></button>
 				</li>
 			</ul>
 		</div>
 	</form>
 </div>
+
+<!-- #게시글 초과 -->
+	<div id="cneditfull" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">게시글은 500자 이상 입력할 수 없습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" id="editcnfailed" class="btn_close comm_btn cfm">확인</button></li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- #해시태그 초과 -->
+	<div id="hteditfull" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">해시태그는 20자 이상 입력할 수 없습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" id="edithtfailed" class="btn_close comm_btn cfm">확인</button></li>
+			</ul>
+		</div>
+	</div>
 <div id="updateOk" class="fstPop pop2">
 	<div class="confirm_wrap pop_wrap">
 		<p class="pop_tit">수정이 완료되었습니다.</p>

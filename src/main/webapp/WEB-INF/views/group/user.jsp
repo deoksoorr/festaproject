@@ -138,7 +138,7 @@
 			 		var sucmsg='웃어라, 함께 웃을 것이다. 울어라, 혼자 울 것이다.'
 			 		if(keymsg == sucmsg){
 			 			$('#outgroup').removeAttr("disabled");
-			 			$('#outgroup').removeClass('cnc');
+			 			$('#outgroup').removeClass('sbm');
 			 			$('#outgroup').addClass('cfm');
 	
 			 			var grnum=$('#grnum').val();
@@ -158,7 +158,7 @@
 			 		}else{
 			 			$('#outgroup').attr("disabled", "disabled");
 			 			$('#outgroup').removeClass('cfm');
-			 			$('#outgroup').addClass('cnc');
+			 			$('#outgroup').addClass('sbm');
 			 		}
 			 	});
 				
@@ -585,7 +585,7 @@
 				<div class="btn_box">
 					<ul class="comm_buttons">
 						<li><button type="button" class="btn_close comm_btn cnc">취소</button></li>
-						<li><button type="button" id="outgroup" class="btn_close comm_btn cnc" disabled="disabled">확인</button></li>
+						<li><button type="button" id="outgroup" class="btn_close comm_btn sbm" disabled="disabled">확인</button></li>
 					</ul>
 				</div>
 			</form>

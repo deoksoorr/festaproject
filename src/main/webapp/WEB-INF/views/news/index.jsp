@@ -60,7 +60,13 @@
 		// 댓글입력
 		$(document).on('submit', '.message_form', function(e) {
 			e.preventDefault();
-			post($(this));
+			var input = $(this).find('input[type=text]');
+			stringValue($(this));
+			
+			var strSize = stringValue($(this));
+			if (strSize == true) {
+				post($(this));
+			}
 		});
 		
 		// 피드/댓글 삭제
@@ -277,10 +283,6 @@
 						+ '</li>';
 					container.append(tag);
 				}
-				/* var target = $(html).find('.feed_viewer');
-				target.appendTo(container);
-				commSlider();
-				scrBar(); */
 			});
 	}
 	</script>
@@ -645,15 +647,20 @@
 				<h3>회원님을 위한 추천</h3>
 				<div>
 					<ul>
+						<c:forEach items="${grouplist}" var="grouplist">
 						<li>
-							<a href="">
+							<a href="${root}group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
 								<span class="pf_picture">
-									<img src="http://placehold.it/50x50" alt="김덕수님의 프로필 썸네일">
+								<c:choose>
+									<c:when test="${!empty grouplist.grphoto}"><img src="${upload}/${grouplist.grphoto}" alt="${grouplist.grname} 썸네일" onload="squareTrim($(this), 50)"></c:when>
+									<c:otherwise><img src="${root}resources/images/thumb/no_profile.png" alt="${grouplist.grname} 썸네일" width="50"></c:otherwise>
+								</c:choose>
 								</span>
-								<b class="fw_name">김덕수</b>
-								<span class="fw_intro">나는 어둠의 빵쟁이다</span>
+								<b class="fw_name">${grouplist.grname}</b>
+								<span class="fw_intro">${grouplist.grintro}</span>
 							</a>
 						</li>
+						</c:forEach>
 					</ul>
 				</div>
 			</section>

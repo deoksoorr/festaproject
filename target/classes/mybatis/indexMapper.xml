@@ -12,7 +12,7 @@
 	
 	<!-- 메인화면 선호지역기반 그룹리스트 -->
 	<select id="addrGroupList" parameterType="ProfileVo" resultType="GroupVo">
-		select * from (select @ROWNUM:=@ROWNUM+1 as grrn,a.* from group1 a,(select @rownum:=0) r where grnum!=1 and graddr like concat('%',#{proaddr},'%') and grnum!=1 and grnum not in (select grnum3 from joingroup where pronum8=#{pronum}) order by grtotal desc) b where grrn<![CDATA[ >= ]]>1 and grrn<![CDATA[ <= ]]>8
+		select * from ((select @ROWNUM:=@ROWNUM+1 as grrn,a.* from group1 a,(select @rownum:=0) r where grnum!=1 and graddr like concat('%',#{proaddr},'%') and grnum!=1 and grnum not in (select grnum3 from joingroup where pronum8=#{pronum}) order by grtotal desc) union all (SELECT @ROWNUM:=@ROWNUM+1 as grrn, A.* FROM group1 A, (SELECT @ROWNUM:=0) R where grnum!=1 order by grtotal desc)) f where grrn<![CDATA[ >= ]]>1 and grrn<![CDATA[ <= ]]>8
 	</select>
 	
 	<!-- 메인화면 좋아요많은순 캠핑장리스트 -->

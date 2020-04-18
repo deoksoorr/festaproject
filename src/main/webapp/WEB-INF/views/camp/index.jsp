@@ -174,10 +174,18 @@
 							<span class="btn_mylist">나의 캠핑장</span>
 							<div class="my_list">
 								<ul>
-								<c:forEach items="${bookMark }" var="bookMark">
-									<li><a href="${root }camp?canum=${bookMark.camp.canum}"> <span><img
-												src="http://placehold.it/45x45" alt="캠핑장 썸네일"></span> <b>${bookMark.camp.caname }</b>
-									</a></li>
+								<c:forEach items="${bookMark}" var="bookMark">
+									<li>
+										<a href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
+											<span>
+												<c:set var="image" value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
+												<c:if test="${!empty bookMark.camp.caphoto && empty image}"><img src="${upload}/${bookMark.camp.caphoto}" alt="${bookMark.camp.caname}"></c:if>
+												<c:if test="${!empty bookMark.camp.caphoto && !empty image}"><img src="${upload}/${image}" alt="${bookMark.camp.caname}"></c:if>
+												<c:if test="${empty bookMark.camp.caphoto && empty image}"><img src="${root}resources/images/thumb/no_profile.png" alt="${bookMark.camp.caname}"></c:if>
+											</span>
+											<b>${bookMark.camp.caname}</b>
+										</a>
+									</li>
 								</c:forEach>
 								</ul>
 							</div>
@@ -212,11 +220,10 @@
 								<c:forEach items="${newCampList}" var="camp">
 								<li class="swiper-slide">
 									<a class="cp_thumb" href="${root}camp/detail?canum=${camp.canum}&caaddrsel=${camp.caaddrsel}">
-									<c:set var="image" value="${fn:substringBefore(camp.caphoto,',')}"></c:set>
-									<c:choose>
-										<c:when test="${!empty image}"><img src="${upload}/${image}" alt="${camp.caname}"></c:when>
-										<c:otherwise><img src="${root}resources/images/thumb/no_profile.png" alt="${camp.caname}"></c:otherwise>
-									</c:choose>
+										<c:set var="image" value="${fn:substringBefore(camp.caphoto,',')}"></c:set>
+										<c:if test="${!empty camp.caphoto && empty image}"><img src="${upload}/${camp.caphoto}" alt="${camp.caname}"></c:if>
+										<c:if test="${!empty camp.caphoto && !empty image}"><img src="${upload}/${image}" alt="${camp.caname}"></c:if>
+										<c:if test="${empty camp.caphoto && empty image}"><img src="${root}resources/images/thumb/no_profile.png" alt="${camp.caname}"></c:if>
 									</a>
 									<a class="cp_text" href="${root}camp/detail?canum=${camp.canum}&caaddrsel=${camp.caaddrsel}">
 										<b class="cp_name">${camp.caname}</b>
@@ -276,12 +283,11 @@
 					<c:when test="${!empty campList}">
 						<c:forEach items="${campList}" var="camp">
 						<li>
-							<a class="cp_thumb" href="${root}camp/detail?canum=${camp.canum}&caaddrsel=${camp.caaddrsel}">							
-							<c:set var="image" value="${fn:substringBefore(camp.caphoto,',')}"></c:set>
-							<c:choose>
-								<c:when test="${!empty image}"><img src="${upload}/${image}" alt="${camp.caname}"></c:when>
-								<c:otherwise><img src="${root}resources/images/thumb/no_profile.png" alt="${camp.caname}"></c:otherwise>
-							</c:choose>
+							<a class="cp_thumb" href="${root}camp/detail?canum=${camp.canum}&caaddrsel=${camp.caaddrsel}">
+								<c:set var="image" value="${fn:substringBefore(camp.caphoto,',')}"></c:set>
+								<c:if test="${!empty camp.caphoto && empty image}"><img src="${upload}/${camp.caphoto}" alt="${camp.caname}"></c:if>
+								<c:if test="${!empty camp.caphoto && !empty image}"><img src="${upload}/${image}" alt="${camp.caname}"></c:if>
+								<c:if test="${empty camp.caphoto && empty image}"><img src="${root}resources/images/thumb/no_profile.png" alt="${camp.caname}"></c:if>
 								<b class="cp_liked">${camp.cagood}</b>
 							</a>
 							<a class="cp_text" href="${root}camp/detail?canum=${camp.canum}&caaddrsel=${camp.caaddrsel}">
