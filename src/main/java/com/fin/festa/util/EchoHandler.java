@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.socket.CloseStatus;
@@ -18,7 +17,6 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.fin.festa.model.GroupDaoImpl;
-import com.fin.festa.model.entity.ChatVo;
 import com.fin.festa.model.entity.GroupVo;
 import com.fin.festa.model.entity.ProfileVo;
 

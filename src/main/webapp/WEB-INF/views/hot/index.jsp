@@ -19,14 +19,36 @@
 	<link rel="shortcut icon" href="${root}resources/favicon.ico">
 	<title>FESTA</title>
 	<script type="text/javascript">
+	
+		function btn_close(){
+	        document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+	        var url = window.location.href;
+	    	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+	    		window.location.href='${root}';
+	    	}
+		}
+		
+		function timeOut(){
+			
+		}
+		
 		$(document).ready(function(){
 			
 			var cookie = '${cookie.loginCookie.value}';
 			var login = '${login ne null}';
-			
 			if(cookie!=''&&login=='false'){
-				openPop('loginCookie');
+				clearInterval();
+				openPop('loginCookie',none,btn_close);
 			}
+			setInterval(function(){
+				$.post('${root}member/loginSession','',function(data){
+					if(data==''){
+						clearInterval();
+						openPop('loginCookie',none,btn_close);
+					}
+				});
+			},2000);
+			
 			
 			$('#btnCookie').on('click',function(){
 				$.post('${root}member/loginCookie','id='+cookie,function(data){
@@ -288,25 +310,31 @@
 			});//댓글더보기 end
 			
 			//댓글등록
-			$('.btn_send').on('click',function(){
-				var sendBtn = $(this);
-				var thisValues = sendBtn.parent().parent().parent().parent().find('.feed_inform');
+			$(document).on('submit','.message_form',function(e){
+				e.preventDefault();
+				var sendBtn = $(this).find('.btn_send');
+				var thisValues = $(this).parents('.feed_viewer').find('.feed_inform');
 				var pronum = $('#wrap>input[type=hidden]').eq(0).val();
 				var pronum_sync = thisValues.find('input[type=hidden]').eq(0).val();
-				var content = sendBtn.siblings('textarea').val();
+				var content = sendBtn.siblings('.msg_txt').val();
 				var author = '${login.proname}';
 				var thisnum = thisValues.find('input[type=hidden]').eq(1).val();
 				var grnum = thisValues.find('input[type=hidden]').eq(2).val();
-				//개인피드 댓글등록
-				if(thisValues.find('.fd_group').length==0){
-					$.post('${root}hot/cmmtadd','mpnum='+thisnum+'&pronum='+pronum+'&pronum_sync='+pronum_sync+'&mcauthor='+author+'&mccontent='+content,function(){
-						location.reload();
-					});
-				//그룹피드 댓글등록
-				}else{
-					$.post('${root}hot/cmmtadd','gpnum='+thisnum+'&pronum='+pronum+'&grnum='+grnum+'&gcauthor='+author+'&gccontent='+content,function(){
-						location.reload();
-					});
+				if(sendBtn.siblings('.msg_txt').val().length>0&&sendBtn.siblings('.msg_txt').val().length<500){
+					//개인피드 댓글등록
+					if(thisValues.find('.fd_group').length==0){
+						$.post('${root}hot/cmmtadd','mpnum='+thisnum+'&pronum='+pronum+'&pronum_sync='+pronum_sync+'&mcauthor='+author+'&mccontent='+content,function(){
+							location.reload();
+						});
+					//그룹피드 댓글등록
+					}else{
+						$.post('${root}hot/cmmtadd','gpnum='+thisnum+'&pronum='+pronum+'&grnum='+grnum+'&gcauthor='+author+'&gccontent='+content,function(){
+							location.reload();
+						});
+					}
+				//해당 input[type=text].val.length
+				}else if(sendBtn.siblings('.msg_txt').val().length>=500){
+					openPop('excess');
 				}
 			});
 			
@@ -577,7 +605,7 @@
 										</c:if>
 										</a>
 										<p class="msg_input">
-											<textarea id="" name="mccontent" placeholder="메세지를 입력해주세요"></textarea>
+											<input type="text" class="msg_txt" name="mccontent" placeholder="메세지를 입력해주세요" required="required">
 											<button type="submit" class="btn_send"><em class="snd_only">전송</em></button>
 										</p>
 									</form>
@@ -744,7 +772,7 @@
 										</c:if>
 										</a>
 										<p class="msg_input">
-											<textarea id="" name="gccontent" placeholder="메세지를 입력해주세요"></textarea>
+											<input type="text" class="msg_txt" name="gccontent" placeholder="메세지를 입력해주세요" required="required">
 											<button type="submit" class="btn_send"><em class="snd_only">전송</em></button>
 										</p>
 									</form>
@@ -827,19 +855,35 @@
 		            <div class="rcmm_list">
 		               <h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
 		               <ul>
-		                  <c:forEach items="${camplist }" begin="0" end="2" var="camplist">
-		                     <c:set var="image" value="${fn:substringBefore(camplist.caphoto,',') }"/>
-		                     <li>
-		                        <a class="rc_thumb" href="${root }camp/detail?canum=${camplist.canum}">
-		                           <img src="${upload }/${image}" alt="${camplist.caname } 썸네일">
-		                        </a>
-		                        <a class="rc_text" href="${root }camp/detail?canum=${camplist.canum}">
-		                           <b class="rc_name">${camplist.caname }</b>
-		                           <span class="rc_hashtag">${camplist.caaddrsel }</span>
-		                        </a>
-		                     </li>
-		                  </c:forEach>
-		               </ul>
+							<c:forEach items="${camplist }" begin="0" end="2" var="camplist">
+								<li>
+								<c:if test="${!empty camplist.caphoto }">
+									<c:set var="image1" value="${fn:split(camplist.caphoto,',') }" />
+									<c:if test="${fn:length(image1) gt 1 }">
+										<c:set var="image"
+											value="${fn:substringBefore(camplist.caphoto,',') }" />
+									</c:if>
+									<c:if test="${fn:length(image1) eq 1 }">
+										<c:set var="image" value="${camplist.caphoto }" />
+									</c:if>
+									<a class="rc_thumb"
+										href="${root }camp/detail?canum=${camplist.canum}"> <img
+										src="${upload }/${image}" alt="${camplist.caname } 썸네일">
+									</a>
+								</c:if> <c:if test="${empty camplist.caphoto }">
+									<a class="rc_thumb"
+										href="${root }camp/detail?canum=${camplist.canum}"> <img
+										src="${root }resources/images/thumb/no_profile.png"
+										alt="${camplist.caname } 썸네일">
+									</a>
+								</c:if> <a class="rc_text"
+								href="${root }camp/detail?canum=${camplist.canum}"> <b
+									class="rc_name">${camplist.caname }</b> <span
+									class="rc_hashtag">${camplist.caaddrsel }</span>
+								</a>
+								</li>
+							</c:forEach>
+						</ul>
 		            </div>
 		         </section>
 			<!-- } 우측 사이드영역 끝 -->
@@ -867,6 +911,15 @@
 				<p>&copy; DEOKSOORR. All RIGHTS RESERVED.</p>
 			</div>
 		</div>
+	</div>
+</div>
+<!-- #댓글 초과팝업 { -->
+<div id="excess" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">500자 이상 입력할수 없습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
 	</div>
 </div>
 <!-- #피드 삭제하기 { -->
@@ -920,9 +973,9 @@
 <!-- #팝업 처리완료 { -->
 <div id="loginCookie" class="fstPop">
 	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+		<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
 		<ul class="comm_buttons">
-			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+			<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
 			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
 		</ul>
 	</div>

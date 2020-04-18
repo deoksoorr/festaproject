@@ -52,25 +52,26 @@ public class NewsServiceImpl implements NewsService{
 		DateCalculate cal = new DateCalculate();
 		List<FeedVo> sortList = cal.VoDateReturn(followFeed, groupFeed);
 		
-		for(int i=page.getStartnum()-1; i<page.getEndnum(); i++) {
-			feedList.add(sortList.get(i));
+		if (sortList.size() != 0) {
+			for(int i=page.getStartnum()-1; i<page.getEndnum(); i++) {
+				feedList.add(sortList.get(i));
+			}
+			req.setAttribute("feedList", feedList);
+			
+			// 팔로우피드 댓글
+			feed.setFeedList(followFeed);
+			if (followFeed.size() != 0) req.setAttribute("followComment", newsDao.followCommentSelectAll(feed));
+			
+			// 그룹피드 댓글
+			feed.setFeedList(groupFeed);
+			if (groupFeed.size() != 0) req.setAttribute("groupComment", newsDao.joinGroupCommentSelectAll(feed));
 		}
-		req.setAttribute("feedList", feedList);
-		
-		// 팔로우피드 댓글
-		feed.setFeedList(followFeed);
-		req.setAttribute("followComment", newsDao.followCommentSelectAll(feed));
-		
-		// 그룹피드 댓글
-		feed.setFeedList(groupFeed);
-		req.setAttribute("groupComment", newsDao.joinGroupCommentSelectAll(feed));
-		
 		// 우측사이드바 (추천그룹, 추천캠핑장)
 		req.setAttribute("grouplist", indexDao.addrGroupSelectAll((ProfileVo)req.getSession().getAttribute("login")));
 		req.setAttribute("camplist", indexDao.veryHotCampSelectAll());
 	}
 	
-	// 뉴스피드 출력 (더보기)
+	// 뉴스피드 출력 (피드 더보기)
 	@Override
 	public void newsFeedMore(HttpServletRequest req, MyFollowingVo myFollowingVo) {
 		FeedVo feed = new FeedVo();
@@ -83,19 +84,31 @@ public class NewsServiceImpl implements NewsService{
 		List<FeedVo> sortList = cal.VoDateReturn(followFeed, groupFeed);
 		
 		PageSearchVo page = myFollowingVo.getPageSearch();
-		for(int i=page.getStartnum()-1; i<page.getEndnum(); i++) {
-			feedList.add(sortList.get(i));
+		if (sortList.size() != 0) {
+			for(int i=page.getStartnum()-1; i<page.getEndnum(); i++) {
+				feedList.add(sortList.get(i));
+			}
+			req.setAttribute("feedList", feedList);
+			
+			// 팔로우피드 댓글
+			feed.setFeedList(followFeed);
+			if (followFeed.size() != 0) req.setAttribute("followComment", newsDao.followCommentSelectAll(feed));
+			
+			// 그룹피드 댓글
+			feed.setFeedList(groupFeed);
+			if (groupFeed.size() != 0) req.setAttribute("groupComment", newsDao.joinGroupCommentSelectAll(feed));
 		}
-		
-		req.setAttribute("feedList", feedList);
-		
-		// 팔로우피드 댓글
-		feed.setFeedList(followFeed);
-		req.setAttribute("followComment", newsDao.followCommentSelectAll(feed));
-		
-		// 그룹피드 댓글
-		feed.setFeedList(groupFeed);
-		req.setAttribute("groupComment", newsDao.joinGroupCommentSelectAll(feed));
+	}
+	
+	// 뉴스피드 출력 (댓글 더보기)
+	@Override
+	public List<MyCommentVo> newsFeedCommentMore(Model model, MyPostVo myPost) {
+		return newsDao.followCommentMore(myPost);
+	}
+	
+	@Override
+	public List<GroupCommentVo> newsGroupCommentMore(Model model, GroupPostVo groupPost) {
+		return newsDao.joingroupCmmtMore(groupPost);
 	}
 
 	//뉴스피드 댓글등록(그룹피드,개인피드 구별해서 등록)

@@ -18,30 +18,37 @@
    <link rel="shortcut icon" href="${root }resources/favicon.ico">
    <title>FESTA</title>
    <script type="text/javascript">
+   function btn_close(){
+       document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+       var url = window.location.href;
+   	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+   		window.location.href='${root}';
+   	}
+}
       $(document).ready(function(){
          
-         var cookie = '${cookie.loginCookie.value}';
-            var login = '${login}';
-            
-            if(cookie!=''&&login==''){
-               openPop('loginCookie');
-            }
-            
-            $('#btnCookie').on('click',function(){
-               $.post('${root}member/loginCookie','id='+cookie,function(data){
-                  if (data.prorn == '0') {
-                     location.href = "${root}user/?pronum="+data.pronum;
-                  } else if (data.prorn == '1') {
-                     location.href = "${root}member/stop";
-                  } else if (data.prorn == '2') {
-                     location.href = "${root}member/kick";
-                  } else if (data.prorn == '3') {
-                     location.href = "${root}admin/";
-                  } else if (data.prorn == '4') {
-                     location.href = "${root}";
-                  }
-               });
-            });
+    	  var cookie = '${cookie.loginCookie.value}';
+    	  var login = '${login ne null}';
+
+    	  if(cookie!=''&&login=='false'){
+    	  	openPop('loginCookie',none,btn_close);
+    	  }
+
+    	  $('#btnCookie').on('click',function(){
+    	  	$.post('${root}member/loginCookie','id='+cookie,function(data){
+    	  		if (data.prorn == '0') {
+    	  			location.reload();
+    	  		} else if (data.prorn == '1') {
+    	  			location.href = "${root}member/stop";
+    	  		} else if (data.prorn == '2') {
+    	  			location.href = "${root}member/kick";
+    	  		} else if (data.prorn == '3') {
+    	  			location.reload();
+    	  		} else if (data.prorn == '4') {
+    	  			location.href = "${root}";
+    	  		}
+    	  	});
+    	  });
             
          //parameter 추출
             $.urlParam = function(name){
@@ -84,6 +91,9 @@
                      $("#idok").show();
                      $("#idfail").hide();
                      $("#idFormError").hide();
+                     $('#proid').attr('readonly','readonly');
+                     $('#email_check').css('background-color','#bbb');
+                     //$('#email_check').attr('disalbed','disabled');
                   }
                    else{
                      $("#idfail").show();
@@ -98,69 +108,197 @@
                $("#idfail").hide();
                $("#idok").hide();
             }
+            if($('#proid').attr("readonly")=="readonly" && $('#proname').val() != "" && $('#pwok').attr("style")=="display: block;"  && $('#datefail').attr("style")=="display: none;" && $('input:radio[name=projender]').is(':checked') ==true &&	$('input:checkbox[id=festa10]').is(':checked')==true && $('input:checkbox[id=festa11]').is(':checked')==true && $('input:checkbox[id=festa12]').is(':checked')==true && $('#proaddr').val() != "관심지역"){
+         			$('#joinBtn').prop('type','submit');
+	            }
+	            else{
+	            	$('#joinBtn').prop('type','button');
+	            }
          });//아이디 유효성 검사 끝
+         
          //비밀번호 형식 유효성 검사
-         $("#propwCheck").focusout(function() {
-            var regExp = /^[A-Za-z0-9+]{8,13}$/;
-            var propw = $("#propw").val();
-            var propwCheck = $("#propwCheck").val();
-            var pw_num = propw.search(/[0-9]/g);
-            var pw_eng = propw.search(/[a-z]/gi);
-            var pwchk_num = propwCheck.search(/[0-9]/g);
-            var pwchk_eng = propwCheck.search(/[a-z]/gi);
-            if (regExp.test(propw) && regExp.test(propwCheck)) {
-               if (pw_num >= 0 && pw_eng >= 0   && pwchk_num >= 0 && pwchk_eng >= 0) {
-                  if (propw != propwCheck) {
-                     $("#pwfail").show();
-                     $("#pwok").hide();
-                     $("#pwif").hide();
-                  } else if (propw == propwCheck) {
-                     $("#pwfail").hide();
-                     $("#pwok").show();
-                     $("#pwif").hide();
-                  }
-               } else {
-                  $("#pwfail").hide();
-                  $("#pwok").hide();
-                  $("#pwif").show();
-               }
-            } else {
-               $("#pwfail").hide();
-               $("#pwok").hide();
-               $("#pwif").show();
-            }
+         $("#propwCheck").on('propertychange change keyup paste input',function() {
+        	 if($('#propw').val() != ""){
+	            var regExp = /^[A-Za-z0-9+]{8,13}$/;
+	            var propw = $("#propw").val();
+	            var propwCheck = $("#propwCheck").val();
+	            var pw_num = propw.search(/[0-9]/g);
+	            var pw_eng = propw.search(/[a-z]/gi);
+	            var pwchk_num = propwCheck.search(/[0-9]/g);
+	            var pwchk_eng = propwCheck.search(/[a-z]/gi);
+	            if (regExp.test(propw) && regExp.test(propwCheck)) {
+	               if (pw_num >= 0 && pw_eng >= 0   && pwchk_num >= 0 && pwchk_eng >= 0) {
+	                  if (propw != propwCheck) {
+	                     $("#pwfail").show();
+	                     $("#pwok").hide();
+	                     $("#pwif").hide();
+	                  } else if (propw == propwCheck) {
+	                     $("#pwfail").hide();
+	                     $("#pwok").show();
+	                     $("#pwif").hide();
+	                  }
+	               } else {
+	                  $("#pwfail").hide();
+	                  $("#pwok").hide();
+	                  $("#pwif").show();
+	               }
+	            } else {
+	               $("#pwfail").hide();
+	               $("#pwok").hide();
+	               $("#pwif").show();
+	            }
+        	 }
+        	 if($('#proid').attr("readonly")=="readonly" && $('#proname').val() != "" && $('#pwok').attr("style")=="display: block;"  && $('#datefail').attr("style")=="display: none;" && $('input:radio[name=projender]').is(':checked') ==true &&	$('input:checkbox[id=festa10]').is(':checked')==true && $('input:checkbox[id=festa11]').is(':checked')==true && $('input:checkbox[id=festa12]').is(':checked')==true && $('#proaddr').val() != "관심지역"){
+          			$('#joinBtn').prop('type','submit');
+	            }
+	            else{
+          			$('#joinBtn').prop('type','button');
+	            }
          });
 
-         $("#propw").focusout(function() {
-            var regExp = /^[A-Za-z0-9+]{8,13}$/;
-            var propw = $("#propw").val();
-            var propwCheck = $("#propwCheck").val();
-            var pw_num = propw.search(/[0-9]/g);
-            var pw_eng = propw.search(/[a-z]/gi);
-            var pwchk_num = propwCheck.search(/[0-9]/g);
-            var pwchk_eng = propwCheck.search(/[a-z]/gi);
-            if (regExp.test(propw) && regExp.test(propwCheck)) {
-               if (pw_num >= 0 && pw_eng >= 0 && pwchk_num >= 0 && pwchk_eng >= 0) {
-                  if (propw != propwCheck) {
-                     $("#pwfail").show();
-                     $("#pwok").hide();
-                     $("#pwif").hide();
-                  } else if (propw == propwCheck) {
-                     $("#pwfail").hide();
-                     $("#pwok").show();
-                     $("#pwif").hide();
-                  }
-               } else {
-                  $("#pwfail").hide();
-                  $("#pwok").hide();
-                  $("#pwif").show();
-               }
-            } else {
-               $("#pwfail").hide();
-               $("#pwok").hide();
-               $("#pwif").show();
-            }
+         $("#propw").on('propertychange change keyup paste input',function() {
+        	if($('#propwCheck').val() != ""){
+	            var regExp = /^[A-Za-z0-9+]{8,13}$/;
+	            var propw = $("#propw").val();
+	            var propwCheck = $("#propwCheck").val();
+	            var pw_num = propw.search(/[0-9]/g);
+	            var pw_eng = propw.search(/[a-z]/gi);
+	            var pwchk_num = propwCheck.search(/[0-9]/g);
+	            var pwchk_eng = propwCheck.search(/[a-z]/gi);
+	            if (regExp.test(propw) && regExp.test(propwCheck)) {
+	               if (pw_num >= 0 && pw_eng >= 0 && pwchk_num >= 0 && pwchk_eng >= 0) {
+	                  if (propw != propwCheck) {
+	                     $("#pwfail").show();
+	                     $("#pwok").hide();
+	                     $("#pwif").hide();
+	                  } else if (propw == propwCheck) {
+	                     $("#pwfail").hide();
+	                     $("#pwok").show();
+	                     $("#pwif").hide();
+	                  }
+	               } else {
+	                  $("#pwfail").hide();
+	                  $("#pwok").hide();
+	                  $("#pwif").show();
+	               }
+	            } else {
+	               $("#pwfail").hide();
+	               $("#pwok").hide();
+	               $("#pwif").show();
+	            }
+        	}
+        	if($('#proid').attr("readonly")=="readonly" && $('#proname').val() != "" && $('#pwok').attr("style")=="display: block;"  && $('#datefail').attr("style")=="display: none;" && $('input:radio[name=projender]').is(':checked') ==true &&	$('input:checkbox[id=festa10]').is(':checked')==true && $('input:checkbox[id=festa11]').is(':checked')==true && $('input:checkbox[id=festa12]').is(':checked')==true && $('#proaddr').val() != "관심지역"){
+         			$('#joinBtn').prop('type','submit');
+	        }
+	        else{
+	            $('#joinBtn').prop('type','button');
+	        }
          });//비밀번호 유효성 검사 끝
+         
+         
+         //생년월일 유효성
+         $('#proidnum').focusout(function(){
+        	 var proidnum = $(this).val();
+        	 var year = Number(proidnum.substr(0,4));
+        	 var month = Number(proidnum.substr(4,2));
+        	 var day = Number(proidnum.substr(6,2));
+        	 var today = new Date();
+        	 var yearNow = today.getFullYear();
+        	 var adultYear = yearNow-20;
+			if(proidnum.length != 8){
+				 $('#datefail').text('생년월일이 8자리여야 합니다.');
+	           	 $('#datefail').show();
+			}
+			else  if (month < 1 || month > 12) { 
+		    	  $('#datefail').text('1월에서 12월 사이의 달을 입력하세요.');
+	           	 $('#datefail').show();
+	             return false;
+	        }
+	        else if (day < 1 || day > 31) {
+	        	 $('#datefail').text('1일에서 31일 사이의 일을 입력하세요.'); 
+	            $('#datefail').show();
+	            return false;
+	        }
+	        else if ((month==4 || month==6 || month==9 || month==11) && day==31) {
+	        	  $('#datefail').text(month+'월은 31일이 없습니다.');
+	        	  $('#datefail').show();
+	              return false;
+	        }
+	        else if (month == 2) {
+	              var isleap = (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0));
+	              if (day>29 || (day==29 && !isleap)) {
+	              	  $('#datefail').text(year+'년 2월은 '+day+"일이 없습니다."); 
+	               	  $('#datefail').show();
+	                  return false;
+	             }
+	        }
+	        else{
+	        	  $('#datefail').hide();
+	        }
+			if($('#proid').attr("readonly")=="readonly" && $('#proname').val() != "" && $('#pwok').attr("style")=="display: block;"  && $('#datefail').attr("style")=="display: none;" && $('input:radio[name=projender]').is(':checked') ==true &&	$('input:checkbox[id=festa10]').is(':checked')==true && $('input:checkbox[id=festa11]').is(':checked')==true && $('input:checkbox[id=festa12]').is(':checked')==true && $('#proaddr').val() != "관심지역"){
+         			$('#joinBtn').prop('type','submit');
+	            }
+	            else{
+	            	$('#joinBtn').prop('type','button');
+	            }
+             return true;
+         });//생년월일 유효성 종료
+         
+         //관심지역 유효성 검사
+         $('#proaddr').change(function(){
+        	 if($('#proaddr option:selected').val() ==""){
+         		$('#selectfail').show();
+         	}
+         	else{
+         		$('#selectfail').hide();
+         	}
+        	 if($('#proid').attr("readonly")=="readonly" && $('#proname').val() != "" && $('#pwok').attr("style")=="display: block;"  && $('#datefail').attr("style")=="display: none;" && $('input:radio[name=projender]').is(':checked') ==true &&	$('input:checkbox[id=festa10]').is(':checked')==true && $('input:checkbox[id=festa11]').is(':checked')==true && $('input:checkbox[id=festa12]').is(':checked')==true && $('#proaddr').val() != "관심지역"){
+          			$('#joinBtn').prop('type','submit');
+	            }
+	            else{
+	            	$('#joinBtn').prop('type','button');
+	            }
+         });//관심지역 유효성 검사 종료
+         
+         //전체 체크했는지 혹은 필수 항목 입력했는지
+         $('#festa10').on('change',function(){
+        	 if($("input:checkbox[id='festa11']").is(":checked")==false && $("input:checkbox[id='festa12']").is(":checked")==false){
+        		 $('#festa10').prop('checked','');
+        	 }
+        		//id유효성 체크 && 이름 유효성 체크 && 비밀번호 유효성 체크 && 생년월일 유효성 체크 && 성별 유효성 && 전체동의 , 이용약관 , 개인정보 체크 여부
+        		if($('#proid').attr("readonly")=="readonly" && $('#proname').val() != "" && $('#pwok').attr("style")=="display: block;"  && $('#datefail').attr("style")=="display: none;" && $('input:radio[name=projender]').is(':checked') ==true &&	$('input:checkbox[id=festa10]').is(':checked')==true && $('input:checkbox[id=festa11]').is(':checked')==true && $('input:checkbox[id=festa12]').is(':checked')==true && $('#proaddr').val() != "관심지역"){
+           			$('#joinBtn').prop('type','submit');
+ 	            }
+ 	            else{
+           			$('#joinBtn').prop('type','button');
+ 	            }
+         });
+         
+         $('#festa11').on('change',function(){
+        		if($("input:checkbox[id='festa11']").is(":checked") && $("input:checkbox[id='festa12']").is(":checked")){
+        			$("#festa10").prop('checked','checked');
+        		}
+         		//id유효성 체크 && 이름 유효성 체크 && 비밀번호 유효성 체크 && 생년월일 유효성 체크 && 성별 유효성 && 전체동의 , 이용약관 , 개인정보 체크 여부
+         		if($('#proid').attr("readonly")=="readonly" && $('#proname').val() != "" && $('#pwok').attr("style")=="display: block;"  && $('#datefail').attr("style")=="display: none;" && $('input:radio[name=projender]').is(':checked') ==true &&	$('input:checkbox[id=festa10]').is(':checked')==true && $('input:checkbox[id=festa11]').is(':checked')==true && $('input:checkbox[id=festa12]').is(':checked')==true && $('#proaddr').val() != "관심지역"){
+           			$('#joinBtn').prop('type','submit');
+ 	            }
+ 	            else{
+           			$('#joinBtn').prop('type','button');
+ 	            } 
+          });
+         
+         $('#festa12').on('change',function(){
+        		 if($("input:checkbox[id='festa11']").is(":checked") && $("input:checkbox[id='festa12']").is(":checked")){
+     				$("#festa10").prop('checked','checked');
+     			}
+         		//id유효성 체크 && 이름 유효성 체크 && 비밀번호 유효성 체크 && 생년월일 유효성 체크 && 성별 유효성 && 전체동의 , 이용약관 , 개인정보 체크 여부 && 관심지역 체크
+         		if($('#proid').attr("readonly")=="readonly" && $('#proname').val() != "" && $('#pwok').attr("style")=="display: block;"  && $('#datefail').attr("style")=="display: none;" && $('input:radio[name=projender]').is(':checked') ==true &&	$('input:checkbox[id=festa10]').is(':checked')==true && $('input:checkbox[id=festa11]').is(':checked')==true && $('input:checkbox[id=festa12]').is(':checked')==true && $('#proaddr').val() != "관심지역"){
+           			$('#joinBtn').prop('type','submit');
+ 	            }
+ 	            else{
+ 	            	$('#joinBtn').prop('type','button');
+ 	            } 
+          });
       });
    </script>
 </head>
@@ -210,12 +348,9 @@
                         <button type="button" id="email_check" class="btn_id">중복확인</button>
                         <!-- 유효성검사 후 메세지 출력 { -->
                         <p class="f_message"></p>
-                        <p hidden="hidden" id="idFormError" name="pwfail"
-                        class="f_message rst">이메일 형식을 입력하세요.</p>
-                        <p hidden="hidden" id="idfail" name="pwfail"
-                        class="f_message rst">중복된 아이디입니다.</p>
-                        <p hidden="hidden" id="idok" name="pwok"
-                        class="f_message ok rst">사용가능한 아이디입니다.</p>
+                        <p hidden="hidden" id="idFormError" class="f_message rst">이메일 형식을 입력하세요.</p>
+                        <p hidden="hidden" id="idfail" class="f_message rst">이미 사용중이거나 탈퇴한 아이디입니다.</p>
+                        <p hidden="hidden" id="idok" class="f_message ok rst">사용가능한 아이디입니다.</p>
                         <!-- } 유효성검사 후 메세지 출력 -->
                      </div>
                      <div class="ip_box">
@@ -229,11 +364,11 @@
                               class="comm_label">비밀번호<span> 8~13자 이내,
                                  영문(대소문자)+숫자 조합</span></label>
                            <p class="f_message"></p>
-                           <p hidden="hidden" id="pwif" name="pwif" class="f_message rst">비밀번호는
+                           <p hidden="hidden" id="pwif" class="f_message rst">비밀번호는
                               8~13자 영문,숫자 조합이어야 합니다.</p>
-                           <p hidden="hidden" id="pwfail" name="pwfail"
+                           <p hidden="hidden" id="pwfail"
                               class="f_message rst">비밀번호가 일치하지 않습니다.</p>
-                           <p hidden="hidden" id="pwok" name="pwok"
+                           <p hidden="hidden" id="pwok"
                               class="f_message ok rst">비밀번호가 일치합니다.</p>
                         </div>
                         <div class="ip_box">
@@ -246,7 +381,8 @@
                      <div class="ip_box">
                         <input type="text" id="proidnum" name="proidnum" required="required">
                         <label for="festa5" class="comm_label">생년월일<span>을 입력해주세요 (예: 19940415)</span></label>
-                        <p class="f_message"></p>
+                        <p hidden="hidden" id="datefail"
+                              class="f_message rst">생년월일을 양식에 맞게 입력해주세요.</p>
                      </div>
                      <div class="sel_box">
                         <select class="comm_sel" id="proaddr" name="proaddr" required="required">
@@ -270,6 +406,8 @@
                         <p class="comm_sel_label"></p>
                         <!-- } 셀렉트박스 선택값 출력 -->
                         <p class="f_message"></p>
+                        <p hidden="hidden" id="selectfail"
+                              class="f_message rst">관심지역을 다시 설정하세요.</p>
                      </div>
                      <div class="sel_box">
                         <select class="comm_sel" id="projob" name="projob">
@@ -299,7 +437,7 @@
                         <dl>
                            <dt>성별</dt>
                            <dd>
-                              <input type="radio" class="comm_rdo" id="projender1" name="projender" value="남성">
+                              <input type="radio" class="comm_rdo" id="projender1" name="projender" value="남성" checked="checked">
                               <label for="projender1">남성</label>
                            </dd>
                            <dd>
@@ -333,7 +471,7 @@
                      </dd>
                   </dl>
                </div>
-               <button type="submit" class="comm_btn sbm">가입하기</button>
+               <button type="button" id="joinBtn" class="comm_btn sbm">가입하기</button>
                <!-- 유효성검사 충족 시 버튼타입 변경 {
                <button type="submit" class="comm_btn sbm">가입하기</button>
                } 유효성검사 충족 시 버튼타입 변경 -->
@@ -368,12 +506,12 @@
 </body>
 <!-- #팝업 처리완료 { -->
 <div id="loginCookie" class="fstPop">
-   <div class="confirm_wrap pop_wrap">
-      <p class="pop_tit">로그인을 유지 시키겠습니까?</p>
-      <ul class="comm_buttons">
-         <li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
-         <li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
-      </ul>
-   </div>
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
+	</div>
 </div>
 </html>

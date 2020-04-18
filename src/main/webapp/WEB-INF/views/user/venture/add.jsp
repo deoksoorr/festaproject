@@ -4,6 +4,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:url value="/" var="root" />
 <c:url value="/resources/upload" var="upload" />
+<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
+   <c:redirect url="/empty"/>
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -20,28 +23,97 @@
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
 	<title>FESTA</title>
 	<script type="text/javascript">
+	function btn_close(){
+	       document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+	       var url = window.location.href;
+	   	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+	   		window.location.href='${root}';
+	   	}
+	}
+
 		$(document).ready(function(){
 			var cookie = '${cookie.loginCookie.value}';
-			var login = '${login}';
-			
-			if(cookie!=''&&login==''){
-			   openPop('loginCookie');
+			var login = '${login ne null}';
+
+			if(cookie!=''&&login=='false'){
+				openPop('loginCookie',none,btn_close);
 			}
-			
+
 			$('#btnCookie').on('click',function(){
-			   $.post('${root}member/loginCookie','id='+cookie,function(data){
-			      if (data.prorn == '0') {
-			         location.reload();
-			      } else if (data.prorn == '1') {
-			         location.href = "${root}member/stop";
-			      } else if (data.prorn == '2') {
-			         location.href = "${root}member/kick";
-			      } else if (data.prorn == '3') {
-			         location.reload();
-			      } else if (data.prorn == '4') {
-			         location.href = "${root}";
-			      }
-			   });
+				$.post('${root}member/loginCookie','id='+cookie,function(data){
+					if (data.prorn == '0') {
+						location.reload();
+					} else if (data.prorn == '1') {
+						location.href = "${root}member/stop";
+					} else if (data.prorn == '2') {
+						location.href = "${root}member/kick";
+					} else if (data.prorn == '3') {
+						location.reload();
+					} else if (data.prorn == '4') {
+						location.href = "${root}";
+					}
+				});
+			});
+
+			
+			//사업자 등록번호 유효성 검사
+			$("#mvnumber").on('propertychange change keyup paste input',function() {
+				if($('#mvnumber').val() != "" && $('#ventureNo').text() != "사업자등록증 사본을 첨부해주세요" && $('#mvname').val() != "" && $('#mvaddr').val() != "" && $('#mvaddrsuv').val() != "" && $('input:checkbox[id=festa1]').is(':checked')==true){
+					$('#ventureSend').prop('type','submit');
+				}
+				else{
+					$('#ventureSend').prop('type','button');
+				}
+			});//사업자 등록번호 종료
+			
+			//사업자 등록증 유효성 - 보류
+			$('#ventureNo').on('propertychange change keyup paste input',function(){
+				if($('#mvnumber').val() != "" && $('#ventureNo').text() != "사업자등록증 사본을 첨부해주세요" && $('#mvname').val() != "" && $('#mvaddr').val() != "" && $('#mvaddrsuv').val() != "" && $('input:checkbox[id=festa1]').is(':checked')==true){
+					$('#ventureSend').prop('type','submit');
+				}
+				else{
+					$('#ventureSend').prop('type','button');
+				}
+			});//사업자 등록증 유효성 종료
+			
+			//캠핑장 이름 유효성 검사
+			$("#mvname").on('propertychange change keyup paste input',function() {
+				if($('#mvnumber').val() != "" && $('#ventureNo').text() != "사업자등록증 사본을 첨부해주세요" && $('#mvname').val() != "" && $('#mvaddr').val() != "" && $('#mvaddrsuv').val() != "" && $('input:checkbox[id=festa1]').is(':checked')==true){
+					$('#ventureSend').prop('type','submit');
+				}
+				else{
+					$('#ventureSend').prop('type','button');
+				}
+			});//캠핑장이름 유효성 검사 종료
+			
+			//캠핑장 주소 유효성 검사
+			$("#mvaddr").on('propertychange change keyup paste input',function() {
+				if($('#mvnumber').val() != "" && $('#ventureNo').text() != "사업자등록증 사본을 첨부해주세요" && $('#mvname').val() != "" && $('#mvaddr').val() != "" && $('#mvaddrsuv').val() != "" && $('input:checkbox[id=festa1]').is(':checked')==true){
+					$('#ventureSend').prop('type','submit');
+				}
+				else{
+					$('#ventureSend').prop('type','button');
+				}
+			});//캠핑장주소 유효성 검사 종료
+			
+			//캠핑장 서브주소 유효성 검사
+			$("#mvaddrsuv").on('propertychange change keyup paste input',function() {
+				if($('#mvnumber').val() != "" && $('#ventureNo').text() != "사업자등록증 사본을 첨부해주세요" && $('#mvname').val() != "" && $('#mvaddr').val() != "" && $('#mvaddrsuv').val() != "" && $('input:checkbox[id=festa1]').is(':checked')==true){
+					$('#ventureSend').prop('type','submit');
+				}
+				else{
+					$('#ventureSend').prop('type','button');
+				}
+			});//캠핑장서브주소 유효성 검사 종료
+			
+			//체크박스 유효성
+			$('#festa1').on('change',function(){
+				if($('#mvnumber').val() != "" && $('#ventureNo').text() != "사업자등록증 사본을 첨부해주세요" && $('#mvname').val() != "" && $('#mvaddr').val() != "" && $('#mvaddrsuv').val() != "" && $('input:checkbox[id=festa1]').is(':checked')==true){
+					$('#ventureSend').prop('type','submit');
+				}
+				else{
+					$('#ventureSend').prop('type','button');
+				}
 			});
 		});
 	</script> 
@@ -62,10 +134,12 @@
 				<h1>
 					<a href="${root }"><em class="snd_only">FESTA</em></a>
 				</h1>
-				<form class="search_box">
-					<input type="text" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
-					<button type="submit"><img src="${root }resources/images/ico/btn_search.png" alt="검색"></button>
-				</form>
+				<form action="${root }search/" class="search_box">
+						<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
+						<button type="submit">
+							<img src="${root }resources/images/ico/btn_search.png" alt="검색">
+						</button>
+					</form>
 				<ul id="gnb">
 						<li><a href="${root}camp/">캠핑정보</a></li>
 						<li><a href="${root}hot/">인기피드</a></li>
@@ -74,7 +148,7 @@
 							<li><a href="${root}member/login" id="btn_pop" class="btn_pop">로그인</a></li>
 						</c:if>
 						<c:if test="${login ne null }">
-							<li><a href="${root}user/index">마이페이지</a></li>
+							<li><a href="${root}user/?pronum=${login.pronum}">마이페이지</a></li>
 						</c:if>
 					</ul>
 					<c:if test="${login ne null }">
@@ -363,7 +437,7 @@
 						<li class="set_half box">
 							<p>사업자등록증</p>
 							<div>
-								<p class="txt_hf plc_holder">사업자등록증 사본을 첨부해주세요</p>
+								<p id="ventureNo" class="txt_hf plc_holder">사업자등록증 사본을 첨부해주세요</p>
 								<input type="file" class="fl_name" id="festa4" name="files" accept="image/*">
 								<label for="festa4" class="btn_hf"><i class="xi-file-upload-o"></i><em class="snd_only">파일 첨부하기</em></label>
 							</div>
@@ -394,7 +468,7 @@
 					</ul>
 					<ul class="comm_buttons">
 						<li><button type="reset" class="btn_close comm_btn cnc">취소</button></li>
-						<li><button type="submit" class="comm_btn sbm">신청</button></li>
+						<li><button id="ventureSend" type="button" class="comm_btn sbm">신청</button></li>
 					</ul>
 				</form>
 			</section>
@@ -433,12 +507,12 @@
 </body>
 <!-- #팝업 처리완료 { -->
 <div id="loginCookie" class="fstPop">
-   <div class="confirm_wrap pop_wrap">
-      <p class="pop_tit">로그인을 유지 시키겠습니까?</p>
-      <ul class="comm_buttons">
-         <li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
-         <li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
-      </ul>
-   </div>
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
+	</div>
 </div>
 </html>

@@ -68,6 +68,7 @@
 	<!-- 가입신청목록 조인 시에 참조되는 데이터 -->
 	<resultMap type="UpdateWaitVo" id="update">
 		<result column="uwrn" property="uwrn"/>
+		<result column="grsayone" property="grsayone"/>
 		<association property="profile" resultMap="profile2"/>
 	</resultMap>
 	<!-- 가입유저목록 조인 시에 참조되는 데이터 -->
@@ -425,6 +426,14 @@
 		update group1 set grtotal=#{grtotal}-#{jointot} where grnum=#{grnum}
 	</update>
 	
+	<!-- 그룹유저 추방시 해당채팅방 리스트에서 삭제 -->
+	<delete id="groupChatDelete"  parameterType="JoinGroupVo">
+		delete from joingroup where jgnum in 
+		<foreach item="item" index="index" collection="joinGroupList" open="(" separator="," close=")">
+      	 #{item.jgnum}
+ 		</foreach>
+	</delete>
+	
 	<!-- 그룹유저 전부추방 그룹장 제외 -->
 	<delete id="groupUserAllKick" parameterType="GroupVo">
 		delete from joingroup where grnum3=#{grnum} and pronum8!=#{pronum};
@@ -441,9 +450,9 @@
 	
 	<!-- 가입신청 승인 -->
 	<insert id="groupRequestHello" parameterType="UpdateWaitVo">
-		insert into joingroup (pronum8,grnum3,grname,jgdate) values 
+		insert into joingroup (pronum8,grnum3,grname,jgdate, joinstatus) values 
 		<foreach item="item" index="index" collection="updateList" separator=",">
-      	 (#{item.pronum},#{item.grnum},#{item.grname},now())
+      	 (#{item.pronum},#{item.grnum},#{item.grname},now(), 0)
  		</foreach>
 	</insert>
 	
@@ -451,6 +460,13 @@
 	<update id="groupTotalPlus" parameterType="GroupVo">
 		update group1 set grtotal=#{grtotal}+#{jointot} where grnum=#{grnum}
 	</update>
+	<!-- 가입신청 승인시 채팅목록에 그룹 등 -->
+	<insert id="groupChatInsert" parameterType="UpdateWaitVo">
+		insert into groupchat (grnum9, pronum17, mymsg, msgdate, joinstatus) values
+		<foreach item="item" index="index" collection="updateList" separator=",">
+			(#{item.grnum}, #{item.pronum}, '', now(), 0)
+		</foreach>
+	</insert>
 	
 	<!-- 가입신청 거절(업데이트 테이블 데이터삭제) -->
 	<delete id="groupRequestSorry" parameterType="UpdateWaitVo">
@@ -478,17 +494,17 @@
 	<!-- 채팅 start -->
 	<!-- 채팅접속시 접속상태 on -->
 	<update id="groupChatUserUpdate" parameterType="GroupVo">
-		update groupchat set joinstatus=1 where pronum17=${profile.pronum} and grnum9=${grnum}
+		update joingroup set joinstatus=1 where pronum8=${profile.pronum} and grnum3=${grnum}
 	</update>
 	
 	<!--채팅퇴장시 접속상태 off -->
 	<update id="groupChatUserUpdateRe" parameterType="GroupVo">
-		update groupchat set joinstatus=0 where pronum17=${profile.pronum} and grnum9=${grnum}
+		update joingroup set joinstatus=0 where pronum8=${profile.pronum} and grnum3=${grnum}
 	</update>
 	
 	<!-- 접속상태 on인 그룹유저 출력 -->
-	<select id="groupChatUser" parameterType="GroupVo" resultMap="groupchat">
-		select * from groupchat a inner join profile b on a.pronum17=b.pronum where grnum9=${grnum} and joinstatus=1
+	<select id="groupChatUser" parameterType="GroupVo" resultMap="joinuser">
+		select * from joingroup a inner join profile b on a.pronum8=b.pronum where grnum3=${grnum} and joinstatus=1
 	</select>
 	
 	<!-- 채팅 end -->

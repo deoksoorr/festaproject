@@ -27,7 +27,14 @@
 	</style>
 	<script type="text/javascript">
 	
-		
+		function btn_close(){
+	        document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+	        var url = window.location.href;
+	    	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+	    		window.location.href='${root}';
+	    	}
+		}		
+	
 		$(document).ready(function(){
 			
 				//지오로케이션 접근시 스크롤기능막기
@@ -62,24 +69,24 @@
 				var login = '${login ne null}';
 				
 				if(cookie!=''&&login=='false'){
-					openPop('loginCookie');
+					openPop('loginCookie',none,btn_close);
 				}
-			
-			$('#btnCookie').on('click',function(){
-				$.post('${root}member/loginCookie','id='+cookie,function(data){
-					if (data.prorn == '0') {
-						location.reload();
-					} else if (data.prorn == '1') {
-						location.href = "${root}member/stop";
-					} else if (data.prorn == '2') {
-						location.href = "${root}member/kick";
-					} else if (data.prorn == '3') {
-						location.reload();
-					} else if (data.prorn == '4') {
-						location.href = "${root}";
-					}
+				
+				$('#btnCookie').on('click',function(){
+					$.post('${root}member/loginCookie','id='+cookie,function(data){
+						if (data.prorn == '0') {
+							location.reload();
+						} else if (data.prorn == '1') {
+							location.href = "${root}member/stop";
+						} else if (data.prorn == '2') {
+							location.href = "${root}member/kick";
+						} else if (data.prorn == '3') {
+							location.reload();
+						} else if (data.prorn == '4') {
+							location.href = "${root}";
+						}
+					});
 				});
-			});
 			
 			//한줄평삭제버튼 눌렀을때
 			$(document).on('click', '.btn_review', function() {
@@ -125,6 +132,9 @@
 	</script>
 </head>
 <body>
+<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
+   <c:redirect url="/empty"/>
+</c:if>
 <c:if test="${sessionScope.login ne null }">
 	<c:if test="${sessionScope.login.proid ne 'admin@festa.com' }">
 		<c:redirect url="/empty"/>
@@ -201,9 +211,16 @@
 				</div>
 				<div class="intro box">
 					<h4 class="snd_only">캠핑장 사진</h4>
-					<c:if test="${!empty campdetail.caphoto }">
+					<div class="thumb_slide">
+					<div class="thumb_slide">
+					<div class="swiper-slide">
+						<iframe id="reali" src="${root }admin/camp/gl_camp" width="1000" height="500" scrolling="no" frameborder="1"></iframe>
+					</div>
+					</div>
+					</div>
+					<%-- <c:if test="${!empty campdetail.caphoto }">
 						<div class="thumb_slide">
-							<div class="swiper-wrapper">
+							<div class="thumb_slide">
 								<c:set var="caphoto" value="${campdetail.caphoto }" />
 								<c:forTokens items="${caphoto }" delims="," var="item">
 									<div class="swiper-slide">
@@ -223,7 +240,7 @@
 							</div>
 							<div class="swiper-pagination"></div>
 						</div>
-					</c:if>
+					</c:if> --%>
 					<div class="text_box">
 						<h4 class="sub_tit">캠핑장 소개</h4>
 						<c:if test="${venturecheck eq 1 }">
@@ -255,9 +272,7 @@
 				</div>
 			</div>
 		</section>
-		<div id="iframe">
-			<iframe id="reali" src="${root }admin/camp/gl_camp" width="1000" height="500" scrolling="no" frameborder="1"></iframe>
-		</div>
+		
 		
 		<section class="location_area">
 			<div class="container">
@@ -384,9 +399,9 @@
 <!-- #팝업 처리완료 { -->
 <div id="loginCookie" class="fstPop">
 	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+		<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
 		<ul class="comm_buttons">
-			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+			<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
 			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
 		</ul>
 	</div>

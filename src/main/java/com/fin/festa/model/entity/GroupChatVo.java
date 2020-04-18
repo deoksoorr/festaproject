@@ -7,9 +7,9 @@ public class GroupChatVo {		//채팅
 	private int grnum;			//그룹번호
 	private int pronum;			//회원번호
 	private int joinstatus;		//접속상태
+	private ProfileVo profile;
 	private String mymsg;		//내 메세지
 	private Date msgdate;		//메세지등록일
-	private ProfileVo profile;
 	
 	public GroupChatVo() {
 		// TODO Auto-generated constructor stub

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fin.festa.model.IndexDaoImpl;
 import com.fin.festa.model.MemberDaoImpl;
 import com.fin.festa.model.UserDaoImpl;
 import com.fin.festa.model.entity.CampVo;
@@ -43,6 +44,9 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	MemberDaoImpl memberDao;
 
+	@Autowired
+	IndexDaoImpl indexDao;
+	
 	//추가사항
 	//유저 댓글 더보기 비동기
 
@@ -70,7 +74,12 @@ public class UserServiceImpl implements UserService {
 			int myFollowerCount = userDao.myFollowerCount(profile);
 			int myFollowingCount = userDao.myFollowingCount(profile);
 			
-			//int isFollow = userDao.isFollow(following);
+			if(req.getSession().getAttribute("login")!=null) {
+				req.setAttribute("grouplist", indexDao.addrGroupSelectAll((ProfileVo) req.getSession().getAttribute("login")));
+			} else {
+				req.setAttribute("grouplist", indexDao.totalGroupSelectAll());
+			}
+			req.setAttribute("camplist", indexDao.veryHotCampSelectAll());
 			
 			session.setAttribute("profile", profile);
 			session.setAttribute("myFeedCount", myFeedCount);
@@ -176,6 +185,13 @@ public class UserServiceImpl implements UserService {
 		
 	}
 
+	//해당유저 팔로우 중인지 확인
+	@Override
+	public int isFollow(HttpServletRequest req,MyFollowerVo myFollowerVo) {
+		int result = userDao.isFollow(myFollowerVo);
+		return result;
+	}
+	
 	// 내팔로잉목록에 등록
 	// 상대팔로워목록에 등록
 	// 내 팔로잉목록 갱신
@@ -183,16 +199,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void followInsertOne(HttpServletRequest req, MyFollowingVo myFollowingVo) {
 		System.out.println("파라미터 : "+myFollowingVo);
-		int result = userDao.isFollow(myFollowingVo);
-		System.out.println("result : "+result);
-		if(result == 0) {
-			userDao.myFollowingInsertOne(myFollowingVo);
-			userDao.yourFollowerInsertOne(myFollowingVo);
-		}
-		else {
-			System.out.println("이미 팔로우");
-		}
+		/*
+		 * int result = userDao.isFollow(myFollowingVo);
+		 * System.out.println("result : "+result); if(result == 0) {
+		 * userDao.myFollowingInsertOne(myFollowingVo);
+		 * userDao.yourFollowerInsertOne(myFollowingVo); } else {
+		 * System.out.println("이미 팔로우"); }
+		 */
 		HttpSession session = req.getSession();
+		System.out.println(myFollowingVo.getPronum());
+		System.out.println(myFollowingVo.getPronum_sync());
 		session.setAttribute("followlist", userDao.myFollowingRenewal(myFollowingVo));
 		System.out.println("등록 : " +req.getSession().getAttribute("followlist"));
 	}
@@ -222,6 +238,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void followerList(HttpServletRequest req, ProfileVo profile) {
 		req.setAttribute("follower", userDao.myFollowerSelectAll(profile));
+		req.setAttribute("following", userDao.myFollowingSelectAll(profile));
 	}
 
 	// 내 팔로잉리스트 출력
@@ -323,7 +340,10 @@ public class UserServiceImpl implements UserService {
 	public void myAdminUpdateOne(HttpServletRequest req, ProfileVo profileVo) {
 		userDao.joinInfoUpdate(profileVo);
 		HttpSession session = req.getSession();
+		profileVo = userDao.myInfo(profileVo);
+		
 		session.setAttribute("profile", profileVo);
+		session.setAttribute("login", profileVo);
 	}
 
 	// 비활성화계정 처리

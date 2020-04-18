@@ -20,6 +20,7 @@
 </head>
 <body>
 <div id="wrap">
+<c:if test="${feedList ne null}">
 <c:forEach items="${feedList}" var="feed">
 	<c:set var="groupFeed" value="${feed.gpnum ne 0}" />
 	<c:choose>
@@ -109,13 +110,13 @@
 					<li>
 						<a href="${root}user/?pronum=${comment.pronum}" class="pf_picture">
 						<c:choose>
-							<c:when test="${!empty comment.profile.prophoto}"><img src="${upload}/images/thumb/no_profile.png" alt="${comment.profile.proname}님의 프로필 썸네일" width="30"></c:when>
+							<c:when test="${!empty comment.profile.prophoto}"><img src="${upload}/${comment.profile.prophoto}" alt="${comment.profile.proname}님의 프로필 썸네일" width="30"></c:when>
 							<c:otherwise><img src="${root}resources/images/thumb/no_profile.png" alt="${feed.profile.proname}님의 프로필 썸네일" onload="squareTrim($(this), 30)"></c:otherwise>
 						</c:choose>
 						</a>
 						<p class="cmt_content">
 							<a href="${root}user/?pronum=${comment.pronum}" class="cmt_name">${comment.profile.proname}</a>
-							${cmmtContent}
+							&nbsp;${cmmtContent}
 							<span class="cmt_date">${cmmtDate}</span>
 							<c:if test="${login.pronum eq comment.pronum}"><button class="btn_delete" data-num="${cmmtNum}" onclick="deleted($(this))"><em class="snd_only">삭제하기</em></button></c:if>
 						</p>
@@ -127,7 +128,7 @@
 					</c:forEach>
 				</ul>
 				<c:if test="${cmmtCount gt 3}">
-					<button class="cmt_btn_more"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
+					<button class="cmt_btn_more" onclick="moreComment($(this))"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
 				</c:if>
 			</div>
 			<form class="message_form" method="POST" action="${root}news/cmmtadd">
@@ -158,12 +159,11 @@
 					<input type="hidden" name="pronum" value="${login.pronum}">
 					<input type="hidden" name="${author}" value="${login.proname}">
 					<input type="hidden" name="${sync}" value="${syncValue}">
-					<textarea name="${content}" placeholder="메세지를 입력해주세요"></textarea>
+					<input type="text" class="msg_txt" name="${content}" placeholder="메세지를 입력해주세요" required="required">
 					<button type="submit" class="btn_send"><em class="snd_only">전송</em></button>
 				</div>
 			</form>
 		</div>
-		<!-- # 썸네일 영역 { -->
 		<c:if test="${!empty feedImages}">
 		<div class="img box">
 			<div class="thumb_slide">
@@ -176,9 +176,9 @@
 			</div>
 		</div>
 		</c:if>
-		<!--  } # 썸네일 영역 -->
 	</div>
 </c:forEach>
+</c:if>
 </div>
 </body>
 </html>

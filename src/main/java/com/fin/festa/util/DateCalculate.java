@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.fin.festa.model.entity.FeedVo;
 import com.fin.festa.model.entity.ProfileVo;
+import com.fin.festa.model.entity.UpdateWaitVo;
 
 //날짜관련 계산
 public class DateCalculate {
@@ -60,6 +61,30 @@ public class DateCalculate {
 			}
 			proidnum3 = nums[0]+"-"+nums[1]+"-"+nums[2];
 			profile.get(i).setProidnum(proidnum3);
+		}
+		
+		return profile;
+	}
+
+	//가입신청부분 생년월일포멧팅
+	public List<UpdateWaitVo> proidnumFormatt(List<UpdateWaitVo> profile){
+		
+		for(int i=0; i<profile.size(); i++) {
+			String proidnum = profile.get(i).getProfile().getProidnum();
+			String proidnum1 = proidnum.replaceAll("년", "-");
+			String proidnum2 = proidnum1.replaceAll("월", "-");
+			String proidnum3 = proidnum2.replaceAll("일", "");
+			String[] nums = proidnum3.split("-");
+			int num1 = Integer.parseInt(nums[1]);
+			int num2 = Integer.parseInt(nums[2]);
+			if(num1<10) {
+				nums[1] = "0" + Integer.toString(num1);
+			}
+			if(num2<10) {
+				nums[2] = "0" + Integer.toString(num2);
+			}
+			proidnum3 = nums[0]+"-"+nums[1]+"-"+nums[2];
+			profile.get(i).getProfile().setProidnum(proidnum3);
 		}
 		
 		return profile;

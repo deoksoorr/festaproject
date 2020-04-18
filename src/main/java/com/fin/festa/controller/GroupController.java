@@ -153,7 +153,8 @@ public class GroupController {
 	
 	//공지사항 수정 (팝업>팝업)
 	@RequestMapping(value = "ntc_maker", method = RequestMethod.GET)
-	public String noticeUpdateOne(){
+	public String noticeUpdateOne(HttpServletRequest req, GroupNoticeVo groupNoticeVo){
+		groupService.noticeSelectOne(req, groupNoticeVo);
 		return "group/ntc_maker";
 	}
 	

@@ -354,6 +354,7 @@ public class UpdateWaitVo {						//가입 & 승인 대기 (사업자, 그룹)
 	public void setReportList(ReportListVo reportList) {
 		this.reportList = reportList;
 	}
+
 	
 	
 	

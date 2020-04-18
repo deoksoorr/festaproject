@@ -18,6 +18,7 @@ import com.fin.festa.model.entity.GroupVo;
 import com.fin.festa.model.entity.LoginVo;
 import com.fin.festa.model.entity.MyAdminVo;
 import com.fin.festa.model.entity.MyCommentVo;
+import com.fin.festa.model.entity.MyFollowerVo;
 import com.fin.festa.model.entity.MyFollowingVo;
 import com.fin.festa.model.entity.MyGoodVo;
 import com.fin.festa.model.entity.MyPostVo;
@@ -98,7 +99,6 @@ public class UserController {
 	//좋아요 체크
 	@RequestMapping(value = "likeadd", method = RequestMethod.POST)
 	public String likeInsertOne(HttpServletRequest req, MyGoodVo myGoodVo) {
-		System.out.println("���ϱ�");
 		userSerivce.likeInsertOne(req, myGoodVo);
 		return "user/index";
 	}
@@ -110,6 +110,16 @@ public class UserController {
 		return "user/index";
 	}
 
+	//해당유저 팔로우 중인지 확인
+	@RequestMapping(value="isfollw",method=RequestMethod.GET)
+	@ResponseBody
+	public int isFollow(HttpServletRequest req, MyFollowerVo myFollowerVo) {
+		int rst = userSerivce.isFollow(req, myFollowerVo);
+		return rst;
+	}
+	
+	
+	
 	//팔로워 목록 (팝업)
 	@RequestMapping(value = "follower", method = RequestMethod.GET)
 	public String followerList(HttpServletRequest req, ProfileVo profile){
@@ -129,7 +139,10 @@ public class UserController {
 	//팔로우 (팝업>팝업 내 기능)
 	@RequestMapping(value = "follow", method = RequestMethod.POST)
 	public String followInsertOne(HttpServletRequest req, MyFollowingVo myFollowingVo) {
-		System.out.println(myFollowingVo);
+		System.out.println("pronum = "+myFollowingVo.getPronum());
+		System.out.println("mfgname= "+myFollowingVo.getMfgname());
+		System.out.println("pronum_sync = "+myFollowingVo.getPronum_sync());
+		System.out.println("myfollower.mfrname = "+myFollowingVo.getMyFollower().getMfrname());
 		userSerivce.followInsertOne(req, myFollowingVo);
 		return "user/following";
 	}
@@ -215,7 +228,7 @@ public class UserController {
 	@RequestMapping(value = "adm", method = RequestMethod.POST)
 	public String myAdminUpdateOne(HttpServletRequest req, ProfileVo profileVo) {
 		userSerivce.myAdminUpdateOne(req, profileVo);
-		return "user/check";
+		return "redirect:../user/check";
 	}
 
 	

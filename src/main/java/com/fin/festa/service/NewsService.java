@@ -14,6 +14,7 @@ import com.fin.festa.model.entity.MyCommentVo;
 import com.fin.festa.model.entity.MyFollowingVo;
 import com.fin.festa.model.entity.MyGoodVo;
 import com.fin.festa.model.entity.MyPostVo;
+import com.fin.festa.model.entity.PageSearchVo;
 import com.fin.festa.model.entity.ReportListVo;
 
 public interface NewsService {
@@ -37,4 +38,8 @@ public interface NewsService {
 	void newsFeedSelectOne(Model model, GroupPostVo groupPostVo, MyPostVo myPostVo);
 	
 	void newsFeedMore(HttpServletRequest req, MyFollowingVo myFollowingVo);
+
+	List<MyCommentVo> newsFeedCommentMore(Model model, MyPostVo myPost);
+
+	List<GroupCommentVo> newsGroupCommentMore(Model model, GroupPostVo groupPost);
 }

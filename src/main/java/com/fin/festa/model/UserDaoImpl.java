@@ -169,8 +169,9 @@ public class UserDaoImpl implements UserDao{
 	}
 
 	//팔로우하고 있는지 확인
-	public int isFollow(MyFollowingVo myFollowingVo) {
-		return sqlSession.selectOne("user.isFollow",myFollowingVo);
+	@Override
+	public int isFollow(MyFollowerVo myFollowerVo) {
+		return sqlSession.selectOne("user.isFollow",myFollowerVo);
 	}
 	
 	////////////////////////////////////////////////////////////

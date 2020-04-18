@@ -11,29 +11,57 @@
 	if(url.indexOf('maker')>0){
 		window.location.href='${root}empty';
 	}
+	
+	function focus_content(){
+		$('#content').focus();
+	}
+	
+	function focus_hash1(){
+		$('input[name=httitle1]').focus();
+	}
+	
+	function focus_hash2(){
+		$('input[name=httitle2]').focus();
+	}
+	
+	function focus_hash3(){
+		$('input[name=httitle3]').focus();
+	}
+	
 	$(document).ready(function(){
-		$('#edit_btn').on('click',function(){
-			var files = new FormData($('#edit_form')[0]);
-			$.ajax({
-				type: "POST",
-				enctype: 'multipart/form-data',
-				url: '${root}hot/maker',
-				data: files,
-				processData: false,
-				contentType: false,
-				cache: false,
-				success: function () {
-					$('#close_btn').click();
-					openPop('success');
-					$('.comm_btn').on('click', function(){
-						window.location.reload();		
-					});
-				},
-				error: function (e) { 
-					openPop('fail');
-				}
-			});
-			return false;
+		
+		$(document).on('submit','#edit_form',function(e){
+			e.preventDefault();
+			if($('#content').val().length>=500){
+				openPop('excess',none,focus_content);
+			}else if($('input[name=httitle1]').val().length>=20){
+				openPop('excess_hash',none,focus_hash1);
+			}else if($('input[name=httitle2]').val().length>=20){
+				openPop('excess_hash',none,focus_hash2);
+			}else if($('input[name=httitle3]').val().length>=20){
+				openPop('excess_hash',none,focus_hash3);
+			}else{
+				var files = new FormData($('#edit_form')[0]);
+				$.ajax({
+					type: "POST",
+					enctype: 'multipart/form-data',
+					url: '${root}hot/maker',
+					data: files,
+					processData: false,
+					contentType: false,
+					cache: false,
+					success: function () {
+						$('#close_btn').click();
+						openPop('success');
+						$('.comm_btn').on('click', function(){
+							window.location.reload();		
+						});
+					},
+					error: function (e) { 
+						openPop('fail');
+					}
+				});
+			}
 		});
 	});
 </script>
@@ -52,7 +80,7 @@
 					<img src="${root }resources/images/thumb/no_profile.png" alt="${feedEdit.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)">
 				</c:if>
 				</p>
-				<textarea id="" name="gpcontent" placeholder="${feedEdit.profile.proname } 님, 무슨 생각을 하고 계신가요?">${feedEdit.gpcontent }</textarea>
+				<textarea id="content" name="gpcontent" placeholder="${feedEdit.profile.proname } 님, 무슨 생각을 하고 계신가요?" required="required">${feedEdit.gpcontent }</textarea>
 			</div>
 			<div class="file_thumbnail mk_thumb box" style="display: block">
 				<ul>
@@ -96,7 +124,7 @@
 						<label for="file1" class="btn_file"><em class="snd_only">사진/동영상 업로드하기</em></label>
 					</li>
 					<li>
-						<button type="button" id="edit_btn" class="btn_send"><em class="snd_only">피드 수정하기</em></button>
+						<button type="submit" id="edit_btn" class="btn_send"><em class="snd_only">피드 수정하기</em></button>
 					</li>
 				</ul>
 			</div>
@@ -114,7 +142,7 @@
 					<img src="${root }resources/images/thumb/no_profile.png" alt="${feedEdit.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 55)">
 				</c:if>
 				</p>
-				<textarea id="" name="mpcontent" placeholder="${feedEdit.profile.proname } 님, 무슨 생각을 하고 계신가요?">${feedEdit.mpcontent }</textarea>
+				<textarea id="content" name="mpcontent" placeholder="${feedEdit.profile.proname } 님, 무슨 생각을 하고 계신가요?" required="required">${feedEdit.mpcontent }</textarea>
 			</div>
 			<div class="file_thumbnail mk_thumb box" style="display: block">
 				<ul>
@@ -158,12 +186,30 @@
 						<label for="file1" class="btn_file"><em class="snd_only">사진/동영상 업로드하기</em></label>
 					</li>
 					<li>
-						<button type="button" id="edit_btn" class="btn_send"><em class="snd_only">피드 수정하기</em></button>
+						<button type="submit" id="edit_btn" class="btn_send"><em class="snd_only">피드 수정하기</em></button>
 					</li>
 				</ul>
 			</div>
 		</form>
 	</c:if>
+</div>
+<!-- #댓글 초과팝업 { -->
+<div id="excess_hash" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">20자 이상 입력할수 없습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
+<!-- #댓글 초과팝업 { -->
+<div id="excess" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">500자 이상 입력할수 없습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
 </div>
 <div id="success" class="fstPop pop2">
 	<div class="confirm_wrap pop_wrap">

@@ -6,14 +6,60 @@
 <!DOCTYPE html>
 <!-- #피드 수정하기 -->
 <script type="text/javascript">
-	$('#feedUpdate').on('click',function(){
+
+	$('#update_feed').on('submit', function(e){
+		e.preventDefault();
 		var gpcontent = $('#gpcontent1').val();
+		console.log(gpcontent);
+		
+		if(gpcontent == '' || gpcontent == null){
+			console.log('??');
+			e.preventDefault();
+			return false;
+			//openPop('makerFail');
+			//$('#makerfailed').on('click', function(){
+			//	location.reload();
+			//});
+		}
+		var content=$('#gpcontent1').val().length;
+		var ht1=$('#httitle1_1').val().length;
+		var ht2=$('#httitle2_1').val().length;
+		var ht3=$('#httitle3_1').val().length;
+		
+		if(content>=500){
+			openPop("cneditfull");
+			$('#editcnfailed').on('click', function(){
+				$('#gpcontent1').focus();					
+			});
+			return false;
+		};
+		if(ht1>=20){
+			openPop("hteditfull");
+			$('#edithtfailed').on('click', function(){
+				$('#httitle1_1').focus();		
+			})
+			return false;
+		}
+		if(ht2>=20){
+			openPop("hteditfull");
+			$('#edithtfailed').on('click', function(){
+				$('#httitle2_1').focus();		
+			})
+			return false;
+		}
+		if(ht3>=20){
+			openPop("hteditfull");
+			$('#edithtfailed').on('click', function(){
+				$('#httitle3_1').focus();		
+			})
+			return false;
+		}
 		
 		var httitle1= $('#httitle1_1').val();
 		var httitle2= $('#httitle2_1').val();
 		var httitle3= $('#httitle3_1').val();
 		var mpnum = "${feedDetail.gpnum}";
-			
+		
 		var files = new FormData($('#update_feed')[0]);
 		$.ajax({
 			type: "POST",
@@ -63,7 +109,7 @@
 					</p>
 				</c:otherwise>
 			</c:choose>
-			<textarea id="gpcontent1" name="gpcontent" placeholder="${login.proname } 님, 무슨 생각을 하고 계신가요?" >${feedDetail.gpcontent}</textarea>
+			<textarea id="gpcontent1" name="gpcontent" placeholder="${login.proname } 님, 무슨 생각을 하고 계신가요?" required="required">${feedDetail.gpcontent}</textarea>
 		</div>
 		<div class="file_thumbnail mk_thumb box" style="display: block">
 			<ul>
@@ -104,20 +150,44 @@
 					<label for="file1_1" class="btn_file"><em class="snd_only">사진/동영상 업로드하기</em></label>
 				</li>
 				<li>
-					<button type="button" class="btn_send" id="feedUpdate" name="feedUpdate"><em class="snd_only">피드 게시하기</em></button>
+					<button type="submit" class="btn_send" id="feedUpdate" name="feedUpdate"><em class="snd_only">피드 게시하기</em></button>
 				</li>
 			</ul>
 		</div>
 	</form>
 </div>
-<div id="updateOk" class="fstPop pop2">
-	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">수정이 완료되었습니다.</p>
-		<ul class="comm_buttons">
-			<li><button type="button" id="finish_update" name="finish_update" class="btn_close comm_btn cfm">확인</button></li>
-		</ul>
+
+	
+	<div id="updateOk" class="fstPop pop2">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">수정이 완료되었습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" id="finish_update" name="finish_update" class="btn_close comm_btn cfm">확인</button></li>
+			</ul>
+		</div>
 	</div>
-</div>
+
+
+	<!-- #게시글 초과 -->
+	<div id="cneditfull" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">게시글은 500자 이상 입력할 수 없습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" id="editcnfailed" class="btn_close comm_btn cfm">확인</button></li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- #해시태그 초과 -->
+	<div id="hteditfull" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">해시태그는 20자 이상 입력할 수 없습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" id="edithtfailed" class="btn_close comm_btn cfm">확인</button></li>
+			</ul>
+		</div>
+	</div>
+
 <button type="button" class="btn_close"><em class="snd_only">창 닫기</em></button>
 <script type="text/javascript">
 	btnPop('btn_pop2');

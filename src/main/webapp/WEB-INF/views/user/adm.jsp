@@ -4,6 +4,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:url value="/" var="root" />
 <c:url value="/resources/upload" var="upload" />
+<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
+   <c:redirect url="/empty"/>
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -22,100 +25,128 @@
 <link rel="shortcut icon" href="${root }resources/favicon.ico">
 <title>FESTA</title>
 <script type="text/javascript">
+function btn_close(){
+    document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+    var url = window.location.href;
+	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+		window.location.href='${root}';
+	}
+}
+
 	$(document).ready(
 			function() {
 				var cookie = '${cookie.loginCookie.value}';
-				var login = '${login}';
-				
-				if(cookie!=''&&login==''){
-				   openPop('loginCookie');
-				}
-				
-				$('#btnCookie').on('click',function(){
-				   $.post('${root}member/loginCookie','id='+cookie,function(data){
-				      if (data.prorn == '0') {
-				         location.reload();
-				      } else if (data.prorn == '1') {
-				         location.href = "${root}member/stop";
-				      } else if (data.prorn == '2') {
-				         location.href = "${root}member/kick";
-				      } else if (data.prorn == '3') {
-				         location.reload();
-				      } else if (data.prorn == '4') {
-				         location.href = "${root}";
-				      }
-				   });
-				});
-			      
-				$("#propwCheck").focusout(
-						function() {
-							var regExp = /^[A-Za-z0-9+]{8,13}$/;
-							var propw = $("#propw").val();
-							var propwCheck = $("#propwCheck").val();
-							var pw_num = propw.search(/[0-9]/g);
-							var pw_eng = propw.search(/[a-z]/gi);
-							var pwchk_num = propwCheck.search(/[0-9]/g);
-							var pwchk_eng = propwCheck.search(/[a-z]/gi);
-							if (regExp.test(propw) && regExp.test(propwCheck)) {
-								if (pw_num >= 0 && pw_eng >= 0
-										&& pwchk_num >= 0 && pwchk_eng >= 0) {
-									if (propw != propwCheck) {
-										$("#pwfail").show();
-										$("#pwok").hide();
-										$("#pwif").hide();
-									} else if (propw == propwCheck) {
-										$("#pwfail").hide();
-										$("#pwok").show();
-										$("#pwif").hide();
-									}
-								} else {
-									$("#pwfail").hide();
-									$("#pwok").hide();
-									$("#pwif").show();
-								}
-							} else {
-								$("#pwfail").hide();
-								$("#pwok").hide();
-								$("#pwif").show();
-							}
-						});
+				var login = '${login ne null}';
 
-				$("#propw").focusout(
-						function() {
-							var regExp = /^[A-Za-z0-9+]{8,13}$/;
-							var propw = $("#propw").val();
-							var propwCheck = $("#propwCheck").val();
-							console.log(regExp.test(propw));
-							console.log(regExp.test(propwCheck));
-							var pw_num = propw.search(/[0-9]/g);
-							var pw_eng = propw.search(/[a-z]/gi);
-							var pwchk_num = propwCheck.search(/[0-9]/g);
-							var pwchk_eng = propwCheck.search(/[a-z]/gi);
-							console.log(pw_num);
-							console.log(pw_eng);
-							if (regExp.test(propw) && regExp.test(propwCheck)) {
-								if (pw_num >= 0 && pw_eng >= 0
-										&& pwchk_num >= 0 && pwchk_eng >= 0) {
-									if (propw != propwCheck) {
-										$("#pwfail").show();
-										$("#pwok").hide();
-										$("#pwif").hide();
-									} else if (propw == propwCheck) {
-										$("#pwfail").hide();
-										$("#pwok").show();
-										$("#pwif").hide();
-									}
-								} else {
-									$("#pwfail").hide();
-									$("#pwok").hide();
-									$("#pwif").show();
-								}
-							} else {
-								$("#pwfail").hide();
-								$("#pwok").hide();
-								$("#pwif").show();
-							}
-						});
+				if(cookie!=''&&login=='false'){
+					openPop('loginCookie',none,btn_close);
+				}
+
+				$('#btnCookie').on('click',function(){
+					$.post('${root}member/loginCookie','id='+cookie,function(data){
+						if (data.prorn == '0') {
+							location.reload();
+						} else if (data.prorn == '1') {
+							location.href = "${root}member/stop";
+						} else if (data.prorn == '2') {
+							location.href = "${root}member/kick";
+						} else if (data.prorn == '3') {
+							location.reload();
+						} else if (data.prorn == '4') {
+							location.href = "${root}";
+						}
+					});
+				});
+
+			      
+				//비밀번호 형식 유효성 검사
+		         $("#propwCheck").on('propertychange change keyup paste input',function() {
+		        	 if($('#propw').val() != ""){
+			            var regExp = /^[A-Za-z0-9+]{8,13}$/;
+			            var propw = $("#propw").val();
+			            var propwCheck = $("#propwCheck").val();
+			            var pw_num = propw.search(/[0-9]/g);
+			            var pw_eng = propw.search(/[a-z]/gi);
+			            var pwchk_num = propwCheck.search(/[0-9]/g);
+			            var pwchk_eng = propwCheck.search(/[a-z]/gi);
+			            if (regExp.test(propw) && regExp.test(propwCheck)) {
+			               if (pw_num >= 0 && pw_eng >= 0   && pwchk_num >= 0 && pwchk_eng >= 0) {
+			                  if (propw != propwCheck) {
+			                     $("#pwfail").show();
+			                     $("#pwok").hide();
+			                     $("#pwif").hide();
+			                  } else if (propw == propwCheck) {
+			                     $("#pwfail").hide();
+			                     $("#pwok").show();
+			                     $("#pwif").hide();
+			                  }
+			               } else {
+			                  $("#pwfail").hide();
+			                  $("#pwok").hide();
+			                  $("#pwif").show();
+			               }
+			            } else {
+			               $("#pwfail").hide();
+			               $("#pwok").hide();
+			               $("#pwif").show();
+			            }
+		        	 }
+		        	 if($('#pwok').attr("style")=="display: block;"){
+		         			$('#changeBtn').prop('type','submit');
+			        }
+			        else{
+			            $('#changeBtn').prop('type','button');
+			        }
+		         });
+
+		         $("#propw").on('propertychange change keyup paste input',function() {
+		        	if($('#propwCheck').val() != ""){
+			            var regExp = /^[A-Za-z0-9+]{8,13}$/;
+			            var propw = $("#propw").val();
+			            var propwCheck = $("#propwCheck").val();
+			            var pw_num = propw.search(/[0-9]/g);
+			            var pw_eng = propw.search(/[a-z]/gi);
+			            var pwchk_num = propwCheck.search(/[0-9]/g);
+			            var pwchk_eng = propwCheck.search(/[a-z]/gi);
+			            if (regExp.test(propw) && regExp.test(propwCheck)) {
+			               if (pw_num >= 0 && pw_eng >= 0 && pwchk_num >= 0 && pwchk_eng >= 0) {
+			                  if (propw != propwCheck) {
+			                     $("#pwfail").show();
+			                     $("#pwok").hide();
+			                     $("#pwif").hide();
+			                  } else if (propw == propwCheck) {
+			                     $("#pwfail").hide();
+			                     $("#pwok").show();
+			                     $("#pwif").hide();
+			                  }
+			               } else {
+			                  $("#pwfail").hide();
+			                  $("#pwok").hide();
+			                  $("#pwif").show();
+			               }
+			            } else {
+			               $("#pwfail").hide();
+			               $("#pwok").hide();
+			               $("#pwif").show();
+			            }
+		        	}
+		        	if($('#pwok').attr("style")=="display: block;"){
+		         			$('#changeBtn').prop('type','submit');
+			        }
+			        else{
+			            $('#changeBtn').prop('type','button');
+			        }
+		         });//비밀번호 유효성 검사 끝
+		         
+		         $('#changeForm').on("submit",function(e){
+		        	e.preventDefault();
+		        	$.post("${root}user/adm","propw="+$('#propw').val()+"&proaddr="+$('#proaddr').val()+"&projob="+$('#projob').val()+"&pronum="+$('#pronum').val());
+		        	openPop("ok");
+		         });
+		         
+		         $('#btn_ok').on('click',function(){
+		        	location.href ="${root}user/check"; 
+		         });
 			});
 </script>
 </head>
@@ -135,8 +166,8 @@
 					<h1>
 						<a href="${root }"><em class="snd_only">FESTA</em></a>
 					</h1>
-					<form class="search_box">
-						<input type="text" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
+					<form action="${root }search/" class="search_box">
+						<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 						<button type="submit">
 							<img src="${root }resources/images/ico/btn_search.png" alt="검색">
 						</button>
@@ -339,7 +370,7 @@
 				<!-- 컨텐츠영역 시작 { -->
 				<section class="content_area">
 					<h2 class="set_tit">계정 관리</h2>
-					<form action="${root }user/adm" method="post" class="set_form">
+					<form id="changeForm"class="set_form">
 						<input type="hidden" id="pronum" name="pronum" value="${profile.pronum }"/>
 						<input type="hidden" id="prointro" name="prointro" value="${profile.prointro }"/>
 						<input type="hidden" id="prophoto" name="prophoto" value="${profile.prophoto }"/>
@@ -370,8 +401,10 @@
 								<div>
 									<input type="password" id="propw" name="propw"
 										placeholder="비밀번호">
-									<p hidden="hidden" id="pwif" name="pwif" class="f_message rst">비밀번호는
+									<p hidden="hidden" id="pwif"class="f_message rst">비밀번호는
 										8~13자 영문,숫자 조합이어야 합니다.</p>
+									<p hidden="hidden" id="pwfail" class="f_message rst">비밀번호가 일치하지 않습니다.</p>
+									<p hidden="hidden" id="pwok" class="f_message ok rst">비밀번호가 일치합니다.</p>
 								</div>
 							</li>
 							<li class="box">
@@ -380,12 +413,7 @@
 								</p>
 								<div>
 									<input type="password" id="propwCheck" name="propwCheck"
-										placeholder="비밀번호 확인">
-									<p hidden="hidden" id="pwfail" name="pwfail"
-										class="f_message rst">비밀번호가 일치하지 않습니다.</p>
-									<p hidden="hidden" id="pwok" name="pwok"
-										class="f_message ok rst">비밀번호가 일치합니다.</p>
-								</div>
+										placeholder="비밀번호 확인">								</div>
 							</li>
 
 						</ul>
@@ -487,7 +515,7 @@
 						</ul>
 						<ul class="comm_buttons">
 							<li><button type="reset" class="btn_close comm_btn cnc">취소</button></li>
-							<li><button type="submit" class="comm_btn sbm">저장</button></li>
+							<li><button id="changeBtn" type="button" class="comm_btn sbm">저장</button></li>
 						</ul>
 					</form>
 				</section>
@@ -519,14 +547,23 @@
 		rdoPop();
 	</script>
 </body>
+<div id="ok" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">변경 사항이 저장되었습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" id="btn_ok" name="btn_ok" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
+
 <!-- #팝업 처리완료 { -->
 <div id="loginCookie" class="fstPop">
-   <div class="confirm_wrap pop_wrap">
-      <p class="pop_tit">로그인을 유지 시키겠습니까?</p>
-      <ul class="comm_buttons">
-         <li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
-         <li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
-      </ul>
-   </div>
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
+	</div>
 </div>
 </html>

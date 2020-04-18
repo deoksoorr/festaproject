@@ -188,7 +188,7 @@
 				</a>
 				<p class="msg_input">
 					<input type="hidden" id="lastchance" value="${detail.grnum }" />
-					<textarea id="chstmsg" name="" placeholder="메세지를 입력해주세요"></textarea>
+					<textarea class="msg_txt" id="chstmsg" name="" placeholder="메세지를 입력해주세요"></textarea>
 					<button type="button" class="btn_send">
 						<em class="snd_only">전송</em>
 					</button>

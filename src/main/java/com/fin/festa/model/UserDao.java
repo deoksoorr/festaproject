@@ -128,5 +128,7 @@ public interface UserDao {
 	int inactiveUpdate(MyAdminVo myAdminVo);
 
 	CampVo myCampPage(MyVentureVo myVenture);
+
+	int isFollow(MyFollowerVo myFollowerVo);
 	
 }

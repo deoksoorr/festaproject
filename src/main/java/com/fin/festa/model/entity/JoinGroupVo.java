@@ -30,6 +30,7 @@ public class JoinGroupVo {						//가입그룹목록
 	private ProfileVo profile;
 	private ReportListVo reportList;
 	private UpdateWaitVo updateWait;
+	private int joinstatus;		//접속상태
 	
 	@Override
 	public String toString() {
@@ -39,7 +40,7 @@ public class JoinGroupVo {						//가입그룹목록
 				+ groupNotice + ", groupPost=" + groupPost + ", group=" + group + ", myAdmin="
 				+ myAdmin + ", myBookMark=" + myBookMark + ", myComment=" + myComment + ", myFollower=" + myFollower
 				+ ", myFollowing=" + myFollowing + ", myGood=" + myGood + ", myPost=" + myPost + ", myVenture="
-				+ myVenture + ", pageSearch=" + pageSearch + ", profile=" + profile + ", reportList=" + reportList
+				+ myVenture + ", joinstatus=" + joinstatus + ", pageSearch=" + pageSearch + ", profile=" + profile + ", reportList=" + reportList
 				+ ", updateWait=" + updateWait + "]";
 	}
 	
@@ -52,7 +53,7 @@ public class JoinGroupVo {						//가입그룹목록
 			GroupNoticeVo groupNotice, GroupPostVo groupPost, GroupVo group, MyAdminVo myAdmin,
 			MyBookMarkVo myBookMark, MyCommentVo myComment, MyFollowerVo myFollower, MyFollowingVo myFollowing,
 			MyGoodVo myGood, MyPostVo myPost, MyVentureVo myVenture, PageSearchVo pageSearch, ProfileVo profile,
-			ReportListVo reportList, UpdateWaitVo updateWait) {
+			ReportListVo reportList, UpdateWaitVo updateWait, int joinstatus) {
 		super();
 		this.joinGroupList = joinGroupList;
 		this.jgnum = jgnum;
@@ -79,8 +80,17 @@ public class JoinGroupVo {						//가입그룹목록
 		this.profile = profile;
 		this.reportList = reportList;
 		this.updateWait = updateWait;
+		this.joinstatus = joinstatus;
 	}
 
+	public int getJoinstatus() {
+		return joinstatus;
+	}
+
+	public void setJoinstatus(int joinstatus) {
+		this.joinstatus = joinstatus;
+	}
+	
 	public List<JoinGroupVo> getJoinGroupList() {
 		return joinGroupList;
 	}

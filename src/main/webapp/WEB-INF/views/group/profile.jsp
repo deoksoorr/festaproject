@@ -2,6 +2,9 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
+   <c:redirect url="/empty"/>
+</c:if>
 <c:if test="${sessionScope.login ne null }">
 	<c:if test="${sessionScope.login.proid eq 'admin@festa.com' }">
 		<c:redirect url="/empty" />
@@ -25,29 +28,39 @@
 <link rel="shortcut icon" href="${root }resources/favicon.ico">
 <title>FESTA</title>
 <script type="text/javascript">
+	function btn_close(){
+	    document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+	    var url = window.location.href;
+		if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+			window.location.href='${root}';
+		}
+	}
 	
 	$(document).ready(function(){
-		var login = '${login}';
+
 		var cookie = '${cookie.loginCookie.value}';
-		if(cookie!=''&&login==''&&loginValue==true){
-		   openPop('loginCookie');
+		var login = '${login ne null}';
+		
+		if(cookie!=''&&login=='false'){
+			openPop('loginCookie',none,btn_close);
 		}
 		
 		$('#btnCookie').on('click',function(){
-		   $.post('${root}member/loginCookie','id='+cookie,function(data){
-		      if (data.prorn == '0') {
-		         location.href = "${root}user/?pronum="+data.pronum;
-		      } else if (data.prorn == '1') {
-		         location.href = "${root}member/stop";
-		      } else if (data.prorn == '2') {
-		         location.href = "${root}member/kick";
-		      } else if (data.prorn == '3') {
-		         location.href = "${root}admin/";
-		      } else if (data.prorn == '4') {
-		         location.href = "${root}";
-		      }
-		   });
+			$.post('${root}member/loginCookie','id='+cookie,function(data){
+				if (data.prorn == '0') {
+					location.reload();
+				} else if (data.prorn == '1') {
+					location.href = "${root}member/stop";
+				} else if (data.prorn == '2') {
+					location.href = "${root}member/kick";
+				} else if (data.prorn == '3') {
+					location.reload();
+				} else if (data.prorn == '4') {
+					location.href = "${root}";
+				}
+			});
 		});
+		
 		$('#festa4').val('${detail.graddr}').prop('selected', 'selected');
 		$('select').each(function() {
 			   var label = $(this).siblings('.comm_sel_label');
@@ -55,6 +68,89 @@
 			   label.text(value);
 			});
 		
+		//그룹소개글 조건검사
+		var grinfo=$('#festa3').val().length;
+		if(grinfo<=500){
+			$('#grintrofail').hide();
+ 			$('#save').removeAttr("disabled");
+ 			$('#save').removeClass('cnc');
+		}
+		
+		
+	 	$('#festa3').on('propertychange change keyup paste input', function(){
+			var grinfo=$('#festa3').val().length;
+			if(grinfo>=500){
+				$('#grintrofail').show();
+	 			$('#save').attr("disabled", "disabled");
+	 			$('#save').addClass('cnc');
+			} else{
+				$('#grintrofail').hide();
+				var info=$('#htfail').is(':visible');
+				if(info==false){
+					$('#save').removeAttr("disabled");
+		 			$('#save').removeClass('cnc');
+				}
+			}
+	 	});
+	 	
+		//해시태그 조건검사
+		var httag1=$('#festa5').val().length;
+		var httag2=$('#festa6').val().length;
+		var httag3=$('#festa7').val().length;
+		if(httag1<=20 || httag2<=20 || httag3<=20){
+			$('#htfail').hide();
+ 			$('#save').removeAttr("disabled");
+ 			$('#save').removeClass('cnc');
+		}
+	 	$('#festa5').on('propertychange change keyup paste input', function(){
+			var httag=$('#festa5').val().length;
+			if(httag>=20){
+				var info=$('#htfail').is(':visible');
+			 	console.log(info)
+				$('#htfail').show();
+	 			$('#save').attr("disabled", "disabled");
+	 			$('#save').addClass('cnc');
+			}else{
+				$('#htfail').hide();
+				var info=$('#grintrofail').is(':visible');
+				if(info==false){
+		 			$('#save').removeAttr("disabled");
+		 			$('#save').removeClass('cnc');
+				}
+			}
+	 	});
+	 	$('#festa6').on('propertychange change keyup paste input', function(){
+			var httag=$('#festa6').val().length;
+			if(httag>=20){
+				$('#htfail').show();
+	 			$('#save').attr("disabled", "disabled");
+	 			$('#save').addClass('cnc');
+			}else{
+				$('#htfail').hide();
+				var info=$('#grintrofail').is(':visible');
+				if(info==false){
+		 			$('#save').removeAttr("disabled");
+		 			$('#save').removeClass('cnc');
+				}
+			}
+	 	});
+	 	$('#festa7').on('propertychange change keyup paste input', function(){
+			var httag=$('#festa7').val().length;
+			if(httag>=20){
+				$('#htfail').show();
+	 			$('#save').attr("disabled", "disabled");
+	 			$('#save').addClass('cnc');
+			}else{
+				$('#htfail').hide();
+				var info=$('#grintrofail').is(':visible');
+				if(info==false){
+		 			$('#save').removeAttr("disabled");
+		 			$('#save').removeClass('cnc');
+				}
+			}
+	 	});
+		
+	 	//수정버튼클릭시
 		$('#editok').on('click', function(){
 			var files = new FormData($('#update_group')[0]);
 			$.ajax({
@@ -78,7 +174,7 @@
 			});
 		});
 		
-	 	
+	 	//그룹삭제
 	 	$('#festa8').on('click', function(){
 	 		var grnum=$('#postgrnum').val();
 	 		$('#grnum').val(grnum);
@@ -396,7 +492,8 @@
 									<label for="festa3">그룹 소개</label>
 								</p>
 								<div>
-									<textarea id="festa3" name="grintro" placeholder="??자 이내로 작성해주세요">${detail.grintro }</textarea>
+									<textarea id="festa3" name="grintro" placeholder="500자 이내로 작성해주세요">${detail.grintro }</textarea>
+									<p hidden="hidden" id="grintrofail" class="f_message rst">500자 이내로 작성해주세요</p>
 								</div>
 							</li>
 						</ul>
@@ -433,6 +530,7 @@
 										<li><input type="text" id="festa6" name="httitle2" value="${detail.httitle2 }"></li>
 										<li><input type="text" id="festa7" name="httitle3" value="${detail.httitle3 }"></li>
 									</ul>
+									<p hidden="hidden" id="htfail" class="f_message rst">20자 이내로 작성해주세요</p>
 								</div>
 							</li>
 						</ul>
@@ -457,7 +555,7 @@
 						<input type="hidden" name="grnum" value="${detail.grnum}"/>
 						<ul class="comm_buttons">
 							<li><button type="reset" class="btn_close comm_btn cnc">취소</button></li>
-							<li><button type="button" id="save" class="comm_btn cfm btn_pop" data-layer="edit">저장</button></li>
+							<li><button type="button" id="save" class="comm_btn cfm btn_pop cnc" data-layer="edit" disabled="disabled">저장</button></li>
 						</ul>
 					</form>
 				</section>
@@ -566,15 +664,13 @@
 	<!-- #팝업 처리완료 { -->
 	<div id="loginCookie" class="fstPop">
 		<div class="confirm_wrap pop_wrap">
-			<p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+			<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
 			<ul class="comm_buttons">
-				<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
-				<li><button type="button" id="btnCookie"
-						class="ok comm_btn cfm">로그인</button></li>
+				<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
+				<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
 			</ul>
 		</div>
 	</div>
-	<!-- } #팝업 처리완료 -->
 	<script type="text/javascript">
 		rdoPop();
 		setOneFile();

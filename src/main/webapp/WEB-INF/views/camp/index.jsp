@@ -90,10 +90,10 @@
 				<h1>
 					<a href="${root}"><em class="snd_only">FESTA</em></a>
 				</h1>
-				<form class="search_box" action="${root }search">
+				<form class="search_box" action="${root}search/">
 					<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 					<button type="submit">
-						<img src="${root }resources/images/ico/btn_search.png" alt="검색">
+						<img src="${root}resources/images/ico/btn_search.png" alt="검색">
 					</button>
 				</form>
 				<ul id="gnb">

@@ -49,6 +49,18 @@ public class NewsDaoImpl implements NewsDao{
 		return sqlSession.selectList("news.joingroupCmmt", feed);
 	}
 	
+	//내팔로우의 피드글댓글더보기
+	@Override
+	public List<MyCommentVo> followCommentMore(MyPostVo myPost) {
+		return sqlSession.selectList("news.followingCmmtMore", myPost);
+	}
+	
+	//내가입그룹의 피드글댓글더보기
+	@Override
+	public List<GroupCommentVo> joingroupCmmtMore(GroupPostVo groupPost) {
+		return sqlSession.selectList("news.joingroupCmmtMore", groupPost);
+	}
+	
 	//////////////////////////////////////////////////////////////////////
 	/////////////////////피드,댓글 수정,등록,삭제/////////////////////////
 	//////////////////////////////////////////////////////////////////////

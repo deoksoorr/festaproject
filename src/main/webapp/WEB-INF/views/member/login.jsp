@@ -27,54 +27,109 @@
 					});
 					return false;
 				});
-
-		$('#btn_check').on("click",function(){
-			$.post('${root}member/find_id','proname='+$('#id_find').val()+'&proidnum='+$('#pw_find').val(),function(data){
-				if(data.proid != null && data.prodate != null){
-					var id = data.proid;
-					var time = new Date(data.prodate);
-	                var year = time.getFullYear();
-	                var month;
-	                if(time.getMonth()+1<10){
-	                   month = '0'+(time.getMonth()+1);
-	                }else {
-	                   month = time.getMonth()+1;
-	                }
-	                var date = year+"년"+month+"월"+time.getDate()+"일";
-	                $('#check_proid').html("아이디 : "+ id);
-					$('#check_prodate').html("가입일 : "+date);	
-					}
-				else{
-					$('#find_id_result').html("일치하는 아이디가 없습니다.");
-					$('#check_proid').html();
-					$('#check_prodate').html();
-				}
-			});
+		
+		//아이디찾기 유효성
+		$('#id_find').on('propertychange change keyup paste input',function(e){
+			var pw_find = $('#pw_find').val();
+			if($('#pw_find').val()!='' && pw_find.length ==8 && $('#id_find').val()!=''){
+				$('#btn_check').prop('type','submit');
+			}
+			else{
+				$('#btn_check').prop('type','button');
+			}
 		});
-
+		
+		$('#pw_find').on('propertychange change keyup paste input',function(e){
+			var pw_find = $('#pw_find').val();
+			if(pw_find.length ==8 && $('#id_find').val()!='' && $('#pw_find').val()!=''){
+					$('#btn_check').prop('type','submit');
+			}
+			else{
+				$('#btn_check').prop('type','button');
+			}
+		});
+		
+		$('#idForm').on("submit",function(e){
+			e.preventDefault();
+				$.post('${root}member/find_id','proname='+$('#id_find').val()+'&proidnum='+$('#pw_find').val(),function(data){
+					if(data.proid != null && data.prodate != null){
+						var id = data.proid;
+						var time = new Date(data.prodate);
+		                var year = time.getFullYear();
+		                var month;
+		                if(time.getMonth()+1<10){
+		                   month = '0'+(time.getMonth()+1);
+		                }else {
+		                   month = time.getMonth()+1;
+		                }
+		                var date = year+"년"+month+"월"+time.getDate()+"일";
+		                $('#check_proid').html("아이디 : "+ id);
+						$('#check_prodate').html("가입일 : "+date);	
+						}
+					else{
+						$('#find_id_result').html("일치하는 아이디가 없습니다.");
+						$('#check_proid').html("아이디 : ");
+						$('#check_prodate').html("가입일 : ");
+					}
+					openPop('findId');
+				});
+			
+		});//아이디찾기유효성 종료
+		
+		//비밀번호 찾기 유효성
+		$('#find_pw_check_id').on('propertychange change keyup paste input',function(e){
+			var find_pw_check_date = $('#find_pw_check_date').val();
+			if($('#find_pw_check_date').val()!="" && find_pw_check_date.length==8 && $('#find_pw_check_id').val()!=""){
+				$('#find_pw').prop('type','submit');
+			}
+			else{
+				$('#find_pw').prop('type','button');
+			}
+		});
+		
+		$('#find_pw_check_date').on('propertychange change keyup paste input',function(e){
+			var find_pw_check_date = $('#find_pw_check_date').val();
+			if($('#find_pw_check_id').val()!="" && find_pw_check_date.length==8 && $('#find_pw_check_date').val()!=""){
+				$('#find_pw').prop('type','submit');
+			}
+			else{
+				$('#find_pw').prop('type','button');
+			}
+		});
 		var pronum;
-		$('#find_pw').on("click",function(){
-			$('#emailCheck_result').html($('#find_pw_check_id').val()+" 으로 이메일을 보냈습니다.");
-			openPop('emailCheck');
-			$.post('${root}member/emailCheck','id='+$('#find_pw_check_id').val()+'&proidnum='+$('#find_pw_check_date').val(),function(data){
-				var proid = data.proid;
-				var proidnum = data.proidnum;
-				pronum = data.pronum;
-				var tmp = $('#find_pw_check_date').val();
-				var editProidnum = tmp.slice(0, 4) + '년' + tmp.slice(4, 6) + '월' + tmp.slice(6,8)+'일';
-				var find_pw_check_id = $('#find_pw_check_id').val();
-				var find_pw_check_date = $('#find_pw_check_date').val();
-				console.log(find_pw_check_id);
-				console.log(find_pw_check_date);
-				console.log(proid);
-				console.log(proidnum);
-				if(proid == find_pw_check_id  && proidnum ==editProidnum ){
-					console.log("id "+proid);
+		$('#findpwForm').on("submit",function(e){
+			e.preventDefault();
+			$.post('${root}member/find_pw','id='+$('#find_pw_check_id').val()+'&proidnum='+$('#find_pw_check_date').val(),function(data){
+				console.log(data.proid!=null);
+				if(data.proid!=null){
+					$('#emailCheck_result').html($('#find_pw_check_id').val()+" 으로 이메일을 보냈습니다.");
+					openPop('emailCheck');
+					$.post('${root}member/emailCheck','id='+$('#find_pw_check_id').val()+'&proidnum='+$('#find_pw_check_date').val(),function(data){
+						var proid = data.proid;
+						var proidnum = data.proidnum;
+						pronum = data.pronum;
+						var tmp = $('#find_pw_check_date').val();
+						var editProidnum = tmp.slice(0, 4) + '년' + tmp.slice(4, 6) + '월' + tmp.slice(6,8)+'일';
+						var find_pw_check_id = $('#find_pw_check_id').val();
+						var find_pw_check_date = $('#find_pw_check_date').val();
+						console.log(find_pw_check_id);
+						console.log(find_pw_check_date);
+						console.log(proid);
+						console.log(proidnum);
+						if(proid == find_pw_check_id  && proidnum ==editProidnum ){
+							console.log("id "+proid);
 
-				} else{
+						} else{
+							openPop('nok');
+						}
+					});
+				}
+				else{
+					$('#nok_p').html('해당 회원이 존재하지 않습니다.');
 					openPop('nok');
 				}
 			});
+			
 		});
 		
 		$('#check_email').on("click",function(){
@@ -94,18 +149,89 @@
 			var text = $('.confirm_wrap .pop_tit');
 			text.text('인증번호가 일치하지 않습니다.');
 		}
-		$('#change_pw').on('click',function(){
-			if($('#propw').val() == $('#propw_check').val()){
-				$.post('${root}member/update_pw','propw='+$('#propw').val()+'&pronum='+pronum,function(){	
-				});
-			}
-		});
-
 		
+		//비밀번호변경 유효성 검사
+		$("#propw").on('propertychange change keyup paste input',function() {
+        	if($('#propw_check').val() != ""){
+	            var regExp = /^[A-Za-z0-9+]{8,13}$/;
+	            var propw = $("#propw").val();
+	            var propwCheck = $("#propw_check").val();
+	            var pw_num = propw.search(/[0-9]/g);
+	            var pw_eng = propw.search(/[a-z]/gi);
+	            var pwchk_num = propwCheck.search(/[0-9]/g);
+	            var pwchk_eng = propwCheck.search(/[a-z]/gi);
+	            if (regExp.test(propw) && regExp.test(propwCheck)) {
+	               if (pw_num >= 0 && pw_eng >= 0 && pwchk_num >= 0 && pwchk_eng >= 0) {
+	                  if (propw != propwCheck) {
+	                     $("#pwfail").show();
+	                     $("#pwok").hide();
+	                     $("#pwif").hide();
+	                  } else if (propw == propwCheck) {
+	                     $("#pwfail").hide();
+	                     $("#pwok").show();
+	                     $("#pwif").hide();
+	                  }
+	               } else {
+	                  $("#pwfail").hide();
+	                  $("#pwok").hide();
+	                  $("#pwif").show();
+	               }
+	            } else {
+	               $("#pwfail").hide();
+	               $("#pwok").hide();
+	               $("#pwif").show();
+	            }
+        	}
+		});
+		
+		$("#propw_check").on('propertychange change keyup paste input',function() {
+       	 	if($('#propw').val() != ""){
+	            var regExp = /^[A-Za-z0-9+]{8,13}$/;
+	            var propw = $("#propw").val();
+	            var propwCheck = $("#propw_check").val();
+	            var pw_num = propw.search(/[0-9]/g);
+	            var pw_eng = propw.search(/[a-z]/gi);
+	            var pwchk_num = propwCheck.search(/[0-9]/g);
+	            var pwchk_eng = propwCheck.search(/[a-z]/gi);
+	            if (regExp.test(propw) && regExp.test(propwCheck)) {
+	               if (pw_num >= 0 && pw_eng >= 0   && pwchk_num >= 0 && pwchk_eng >= 0) {
+	                  if (propw != propwCheck) {
+	                     $("#pwfail").show();
+	                     $("#pwok").hide();
+	                     $("#pwif").hide();
+	                  } else if (propw == propwCheck) {
+	                     $("#pwfail").hide();
+	                     $("#pwok").show();
+	                     $("#pwif").hide();
+	                  }
+	               } else {
+	                  $("#pwfail").hide();
+	                  $("#pwok").hide();
+	                  $("#pwif").show();
+	               }
+	            } else {
+	               $("#pwfail").hide();
+	               $("#pwok").hide();
+	               $("#pwif").show();
+	            }
+	            if($('#pwok').attr("style")=="display: block;"){
+	            	$('#change_pw').prop('type','submit');
+	            }
+	            else{
+	            	$('#change_pw').prop('type','button');
+	            }
+       	 	}
+		});
+		$('#change_pwForm').on("submit",function(e){
+			e.preventDefault();
+			$.post('${root}member/update_pw','propw='+$('#propw').val()+'&pronum='+pronum,function(){
+				openPop("ok")
+			});
+		});
 		
 		$('#change_ok').on('click',function(){
 			window.location.reload();
-		})
+		})//비밀번호변경 유효성 종료
 		
 		$('#googleLogin').on("clifk",function(){
 			console.log("클릭");
@@ -156,12 +282,6 @@
       }
     </script>
 					</dd>
-					<dd>
-						<button type="button">
-							<img src="${root }resources/images/ico/shp_naver.png"
-								alt="네이버 계정으로 로그인">
-						</button>
-					</dd>
 				</dl>
 				<ul class="lg_find">
 					<li><a href="${root }member/join">회원가입</a></li>
@@ -179,7 +299,7 @@
 		<section id="log2" class="find_area">
 			<div>
 			<h3 class="pop_tit">아이디 찾기</h3>
-			<form class="comm_form">
+			<form id="idForm" class="comm_form">
 				<div class="ip_box">
 					<input type="text" id="id_find" name="id_find" required="required">
 					<label for="festaFid1" class="comm_label">이름</label>
@@ -194,8 +314,8 @@
 				</p>
 				<ul class="comm_buttons">
 					<li><button type="button" class="btn_move comm_btn cnc">취소</button></li>
-					<li><button type="button" class="comm_btn sbm btn_pop2"
-							name="btn_check" id="btn_check" data-layer="findId">확인</button></li>
+					<li><button type="button" class="comm_btn sbm"
+							name="btn_check" id="btn_check">확인</button></li>
 				</ul>
 			</form>
 		</div>
@@ -205,7 +325,7 @@
 		<section id="log3" class="find_area">
 			<div>
 			<h3 class="pop_tit">비밀번호 찾기</h3>
-			<form class="comm_form">
+			<form id="findpwForm" class="comm_form">
 				<div class="ip_box">
 					<input type="email" id="find_pw_check_id" name="find_pw_check_id" required="required">
 					<label for="festaFpw1" class="comm_label">아이디<span>(이메일)</span></label>
@@ -221,7 +341,7 @@
 				<ul class="comm_buttons">
 					<li><button type="button" class="btn_move comm_btn cnc">취소</button></li>
 					<li><button type="button" class="comm_btn sbm btn_pop2" id="find_pw" name="find_pw"
-							data-layer="">확인</button></li>
+							>확인</button></li>
 				</ul>
 			</form>
 		</div>
@@ -276,14 +396,16 @@
 			<div class="info_box">
 				<p>새로운 비밀번호를 설정해주세요.</p>
 			</div>
-			<form class="comm_form">
+			<form id="change_pwForm"class="comm_form">
 				<div class="ip_box">
 					<input type="password" id="propw" name="propw" required="required">
-					<label for="festaFpw3" class="comm_label">비밀번호<span>
-							8~13자 이내, 영문(대소문자)+숫자 조합</span></label>
-					<p class="f_message">
-						<!-- 비밀번호 유효성 검사 -->
-					</p>
+					<label for="festa3" id="festa3" class="comm_label">비밀번호<span> 8~13자 이내, 영문(대소문자)+숫자 조합</span></label>
+					<p hidden="hidden" id="pwif" class="f_message rst">비밀번호는
+                              8~13자 영문,숫자 조합이어야 합니다.</p>
+                    <p hidden="hidden" id="pwfail"
+                              class="f_message rst">비밀번호가 일치하지 않습니다.</p>
+                     <p hidden="hidden" id="pwok"
+                              class="f_message ok rst">비밀번호가 일치합니다.</p>
 				</div>
 				<div class="ip_box">
 					<input type="password" id="propw_check" name="propw_check" required="required">
@@ -297,7 +419,7 @@
 				</p>
 				<ul class="comm_buttons">
 					<li><button type="button" class="comm_btn sbm btn_pop2" id="change_pw" name="change_pw"
-							data-layer="ok">확인</button></li>
+							>확인</button></li>
 				</ul>
 			</form>
 		</div>
@@ -315,7 +437,7 @@
 		<!-- #3단계팝업 처리완료 { -->
 	<div id="nok" class="fstPop">
 		<div class="confirm_wrap pop_wrap">
-			<p class="pop_tit">인증번호가 일치하지 않습니다.</p>
+			<p id="nok_p" class="pop_tit">인증번호가 일치하지 않습니다.</p>
 			<ul class="comm_buttons">
 				<li><button type="button" class="btn_close comm_btn cnc">확인</button></li>
 			</ul>

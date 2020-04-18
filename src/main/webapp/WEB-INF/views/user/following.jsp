@@ -59,7 +59,7 @@ if(url.indexOf('following')>0){
 			<c:if test="${fn:length(following) > 0}">
 				<c:forEach items="${following }" var="following">
 						<li>
-							<a href="">
+							<a href="${root }user/?pronum=${following.profile.pronum}">
 								<span class="pf_picture">
 									<c:if test="${!empty following.profile.prophoto}">
 											<img src="${upload }/${following.profile.prophoto}" alt="${following.profile.prophoto }님의 프로필 썸네일" onload="squareTrim($(this), 50)">

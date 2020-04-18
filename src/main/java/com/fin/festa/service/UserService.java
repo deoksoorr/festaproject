@@ -82,4 +82,6 @@ public interface UserService {
 		void userReport(HttpServletRequest req, MultipartFile[] files, ReportListVo reportListVo);
 
 		void feedReport(HttpServletRequest req, MultipartFile[] files, ReportListVo reportListVo);
+
+		int isFollow(HttpServletRequest req, MyFollowerVo myFollowerVo);
 }

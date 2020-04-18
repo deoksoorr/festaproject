@@ -9,6 +9,9 @@
 </c:if>
 <c:url value="/resources/upload" var="upload" />
 <c:url value="/" var="root" />
+<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
+   <c:redirect url="/empty"/>
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -26,29 +29,38 @@
 <link rel="shortcut icon" href="${root }resources/favicon.ico">
 <script type="text/javascript">
 
+	function btn_close(){
+	    document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+	    var url = window.location.href;
+		if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+			window.location.href='${root}';
+		}
+	}
+	
 	$(document).ready(function(){
 		var cookie = '${cookie.loginCookie.value}';
-		var login = '${login}';
-		
-		if(cookie!=''&&login==''&&loginValue==true){
-		   openPop('loginCookie');
+		var login = '${login ne null}';
+
+		if(cookie!=''&&login=='false'){
+			openPop('loginCookie',none,btn_close);
 		}
-		
+
 		$('#btnCookie').on('click',function(){
-		   $.post('${root}member/loginCookie','id='+cookie,function(data){
-		      if (data.prorn == '0') {
-		         location.href = "${root}user/?pronum="+data.pronum;
-		      } else if (data.prorn == '1') {
-		         location.href = "${root}member/stop";
-		      } else if (data.prorn == '2') {
-		         location.href = "${root}member/kick";
-		      } else if (data.prorn == '3') {
-		         location.href = "${root}admin/";
-		      } else if (data.prorn == '4') {
-		         location.href = "${root}";
-		      }
-		   });
+			$.post('${root}member/loginCookie','id='+cookie,function(data){
+				if (data.prorn == '0') {
+					location.reload();
+				} else if (data.prorn == '1') {
+					location.href = "${root}member/stop";
+				} else if (data.prorn == '2') {
+					location.href = "${root}member/kick";
+				} else if (data.prorn == '3') {
+					location.reload();
+				} else if (data.prorn == '4') {
+					location.href = "${root}";
+				}
+			});
 		});
+		
 		$("input:checkbox[name='ntc']").on('click', function(){
 			$('.mk_tags').hide();
 			$('#insertform').attr("action", "${root}group/noticeadd");
@@ -60,8 +72,46 @@
 				$('#ntc1').removeAttr("name").attr({name : "gpauthor"}); 
 				$('#ntc4').removeAttr("name").attr({name : "gpcontent"});
 				$(".mk_tags").show();
+				$('.btn_send').on('click', function(e){
+	    			e.preventDefault();	
+				});
 			}
-			
+		});
+		
+		$('#contentsend').on('click', function(){
+
+			var content=$('#ntc4').val().length;
+			var ht1=$('#httitle1').val().length;
+			var ht2=$('#httitle2').val().length;
+			var ht3=$('#httitle3').val().length;
+			if(content>=500){
+				openPop("cnfull");
+				$('#cnfailed').on('click', function(){
+					$('#ntc4').focus();					
+				});
+				return false;
+			};
+			if(ht1>=20){
+				openPop("htfull");
+				$('#htfailed').on('click', function(){
+					$('#httitle1').focus();		
+				})
+				return false;
+			}
+			if(ht2>=20){
+				openPop("htfull");
+				$('#htfailed').on('click', function(){
+					$('#httitle2').focus();		
+				})
+				return false;
+			}
+			if(ht3>=20){
+				openPop("htfull");
+				$('#htfailed').on('click', function(){
+					$('#httitle3').focus();		
+				})
+				return false;
+			}
 		});
 		
 		$('.feed_viewer').each(function(index){
@@ -70,6 +120,7 @@
 			}
 		});
 
+		//스크롤시 게시글 로드 
 		$(window).scroll(function(){
 			var scrolltop = parseInt ( $(window).scrollTop() );
 			if( scrolltop >= $(document).height() - $(window).height() - 1 ){
@@ -83,38 +134,26 @@
 				$('.feed_viewer').eq(scroll*2+1).show();
 		    }
 		});
-		
-		//댓글 입력하기 엔터
-		$("#groupCmmtAddCont").keydown(function(key) {
-            if (key.keyCode == 13) {
-            	if (!event.shiftKey){
-	    			var btn=$(this);
-	    			var feed=btn.parents('.feed_viewer.ind');
-	    			var gccontent=feed.find('#groupCmmtAddCont').val();
-	    			$('#groupCmmtAddCont').val('');
-	    			var gcauthor=feed.find('#cmmtName').val();
-	    			var gpnum=feed.find('#cmmtGpnum').val();
-	    			var pronum=feed.find('#cmmtPronum').val();
-	    			var grnum=feed.find('#cmmtGrnum').val();
-	    			console.log(gccontent+'/'+gcauthor+'/'+gpnum+'/'+pronum+'/'+grnum)
-	    			$.post('${root}group/cmmtadd', 'gccontent='+gccontent+'&gcauthor='+gcauthor+'&gpnum='+gpnum+'&pronum='+pronum+'&grnum='+grnum, function(data){
-	    				window.location.reload();
-	    			});
-            	}
-            }
-        });
 
 		//댓글 입력하기 버튼클릭
-		$('.btn_send.cmmt').on('click', function() {
-			var btn=$(this);
+		$(document).on('submit', '.message_form', function(e){
+			var btn=$(this).find('.btn_send.cmmt');
 			var feed=btn.parents('.feed_viewer.ind');
 			var gccontent=feed.find('#groupCmmtAddCont').val();
 			var gcauthor=feed.find('#cmmtName').val();
 			var gpnum=feed.find('#cmmtGpnum').val();
 			var pronum=feed.find('#cmmtPronum').val();
 			var grnum=feed.find('#cmmtGrnum').val();
-			console.log(gccontent+'/'+gcauthor+'/'+gpnum+'/'+pronum+'/'+grnum)
-			
+			console.log(gccontent+'/'+gcauthor+'/'+gpnum+'/'+pronum+'/'+grnum);
+			var gctest=gccontent.length;
+			if(gctest>=500){
+				openPop("cmmtfull");
+				$('#cmmtfailed').on('click', function(){
+					$('#groupCmmtAddCont').focus();					
+				});
+				return false;
+			};
+			e.preventDefault();
 			$.post('${root}group/cmmtadd', 'gccontent='+gccontent+'&gcauthor='+gcauthor+'&gpnum='+gpnum+'&pronum='+pronum+'&grnum='+grnum, function(html){
 				window.location.reload();
 			});
@@ -227,7 +266,7 @@
 		 				$.post('${root}/group/out', 'grnum='+grnum+'&pronum='+pronum+'&jointot=1'+'&grtotal='+grtotal, function(data){
 								openPop("ok");
 								$('#success').on('click', function(){
-									window.location.href='${root}festa/user/?pronum='+pronum;
+									window.location.href='${root}user/?pronum='+pronum;
 								});
 		 				});
 	 				})
@@ -276,6 +315,11 @@
 			$.post('${root}search/', 'keyword='+keyword);
 		});
 		
+		// 신고하기 팝업
+		$('.btn_report').on('click', function(e) {
+			var url = $(this).attr('href');
+			openLayer(e, url);
+		});
 	});
 </script>
 <title>FESTA</title>
@@ -430,7 +474,7 @@
 								</c:if>
 								<c:if test="${login.pronum ne detail.pronum }">
 									<a href="${root }group/gp_report"
-										class="pf_opt btn_pop btn_report"> <em class="snd_only">신고하기</em>
+										class="pf_opt btn_report"> <em class="snd_only">신고하기</em>
 									</a>
 								</c:if>
 							</dt>
@@ -544,8 +588,7 @@
 										</p>
 									</c:otherwise>
 								</c:choose>
-								<textarea id="ntc4" name="gpcontent"
-									placeholder="${login.proname } 님, 무슨 생각을 하고 계신가요?"></textarea>
+								<textarea id="ntc4" name="gpcontent" placeholder="${login.proname } 님, 무슨 생각을 하고 계신가요?" required="required"></textarea>
 							</div>
 							<div class="file_thumbnail mk_thumb box">
 								<ul>
@@ -614,7 +657,7 @@
 										</label>
 									</li>
 									<li>
-										<button type="submit" class="btn_send">
+										<button type="submit" class="btn_send" id="contentsend">
 											<em class="snd_only">피드 게시하기</em>
 										</button>
 									</li>
@@ -667,13 +710,12 @@
 									</c:forEach>
 									<c:if test="${(login.pronum ne feed.pronum) and !(login.pronum eq detail.pronum)}">
 										<li><a href="${root }group/report?gpnum=${feed.gpnum}&profile.pronum=${feed.profile.pronum}&profile.proid=${feed.profile.proid}&profile.proname=${feed.profile.proname}"
-											class="btn_pop btn_report"> <em class="snd_only">신고하기</em>
+											class="btn_report"> <em class="snd_only">신고하기</em>
 										</a></li>
 									</c:if>
 									<c:if test="${login.pronum eq feed.pronum}">
 										<li>
-											<a href="${root }group/maker?gpnum=${feed.gpnum}"
-												class="btn_pop btn_edit" id="feedmaker">
+											<a href="${root }group/maker?gpnum=${feed.gpnum}" class="btn_pop btn_edit" id="feedmaker">
 												<em	class="snd_only">수정하기</em>
 											</a>
 										</li>
@@ -788,9 +830,8 @@
 										</c:otherwise>
 									</c:choose>
 									<p class="msg_input">
-										<textarea id="groupCmmtAddCont" name="groupCmmtAddCont"
-											placeholder="메세지를 입력해주세요"></textarea>
-										<button type="button" class="btn_send cmmt">
+										<input type="text" class="msg_txt" id="groupCmmtAddCont" name="groupCmmtAddCont" placeholder="메세지를 입력해주세요" required="required">
+										<button type="submit" class="btn_send cmmt">
 											<em class="snd_only">전송</em>
 										</button>
 									</p>
@@ -822,71 +863,94 @@
 				<!-- 우측 사이드영역 시작 { -->
 				<section class="side_area">
 					<div class="rcmm_list">
-		               <h3><em class="snd_only">추천그룹 목록</em>나홀로 캠핑이 심심하신가요?</h3>
-		               <ul>
-		                  <c:forEach items="${grouplist }" begin="0" end="2" var="grouplist">
-		                     <c:if test="${login ne null }">
-		                        <li>
-		                        	<c:choose>
-		                        		<c:when test="${grouplist.grphoto eq null }">
-				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
-				                              <img src="${root}resources/images/thumb/no_profile.png" alt="${grouplist.grname } 그룹 썸네일">
-				                           </a>
-		                        		</c:when>
-		                        		<c:otherwise>
-				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
-				                              <img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
-				                           </a>
-		                        		</c:otherwise>
-		                        	</c:choose>
-									<a class="rc_text" href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
-											<b class="rc_name">${grouplist.grname }</b>
-											<span class="rc_intro">${grouplist.grintro }</span>
-									</a>
-								</li>
-		                     </c:if>
-		                     <c:if test="${login eq null }">
-		                        <li>
-		                        	<c:choose>
-		                        		<c:when test="${grouplist.grphoto eq null }">
-				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}">
-				                              <img src="${root}resources/images/thumb/no_profile.png" alt="${grouplist.grname } 그룹 썸네일">
-				                           </a>
-		                        		</c:when>
-		                        		<c:otherwise>
-				                           <a class="rc_thumb" href="${root }group/?grnum=${grouplist.grnum}">
-				                              <img src="${upload }/${grouplist.grphoto}" alt="${grouplist.grname } 그룹 썸네일">
-				                           </a>
-		                        		</c:otherwise>
-		                        	</c:choose>
-		                            <a class="rc_text" href="${root }group/?grnum=${grouplist.grnum}">
-		                                <b class="rc_name">${grouplist.grname }</b>
-		                                <span class="rc_intro">${grouplist.grintro }</span>
-		                            </a>
-		                        </li>
-		                     </c:if>
-		                  </c:forEach>
-		               </ul>
-		            </div>
-		            <div class="rcmm_list">
-		               <h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
-		               <ul>
-		                  <c:forEach items="${camplist }" begin="0" end="2" var="camplist">
-		                     <c:set var="image" value="${fn:substringBefore(camplist.caphoto,',') }"/>
-		                     <li>
-		                        <a class="rc_thumb" href="${root }camp/detail?canum=${camplist.canum}">
-		                           <img src="${upload }/${image}" alt="${camplist.caname } 썸네일">
-		                        </a>
-		                        <a class="rc_text" href="${root }camp/detail?canum=${camplist.canum}">
-		                           <b class="rc_name">${camplist.caname }</b>
-		                           <span class="rc_hashtag">${camplist.caaddrsel }</span>
-		                        </a>
-		                     </li>
-		                  </c:forEach>
-		               </ul>
-		            </div>
-		         </section>
-		         <!-- } 우측 사이드영역 끝 -->
+						<h3>
+							<em class="snd_only">추천그룹 목록</em>나홀로 캠핑이 심심하신가요?
+						</h3>
+						<ul>
+							<c:forEach items="${grouplist }" begin="0" end="2"
+								var="grouplist">
+								<c:if test="${login ne null }">
+									<li><c:choose>
+											<c:when test="${grouplist.grphoto eq null }">
+												<a class="rc_thumb"
+													href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+													<img src="${root}resources/images/thumb/no_profile.png"
+													alt="${grouplist.grname } 그룹 썸네일">
+												</a>
+											</c:when>
+											<c:otherwise>
+												<a class="rc_thumb"
+													href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+													<img src="${upload }/${grouplist.grphoto}"
+													alt="${grouplist.grname } 그룹 썸네일">
+												</a>
+											</c:otherwise>
+										</c:choose> <a class="rc_text"
+										href="${root }group/?grnum=${grouplist.grnum}&pronum=${login.pronum}">
+											<b class="rc_name">${grouplist.grname }</b> <span
+											class="rc_intro">${grouplist.grintro }</span>
+									</a></li>
+								</c:if>
+								<c:if test="${login eq null }">
+									<li><c:choose>
+											<c:when test="${grouplist.grphoto eq null }">
+												<a class="rc_thumb"
+													href="${root }group/?grnum=${grouplist.grnum}"> <img
+													src="${root}resources/images/thumb/no_profile.png"
+													alt="${grouplist.grname } 그룹 썸네일">
+												</a>
+											</c:when>
+											<c:otherwise>
+												<a class="rc_thumb"
+													href="${root }group/?grnum=${grouplist.grnum}"> <img
+													src="${upload }/${grouplist.grphoto}"
+													alt="${grouplist.grname } 그룹 썸네일">
+												</a>
+											</c:otherwise>
+										</c:choose> <a class="rc_text"
+										href="${root }group/?grnum=${grouplist.grnum}"> <b
+											class="rc_name">${grouplist.grname }</b> <span
+											class="rc_intro">${grouplist.grintro }</span>
+									</a></li>
+								</c:if>
+							</c:forEach>
+						</ul>
+					</div>
+					<div class="rcmm_list">
+						<h3>
+							<em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?
+						</h3>
+						<ul>
+							<c:forEach items="${camplist }" begin="0" end="2" var="camplist">
+								<li><c:if test="${!empty camplist.caphoto }">
+										<c:set var="image1" value="${fn:split(camplist.caphoto,',') }" />
+										<c:if test="${fn:length(image1) gt 1 }">
+											<c:set var="image"
+												value="${fn:substringBefore(camplist.caphoto,',') }" />
+										</c:if>
+										<c:if test="${fn:length(image1) eq 1 }">
+											<c:set var="image" value="${camplist.caphoto }" />
+										</c:if>
+										<a class="rc_thumb"
+											href="${root }camp/detail?canum=${camplist.canum}"> <img
+											src="${upload }/${image}" alt="${camplist.caname } 썸네일">
+										</a>
+									</c:if> <c:if test="${empty camplist.caphoto }">
+										<a class="rc_thumb"
+											href="${root }camp/detail?canum=${camplist.canum}"> <img
+											src="${root }resources/images/thumb/no_profile.png"
+											alt="${camplist.caname } 썸네일">
+										</a>
+									</c:if> <a class="rc_text"
+									href="${root }camp/detail?canum=${camplist.canum}"> <b
+										class="rc_name">${camplist.caname }</b> <span
+										class="rc_hashtag">${camplist.caaddrsel }</span>
+								</a></li>
+							</c:forEach>
+						</ul>
+					</div>
+				</section>
+				<!-- } 우측 사이드영역 끝 -->
 		      </div>
 		   </div>
 		<span class="snd_only">0</span>
@@ -986,18 +1050,56 @@
 		</div>
 	</div>
 	
-	<!-- #팝업 처리완료 { -->
-	<div id="loginCookie" class="fstPop">
-		<div class="confirm_wrap pop_wrap">
-			<p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+	<!-- #공백불 { -->
+	<div id="uploadfail" class="fstPop">
+		<div class="confirm_wrap pop_wrap"> 
+			<p class="pop_tit">공백입력은 불가능합니다.</p>
 			<ul class="comm_buttons">
-				<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
-				<li><button type="button" id="btnCookie"
-						class="ok comm_btn cfm">로그인</button></li>
+				<li><button type="button" class="btn_close ok comm_btn cfm">확인</button></li>
 			</ul>
 		</div>
 	</div>
-	<!-- } #팝업 처리완료 -->
+	
+	<!-- #팝업 처리완료 { -->
+	<div id="loginCookie" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
+			<ul class="comm_buttons">
+				<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
+				<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+			</ul>
+		</div>
+	</div>
+	
+	<!-- #게시글 초과 -->
+	<div id="cnfull" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">게시글은 500자 이상 입력할 수 없습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" id="cnfailed" class="btn_close comm_btn cfm">확인</button></li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- #댓글 초과 -->
+	<div id="cmmtfull" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">댓글은 500자 이상 입력할 수 없습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" id="cmmtfailed" class="btn_close comm_btn cfm">확인</button></li>
+			</ul>
+		</div>
+	</div>
+	<!-- #해시태그 초과 -->
+	<div id="htfull" class="fstPop">
+		<div class="confirm_wrap pop_wrap">
+			<p class="pop_tit">해시태그는 20자 이상 입력할 수 없습니다.</p>
+			<ul class="comm_buttons">
+				<li><button type="button" id="htfailed" class="btn_close comm_btn cfm">확인</button></li>
+			</ul>
+		</div>
+	</div>
+
 	<script type="text/javascript">
 		feedType('feed_viewer');
 		btnPop('btn_pop2');

@@ -67,9 +67,11 @@ public class MemberServiceImpl implements MemberService {
 			if (myAdmin.getProstop() == 2) {
 				// 정지회원
 				profile.setProrn(1);
+				session.invalidate();
 			} else if (myAdmin.getProkick() == 2) {
 				// 추방회원
 				profile.setProrn(2);
+				session.invalidate();
 			} else if (myAdmin.getPropublic() == 3) {
 				// 관리자
 				Cookie userCookie = new Cookie("loginCookie",profile.getProid());
@@ -250,8 +252,13 @@ public class MemberServiceImpl implements MemberService {
 			proidnum +="일";
 			loginVo.setProidnum(proidnum);
 			profile = memberDao.findPw(loginVo);
-			if(profile.getProid().contentEquals(loginVo.getId()) && profile.getProidnum().equals(loginVo.getProidnum())) {
-				memberDao.pwUpdate(profile);
+			if(profile !=null) {
+				if(profile.getProid().contentEquals(loginVo.getId()) && profile.getProidnum().equals(loginVo.getProidnum())) {
+					memberDao.pwUpdate(profile);
+				}
+				else {
+					return null;
+				}
 			}
 		}
 		return profile;

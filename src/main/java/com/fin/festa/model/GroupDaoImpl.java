@@ -412,4 +412,8 @@ public class GroupDaoImpl implements GroupDao{
 	public int groupChatUserUpdateRe(GroupVo group) {
 		return sqlSession.update("group.groupChatUserUpdateRe", group);
 	}
+
+	public void groupChatInsert(UpdateWaitVo updateWaitVo) {
+		sqlSession.insert("group.groupChatInsert", updateWaitVo);
+	}
 }

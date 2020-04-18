@@ -12,7 +12,7 @@ if(url.indexOf('out')>0){
 	window.location.href='${root}empty';
 }
 $(document).ready(function(){
-	$('#recheck').focusout(function(){
+	$("#recheck").on('propertychange change keyup paste input',function(){
 		if($('#check').text() == $('#recheck').val()){
 			$('#checkRst').attr("type","submit");
 		}
@@ -31,12 +31,12 @@ $(document).ready(function(){
 				}
 				else if(data ==0){
 					openPop('ok');
-					$('#btn_ok').on('click',function(){
-						window.location = "http://localhost:8080/festa/";
-					});
 				}
 			});
 		});
+	});
+	$('#btn_ok').on('click',function(){
+		location.href="${root}"
 	});
 
 });

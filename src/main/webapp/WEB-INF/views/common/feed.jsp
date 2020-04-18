@@ -154,33 +154,42 @@
 		}
 		
 		//댓글등록
-		$('.btn_send').on('click',function(){
-			var sendBtn = $(this);
+		$('.message_form').on('submit',function(e){
+			e.preventDefault();
+			var sendBtn = $(this).find('.btn_send');
 			var thisValues = sendBtn.parent().parent().parent().parent().find('.feed_inform');
 			var pronum = $('#pronum').val();
 			var pronum_sync = thisValues.find('input[type=hidden]').eq(0).val();
-			var content = sendBtn.siblings('textarea').val();
+			var content = sendBtn.siblings('.msg_txt').val();
 			var author = '${login.proname}';
 			var thisnum = thisValues.find('input[type=hidden]').eq(1).val();
 			var grnum = thisValues.find('input[type=hidden]').eq(2).val();
-			//개인피드 댓글등록
-			if(thisValues.find('.fd_group').length==0){
-				$.post('${root}search/feed/cmmtadd','mpnum='+thisnum+'&pronum='+pronum+'&pronum_sync='+pronum_sync+'&mcauthor='+author+'&mccontent='+content,function(){
-					$.get('${root}search/feed','mpnum='+thisnum,function(){
-						
-					}).done(function(html){
-						$('.feed_viewer').replaceWith(html);
-					});
-				});
-			//그룹피드 댓글등록
+			if(content.length>=500){
+				openPop('excess');
 			}else{
-				$.post('${root}search/feed/cmmtadd','gpnum='+thisnum+'&pronum='+pronum+'&grnum='+grnum+'&gcauthor='+author+'&gccontent='+content,function(){
-					$.get('${root}search/feed','gpnum='+thisnum,function(){
-						
-					}).done(function(html){
-						$('.feed_viewer').replaceWith(html);
+				//개인피드 댓글등록
+				if(thisValues.find('.fd_group').length==0){
+					$.post('${root}search/feed/cmmtadd','mpnum='+thisnum+'&pronum='+pronum+'&pronum_sync='+pronum_sync+'&mcauthor='+author+'&mccontent='+content,function(){
+						$.get('${root}search/feed','mpnum='+thisnum,function(){
+							
+						}).done(function(html){
+							$('.feed_viewer').replaceWith(html);
+							imageLoad(0);
+							scrBar();
+						});
 					});
-				});
+				//그룹피드 댓글등록
+				}else{
+					$.post('${root}search/feed/cmmtadd','gpnum='+thisnum+'&pronum='+pronum+'&grnum='+grnum+'&gcauthor='+author+'&gccontent='+content,function(){
+						$.get('${root}search/feed','gpnum='+thisnum,function(){
+							
+						}).done(function(html){
+							$('.feed_viewer').replaceWith(html);
+							imageLoad(0);
+							scrBar();
+						});
+					});
+				}
 			}
 		});
 	});
@@ -310,8 +319,8 @@
 						</c:if>
 						</a>
 						<p class="msg_input">
-							<textarea id="" name="mccontent" placeholder="메세지를 입력해주세요"></textarea>
-							<button type="button" class="btn_send"><em class="snd_only">전송</em></button>
+							<input type="text" class="msg_txt" name="mccontent" placeholder="메세지를 입력해주세요" required="required">
+							<button type="submit" class="btn_send"><em class="snd_only">전송</em></button>
 						</p>
 					</form>
 				</c:if>
@@ -470,8 +479,8 @@
 						</c:if>
 						</a>
 						<p class="msg_input">
-							<textarea id="" name="gccontent" placeholder="메세지를 입력해주세요"></textarea>
-							<button type="button" class="btn_send"><em class="snd_only">전송</em></button>
+							<input type="text" class="msg_txt" name="gccontent" placeholder="메세지를 입력해주세요" required="required">
+							<button type="submit" class="btn_send"><em class="snd_only">전송</em></button>
 						</p>
 					</form>
 				</c:if>
@@ -501,6 +510,15 @@
 </c:choose>
 <!-- } #텍스트+썸네일 피드 끝 -->
 <button type="button" class="btn_close"><em class="snd_only">창 닫기</em></button>
+<!-- #댓글 초과팝업 { -->
+<div id="excess" class="fstPop">
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">500자 이상 입력할수 없습니다.</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close comm_btn cfm">확인</button></li>
+		</ul>
+	</div>
+</div>
 <!-- #팝업 처리완료 { -->
 <div id="login1" class="fstPop">
 	<div class="confirm_wrap pop_wrap">

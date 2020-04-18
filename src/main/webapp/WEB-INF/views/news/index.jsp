@@ -56,7 +56,7 @@
 			var url = makeUrl($(this));
 			openLayer(e, url);
 		});
-
+		
 		// 댓글입력
 		$(document).on('submit', '.message_form', function(e) {
 			e.preventDefault();
@@ -117,8 +117,8 @@
 		});
 	}
 	function deleted(button) {
-		var container = button.parents('.feed_viewer'),
-			group = container.find('.fd_group');
+		var viewer = button.parents('.feed_viewer'),
+			group = viewer.find('.fd_group');
 		var feed = button.parents('.feed_options');
 		
 		var delForm = $('#deleteForm'),
@@ -135,12 +135,12 @@
 			if (!group.length > 0) {
 				delInput.attr({
 					'name': 'mpnum',
-					'value': container.data('num'),
+					'value': viewer.data('num'),
 				});
 			} else {
 				delInput.attr({
 					'name': 'gpnum',
-					'value': container.data('num'),
+					'value': viewer.data('num'),
 				});
 			}
 			
@@ -164,10 +164,10 @@
 	// 좋아요
 	function liked(button) {
 		var plus = !button.hasClass('act');
-		var container = button.parents('.feed_viewer'),
-			cntTag = container.find('.fd_liked'),
+		var viewer = button.parents('.feed_viewer'),
+			cntTag = viewer.find('.fd_liked'),
 			cnt = Number(cntTag.text());
-		var feedNum = feedSeparate(container);
+		var feedNum = feedSeparate(viewer);
 		var url = '${root}news/',
 			param = {
 				pronum: '${login.pronum}',
@@ -189,8 +189,8 @@
 	}
 	// 신고/수정하기 경로
 	function makeUrl(button) {
-		var container = button.parents('.feed_viewer');
-		var feed = feedSeparate(container);
+		var viewer = button.parents('.feed_viewer');
+		var feed = feedSeparate(viewer);
 		var url = button.attr('href');
 		var param = {
 			mpnum: feed.mpnum,
@@ -204,12 +204,12 @@
 		}
 		return url;
 	}
+	// 피드 더보기
 	function moreFeed() {
 		var container = $('.content_area');
 		var page = $('#pageNum'),
 			pageNum = Number(page.text());
-		pageNum += 1;
-		page.text(pageNum);
+		page.text(pageNum += 1);
 		var param = {
 				'pronum': '${login.pronum}',
 				'pageSearch.page5': pageNum,
@@ -220,6 +220,67 @@
 				target.appendTo(container);
 				commSlider();
 				scrBar();
+			});
+	}
+	// 댓글 더보기
+	function moreComment(button) {
+		var viewer = button.parents('.feed_viewer');
+		var feedNum = feedSeparate(viewer);
+		var page = button.find('span'),
+			pageNum = Number(page.text());
+		page.text(pageNum += 1);
+		var param = {
+			'mpnum': feedNum.mpnum,
+			'gpnum': feedNum.gpnum,
+			'pageSearch.page4': pageNum,
+		}
+		var container = viewer.find('.comment_list');
+		$.get('${root}news/comment', param)
+			.success(function(data) {
+				var size;
+				if (data.length < 4) {
+					size = data.length;
+					button.hide();
+				} else {
+					size = 3;
+				}
+				
+				for (var i=0; i<size; i++) {
+					var d = data[i];
+					var photo, trim, num, content, date;
+					if (d.profile.prophoto != '') {
+						photo = '${upload}/'+d.profile.prophoto;
+						trim = 'onload="squareTrim($(this), 30)"';
+					} else {
+						photo = '${root}resources/images/thumb/no_profile.png'
+						trim = 'width="30"';
+					}
+					if (d.gpnum == undefined) {
+						num = d.mcnum;
+						content = d.mccontent;
+						date = d.mcdate1;
+					} else {
+						num = d.gcnum;
+						content = d.gccontent;
+						date = d.gcdate1;
+					}
+					var tag = '<li>'
+						+ '<a href="${root}user/?pronum='+d.pronum+'" class="pf_picture" '+trim+'>'
+						+ '<img src="'+photo+'" alt="'+d.profile.proname+'님의 프로필 썸네일" '+trim+'>'
+						+ '</a>'
+						+ '<p class="cmt_content">'
+						+ '<a href="${root}user/?pronum='+d.pronum+'" class="cmt_name">'+d.profile.proname+'</a>'
+						+ '&nbsp;'+content
+						+ '<span class="cmt_date">'+date+'</span>'
+						+ '<button class="btn_delete" data-num="'+num+'" onclick="deleted($(this))"><em class="snd_only">삭제하기</em></button>'
+						+ '</p>'
+						+ '</li>';
+					container.append(tag);
+				}
+				/* var target = $(html).find('.feed_viewer');
+				target.appendTo(container);
+				commSlider();
+				scrBar(); */
 			});
 	}
 	</script>
@@ -237,10 +298,10 @@
 				<h1>
 					<a href="${root}"><em class="snd_only">FESTA</em></a>
 				</h1>
-				<form class="search_box" action="${root }search">
+				<form class="search_box" action="${root}search/">
 					<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 					<button type="submit">
-						<img src="${root }resources/images/ico/btn_search.png" alt="검색">
+						<img src="${root}resources/images/ico/btn_search.png" alt="검색">
 					</button>
 				</form>
 				<ul id="gnb">
@@ -357,10 +418,11 @@
 		<h2 class="snd_only">뉴스피드</h2>
 		<em id="pageNum" class="snd_only">1</em>
 		<div class="container">
+		<c:choose>
+			<c:when test="${feedList ne null}">
 			<!-- 컨텐츠영역 시작 { -->
 			<section class="content_area">
-				<!-- #텍스트+썸네일 피드 시작 { -->
-				<c:forEach items="${feedList}" var="feed">
+			<c:forEach items="${feedList}" var="feed">
 				<c:set var="groupFeed" value="${feed.gpnum ne 0}" />
 				<c:choose>
 					<c:when test="${!groupFeed}">
@@ -449,13 +511,13 @@
 								<li>
 									<a href="${root}user/?pronum=${comment.pronum}" class="pf_picture">
 									<c:choose>
-										<c:when test="${!empty comment.profile.prophoto}"><img src="${upload}/images/thumb/no_profile.png" alt="${comment.profile.proname}님의 프로필 썸네일"></c:when>
-										<c:otherwise><img src="${root}resources/images/thumb/no_profile.png" alt="${feed.profile.proname}님의 프로필 썸네일"></c:otherwise>
+										<c:when test="${!empty comment.profile.prophoto}"><img src="${upload}/${comment.profile.prophoto}" alt="${comment.profile.proname}님의 프로필 썸네일"></c:when>
+										<c:otherwise><img src="${root}resources/images/thumb/no_profile.png" alt="${comment.profile.proname}님의 프로필 썸네일"></c:otherwise>
 									</c:choose>
 									</a>
 									<p class="cmt_content">
 										<a href="${root}user/?pronum=${comment.pronum}" class="cmt_name">${comment.profile.proname}</a>
-										${cmmtContent}
+										&nbsp;${cmmtContent}
 										<span class="cmt_date">${cmmtDate}</span>
 										<c:if test="${login.pronum eq comment.pronum}"><button class="btn_delete" data-num="${cmmtNum}" onclick="deleted($(this))"><em class="snd_only">삭제하기</em></button></c:if>
 									</p>
@@ -467,7 +529,7 @@
 								</c:forEach>
 							</ul>
 							<c:if test="${cmmtCount gt 3}">
-								<button class="cmt_btn_more"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
+								<button class="cmt_btn_more" onclick="moreComment($(this))"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
 							</c:if>
 						</div>
 						<form class="message_form" method="POST" action="${root}news/cmmtadd">
@@ -498,12 +560,11 @@
 								<input type="hidden" name="pronum" value="${login.pronum}">
 								<input type="hidden" name="${author}" value="${login.proname}">
 								<input type="hidden" name="${sync}" value="${syncValue}">
-								<textarea name="${content}" placeholder="메세지를 입력해주세요"></textarea>
+								<input type="text" class="msg_txt" name="${content}" placeholder="메세지를 입력해주세요" required="required">
 								<button type="submit" class="btn_send"><em class="snd_only">전송</em></button>
 							</div>
 						</form>
 					</div>
-					<!-- # 썸네일 영역 { -->
 					<c:if test="${!empty feedImages}">
 					<div class="img box">
 						<div class="thumb_slide">
@@ -516,10 +577,8 @@
 						</div>
 					</div>
 					</c:if>
-					<!--  } # 썸네일 영역 -->
 				</div>
-				</c:forEach>
-				<!-- } #텍스트+썸네일 피드 끝 -->
+			</c:forEach>
 			</section>
 			<!-- } 컨텐츠영역 끝 -->
 			<!-- 우측 사이드영역 시작 { -->
@@ -556,22 +615,50 @@
 				<div class="rcmm_list">
 					<h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
 					<ul>
-						<c:forEach items="${camplist }" begin="0" end="2" var="camplist">
-							<c:set var="image" value="${fn:substringBefore(camplist.caphoto,',') }"/>
-							<li>
-								<a class="rc_thumb" href="${root }camp/detail?canum=${camplist.canum}">
-									<img src="${upload }/${image}" alt="${camplist.caname } 썸네일">
-								</a>
-								<a class="rc_text" href="${root }camp/detail?canum=${camplist.canum}">
-									<b class="rc_name">${camplist.caname }</b>
-									<span class="rc_hashtag">${camplist.caaddrsel }</span>
-								</a>
-							</li>
-						</c:forEach>
+					<c:forEach items="${camplist}" begin="0" end="2" var="camplist">
+						<li>
+							<c:if test="${!empty camplist.caphoto}"><c:set var="image1" value="${fn:split(camplist.caphoto,',')}" />
+							<c:if test="${fn:length(image1) gt 1}"><c:set var="image" value="${fn:substringBefore(camplist.caphoto,',')}" /></c:if>
+							<c:if test="${fn:length(image1) eq 1}"><c:set var="image" value="${camplist.caphoto}" /></c:if>
+							<a class="rc_thumb" href="${root}camp/detail?canum=${camplist.canum}">
+								<img src="${upload }/${image}" alt="${camplist.caname} 썸네일">
+							</a>
+							</c:if>
+							<c:if test="${empty camplist.caphoto}">
+							<a class="rc_thumb" href="${root}camp/detail?canum=${camplist.canum}">
+								<img src="${root}resources/images/thumb/no_profile.png" alt="${camplist.caname} 썸네일">
+							</a>
+							</c:if>
+							<a class="rc_text" href="${root}camp/detail?canum=${camplist.canum}">
+								<b class="rc_name">${camplist.caname }</b>
+								<span class="rc_hashtag">${camplist.caaddrsel}</span>
+							</a>
+						</li>
+					</c:forEach>
 					</ul>
 				</div>
 			</section>
 			<!-- } 우측 사이드영역 끝 -->
+			</c:when>
+			<c:otherwise>
+			<section class="follow_wrap">
+				<h3>회원님을 위한 추천</h3>
+				<div>
+					<ul>
+						<li>
+							<a href="">
+								<span class="pf_picture">
+									<img src="http://placehold.it/50x50" alt="김덕수님의 프로필 썸네일">
+								</span>
+								<b class="fw_name">김덕수</b>
+								<span class="fw_intro">나는 어둠의 빵쟁이다</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+			</section>
+			</c:otherwise>
+		</c:choose>
 		</div>
 	</div>
 	<!-- } 서브페이지 -->

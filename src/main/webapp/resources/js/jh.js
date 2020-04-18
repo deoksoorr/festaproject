@@ -268,6 +268,7 @@ function feedList(data,view,pronum,prophoto,logincheck){
 			var content;
 			var prophototag;
 			var feedprophototag;
+			var msgTag;
 			
 			//해시태그 선언부
 			if(hash1==''&&hash2==''&&hash3==''){
@@ -300,6 +301,7 @@ function feedList(data,view,pronum,prophoto,logincheck){
 				num=data[0][index].mpnum;
 				content=data[0][index].mpcontent;
 				photo=data[0][index].mpphoto;
+				msgTag='<input type="text" class="msg_txt" name="mccontent" placeholder="메세지를 입력해주세요" required="required">';
 				//로그인상태일때
 				if(logincheck!=''){
 					$(data[3]).each(function(idx){
@@ -361,6 +363,7 @@ function feedList(data,view,pronum,prophoto,logincheck){
 				num=data[0][index].gpnum;
 				content=data[0][index].gpcontent;
 				photo=data[0][index].gpphoto;
+				msgTag='<input type="text" class="msg_txt" name="gccontent" placeholder="메세지를 입력해주세요" required="required">';
 				//로그인상태일때
 				//로그인 그룹접속시 프로필번호생성
 				if(logincheck!=''){
@@ -454,7 +457,7 @@ function feedList(data,view,pronum,prophoto,logincheck){
 						+prophototag
 						+'</a>'
 						+'<p class="msg_input">'
-						+'<textarea id="" name="gccontent" placeholder="메세지를 입력해주세요"></textarea>'
+						+msgTag
 						+'<button type="submit" class="btn_send"><em class="snd_only">전송</em></button>'
 						+'</p>'
 						+'</form>';
@@ -529,6 +532,7 @@ function feedList(data,view,pronum,prophoto,logincheck){
 			+thums
 			+'</div>');
 			scrBar();
+			commSlider();
 		});
 	}else if(view=='news'){
 		
@@ -670,6 +674,7 @@ function feedList(data,view,pronum,prophoto,logincheck){
 			+thums
 			+'</div>');
 			scrBar();
+			commSlider();
 		});
 	}else if(view=='admin/user'){
 		$(data[0]).each(function(index){
@@ -806,6 +811,7 @@ function feedList(data,view,pronum,prophoto,logincheck){
 			+thums
 			+'</div>');
 			scrBar();
+			commSlider();
 		});
 	}
 }

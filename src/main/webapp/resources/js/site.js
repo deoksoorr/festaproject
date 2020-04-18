@@ -419,7 +419,7 @@ function rectangleArrTrim() {
 	var rectangle = [
 		[$('#main .camp_area'), 492, 223],
 		[$('.camp_list'), 320, 180],
-		[$('.thumb_slide'), 720, 380],
+		[$('.thumb_slide'), 1024, 500],
 	];
 	for (var i=0; i<rectangle.length; i++) {
 		var img = $(rectangle[i][0]).find('img');

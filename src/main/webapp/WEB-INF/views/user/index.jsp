@@ -4,6 +4,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:url value="/" var="root" />
 <c:url value="/resources/upload" var="upload" />
+<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
+   <c:redirect url="/empty"/>
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -23,30 +26,69 @@
 <link rel="shortcut icon" href="${root }resources/favicon.ico">
 <title>FESTA</title>
 <script type="text/javascript">
+function btn_close(){
+    document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+    var url = window.location.href;
+	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+		window.location.href='${root}';
+	}
+}
+
 	$(document).ready(function() {
 		var cookie = '${cookie.loginCookie.value}';
-		var login = '${login}';
-		
-		if(cookie!=''&&login==''){
-		   openPop('loginCookie');
+		var login = '${login ne null}';
+
+		if(cookie!=''&&login=='false'){
+			openPop('loginCookie',none,btn_close);
 		}
-		
+
 		$('#btnCookie').on('click',function(){
-		   $.post('${root}member/loginCookie','id='+cookie,function(data){
-		      if (data.prorn == '0') {
-		         location.reload();
-		      } else if (data.prorn == '1') {
-		         location.href = "${root}member/stop";
-		      } else if (data.prorn == '2') {
-		         location.href = "${root}member/kick";
-		      } else if (data.prorn == '3') {
-		         location.reload();
-		      } else if (data.prorn == '4') {
-		         location.href = "${root}";
-		      }
-		   });
+			$.post('${root}member/loginCookie','id='+cookie,function(data){
+				if (data.prorn == '0') {
+					location.reload();
+				} else if (data.prorn == '1') {
+					location.href = "${root}member/stop";
+				} else if (data.prorn == '2') {
+					location.href = "${root}member/kick";
+				} else if (data.prorn == '3') {
+					location.reload();
+				} else if (data.prorn == '4') {
+					location.href = "${root}";
+				}
+			});
+		});
+
+		
+		//팔로우중인지 확인
+		var pronum = "${login.pronum}";
+		var pronum_sync="${profile.pronum}";
+		console.log('pronum='+pronum);
+		$.get('${root}user/isfollw',"pronum="+pronum+"&pronum_sync="+pronum_sync,function(data){
+			console.log(data);
+			if(data==0){
+				$('#follow').removeClass("act");
+			}
 		});
 		
+/* 		$('#follow').on('click',function(){
+			var unFollow = $(this).hasClass('act');
+			//등록
+			if(unFollow){
+				$.get('${root}user/follow','pronum='+ ${login.pronum}+'&mfgname='+"${login.proname}"+'&pronum_sync='+${profile.pronum}+'&myFollower.mfrname='+"${profile.proname}",function(){
+					var follow = $('#myFollowingCount');
+					//console.log(follow.text());
+					//window.location.reload();
+				});
+			}
+			//해제
+			else{
+				$.get('${root}user/unfollow','pronum='+${login.pronum}+'&mfgname='+"${login.proname}"+'&pronum_sync='+${profile.pronum},function(){
+					var follow = $('#myFollowingCount');
+					//console.log(follow.text());
+					//window.location.reload();
+				});
+			}
+		}); */
 		
 		$('.feed_viewer').each(function(index) {
 			if (index > 1) {
@@ -223,7 +265,7 @@
 		var mfgname = "${profile.proname}";
 		var mfrname = "${login.proname}";
 		$.post('${root}user/follow',"pronum="+pronum+"&pronum_sync="+pronum_sync+"&mfgname="+mfgname+"&mfrname"+mfrname,function(){
-			console.log("ㅋㅋ");
+			
 		});
 	});
 });
@@ -246,8 +288,8 @@
 					<h1>
 						<a href="${root }"><em class="snd_only">FESTA</em></a>
 					</h1>
-					<form class="search_box">
-						<input type="text" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
+					<form action="${root }search/" class="search_box">
+						<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 						<button type="submit">
 							<img src="${root }resources/images/ico/btn_search.png" alt="검색">
 						</button>
@@ -389,9 +431,7 @@
 								<c:if test="${login.pronum ne profile.pronum }">
 									<a href="${root }user/us_report"
 										class="pf_opt btn_pop btn_report"><em class="snd_only">신고하기</em></a>
-									<c:if test="">
 									<button type="button" id="follow" class="btn_follow act">팔로잉</button>
-									</c:if>
 								</c:if>
 								<!-- } 유저페이지일 경우 신고하기 -->
 							</dt>
@@ -638,8 +678,7 @@
 								</c:if>
 									</a>
 									<p class="msg_input">
-										<textarea id="mccontent" name="mccontent"
-											placeholder="메세지를 입력해주세요"></textarea>
+										<input type="text" class="msg_txt" name="mccontent" placeholder="메세지를 입력해주세요" required="required">
 										<button type="button" class="btn_send cmmt">
 											<em class="snd_only">전송</em>
 										</button>
@@ -675,7 +714,7 @@
 					<div class="rcmm_list">
 		               <h3><em class="snd_only">추천그룹 목록</em>나홀로 캠핑이 심심하신가요?</h3>
 		               <ul>
-		                  <c:forEach items="${goodgroup }" begin="0" end="2" var="grouplist">
+		                  <c:forEach items="${grouplist }" begin="0" end="2" var="grouplist">
 		                     <c:if test="${login ne null }">
 		                        <li>
 		                        	<c:choose>
@@ -720,22 +759,38 @@
 		               </ul>
 		            </div>
 		            <div class="rcmm_list">
-		               <h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
-		               <ul>
-		                  <c:forEach items="${goodcamp }" begin="0" end="2" var="camplist">
-		                     <c:set var="image" value="${fn:substringBefore(camplist.caphoto,',') }"/>
-		                     <li>
-		                        <a class="rc_thumb" href="${root }camp/detail?canum=${camplist.canum}">
-		                           <img src="${upload }/${image}" alt="${camplist.caname } 썸네일">
-		                        </a>
-		                        <a class="rc_text" href="${root }camp/detail?canum=${camplist.canum}">
-		                           <b class="rc_name">${camplist.caname }</b>
-		                           <span class="rc_hashtag">${camplist.caaddrsel }</span>
-		                        </a>
-		                     </li>
-		                  </c:forEach>
-		               </ul>
-		            </div>
+                     <h3><em class="snd_only">추천캠핑장 목록</em>이 캠핑장에도 가보셨나요?</h3>
+                     <ul>
+                     <c:forEach items="${camplist }" begin="0" end="2" var="camplist">
+                        <li>
+                        <c:if test="${!empty camplist.caphoto }">
+                           <c:set var="image1" value="${fn:split(camplist.caphoto,',') }" />
+                           <c:if test="${fn:length(image1) gt 1 }">
+                              <c:set var="image"
+                                 value="${fn:substringBefore(camplist.caphoto,',') }" />
+                           </c:if>
+                           <c:if test="${fn:length(image1) eq 1 }">
+                              <c:set var="image" value="${camplist.caphoto }" />
+                           </c:if>
+                           <a class="rc_thumb"
+                              href="${root }camp/detail?canum=${camplist.canum}"> <img
+                              src="${upload }/${image}" alt="${camplist.caname } 썸네일">
+                           </a>
+                        </c:if> <c:if test="${empty camplist.caphoto }">
+                           <a class="rc_thumb"
+                              href="${root }camp/detail?canum=${camplist.canum}"> <img
+                              src="${root }resources/images/thumb/no_profile.png"
+                              alt="${camplist.caname } 썸네일">
+                           </a>
+                        </c:if> <a class="rc_text"
+                        href="${root }camp/detail?canum=${camplist.canum}"> <b
+                           class="rc_name">${camplist.caname }</b> <span
+                           class="rc_hashtag">${camplist.caaddrsel }</span>
+                        </a>
+                        </li>
+                     </c:forEach>
+                  </ul>
+                  </div>
 		         </section>
 				<!-- } 우측 사이드영역 끝 -->
 			</div>
@@ -821,13 +876,13 @@
 </body>
 <!-- #팝업 처리완료 { -->
 <div id="loginCookie" class="fstPop">
-   <div class="confirm_wrap pop_wrap">
-      <p class="pop_tit">로그인을 유지 시키겠습니까?</p>
-      <ul class="comm_buttons">
-         <li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
-         <li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
-      </ul>
-   </div>
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
+	</div>
 </div>
 	<!-- } #팝업 처리완료 -->
 	<script type="text/javascript">

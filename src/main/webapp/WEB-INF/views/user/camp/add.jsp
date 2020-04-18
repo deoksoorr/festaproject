@@ -4,6 +4,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:url value="/" var="root" />
 <c:url value="/resources/upload" var="upload" />
+<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
+   <c:redirect url="/empty"/>
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -23,29 +26,38 @@
 <link rel="shortcut icon" href="${root }resources/favicon.ico">
 <title>FESTA</title>
 <script type="text/javascript">
+function btn_close(){
+    document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+    var url = window.location.href;
+	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+		window.location.href='${root}';
+	}
+}
+
 	$(document).ready(function(){
 		var cookie = '${cookie.loginCookie.value}';
-		var login = '${login}';
-		
-		if(cookie!=''&&login==''){
-		   openPop('loginCookie');
+		var login = '${login ne null}';
+
+		if(cookie!=''&&login=='false'){
+			openPop('loginCookie',none,btn_close);
 		}
-		
+
 		$('#btnCookie').on('click',function(){
-		   $.post('${root}member/loginCookie','id='+cookie,function(data){
-		      if (data.prorn == '0') {
-		         location.reload();
-		      } else if (data.prorn == '1') {
-		         location.href = "${root}member/stop";
-		      } else if (data.prorn == '2') {
-		         location.href = "${root}member/kick";
-		      } else if (data.prorn == '3') {
-		         location.reload();
-		      } else if (data.prorn == '4') {
-		         location.href = "${root}";
-		      }
-		   });
+			$.post('${root}member/loginCookie','id='+cookie,function(data){
+				if (data.prorn == '0') {
+					location.reload();
+				} else if (data.prorn == '1') {
+					location.href = "${root}member/stop";
+				} else if (data.prorn == '2') {
+					location.href = "${root}member/kick";
+				} else if (data.prorn == '3') {
+					location.reload();
+				} else if (data.prorn == '4') {
+					location.href = "${root}";
+				}
+			});
 		});
+
 		
 		var myVenture = "${myVenture}";
 		var campCheck = "${campCheck}";
@@ -60,9 +72,29 @@
 			$('#imgCaphoto').attr('src','${upload }/'+tmp[tmp.length-1]);
 		}
 		
-		$('#save').on('click',function(e){
+		//canum, caname, caaddr, caintro  , caaddrsuv is not null
+		
+		var caname = $('#caname').val();
+		var caaddr = $('#caaddr').val();
+		var caintro = $('#caintro').val();
+		var caaddrsuv = $('#caaddrsuv').val();
+		if(caname!=null && caaddr !=null && caaddrsuv !=null && caintro.length>0){
+			$('#apply').prop('type','submit');
+		}
+		
+		//한줄평 유효성
+		$("#caintro").on('propertychange change keyup paste input',function() {
+			if($('#canum').val()!="" && $('#caname').val()!="" && $('#caaddr').val()!="" && $('#caintro').val()!=""&& $('#caaddrsuv').val()!=""){
+				$('#apply').prop('type','submit');
+			}
+			else{
+				$('#apply').prop('type','button');
+			}
+		});//한줄평 유효성 종료
+		
+		$('#rst').on('submit',function(e){
 			e.preventDefault();
-			var canum = $('#canum').val();
+/* 			var canum = $('#canum').val();
 			var caphoto = $('#caphoto').val();
 			var caintroone = $('#caintroone').val();
 			var httitle1 = $('#httitle1').val();
@@ -74,7 +106,7 @@
 			var caguide4 = $('#caguide4').val();
 			var caguide5 = $('#caguide5').val();
 			var caguide6 = $('#caguide6').val();
-			var caguide7 = $('#caguide7').val();
+			var caguide7 = $('#caguide7').val(); */
 			
 			var files = new FormData($('#rst')[0]);
 			$.ajax({
@@ -131,8 +163,8 @@
 					<h1>
 						<a href="${root }"><em class="snd_only">FESTA</em></a>
 					</h1>
-					<form class="search_box">
-						<input type="text" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
+					<form action="${root }search/" class="search_box">
+						<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 						<button type="submit">
 							<img src="${root }resources/images/ico/btn_search.png" alt="검색">
 						</button>
@@ -438,11 +470,11 @@
 							</li>
 							<li class="box">
 								<p>
-									<label for="festa8">메인 소개</label>
+									<label for="festa8" class="rq">메인 소개</label>
 								</p>
 								<div>
 									<textarea id="caintro" name="caintro"
-										placeholder="??자 이내로 작성해주세요">${myCamp.caintro }</textarea>
+										placeholder="500자 이내로 작성해주세요">${myCamp.caintro }</textarea>
 								</div>
 							</li>
 							<li class="set_tags box">
@@ -484,7 +516,7 @@
 						</ul>
 						<ul class="comm_buttons">
 							<li><button type="reset" class="btn_close comm_btn cnc">취소</button></li>
-							<li id="save" ><button type="submit" id="apply" class="comm_btn sbm">저장</button></li>
+							<li id="save" ><button type="button" id="apply" class="comm_btn sbm">저장</button></li>
 						</ul>
 						<input type="hidden" name="mvnum" value="${myVenture.mvnum }"/>
 					</form>
@@ -529,12 +561,12 @@
 </div>
 <!-- #팝업 처리완료 { -->
 <div id="loginCookie" class="fstPop">
-   <div class="confirm_wrap pop_wrap">
-      <p class="pop_tit">로그인을 유지 시키겠습니까?</p>
-      <ul class="comm_buttons">
-         <li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
-         <li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
-      </ul>
-   </div>
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
+	</div>
 </div>
 </html>

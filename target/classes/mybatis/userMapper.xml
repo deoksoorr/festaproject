@@ -236,8 +236,8 @@
    </select>
    
    <!-- 팔로우 하고있는지 확인 -->
-   <select id="isFollow" parameterType="MyFollowingVo" resultType="int">
-   	select count(*) from myfollowing where pronum_sync=#{pronum_sync} and pronum11=#{pronum};
+   <select id="isFollow" parameterType="MyFollowerVo" resultType="int">
+   	select count(*) from myfollower where pronum_sync=#{pronum_sync} and pronum10=#{pronum};
    </select>
    
    <!-- 팔로우 등록,해제 end -->

@@ -17,8 +17,36 @@
 	<link type="text/css" rel="stylesheet" href="${root}resources/css/site.css">
 	<link rel="shortcut icon" href="${root}resources/favicon.ico">
 	<title>FESTA</title>
+	<style type="text/css">
+		#iframe{
+			text-align: center;
+		}
+	</style>
 	<script type="text/javascript">
 	$(function() {
+		
+		//지오로케이션 접근시 스크롤기능막기
+		var check=false;
+		var i=0;
+		$(document).on('mouseenter','#reali',function(e){
+			check=true;
+			setTimeout(function(){
+				i++;
+			},2000);
+			var scroll = $(document).scrollTop();
+			$(document).on('scroll touchmove mousewheel',function(event){
+				if(check==true&&i>=1){
+					$(document).scrollTop(scroll);
+				}
+			});
+		});
+		//도큐먼트 클릭시 스크롤기능실행
+		$(document).on('click',function(e){
+			check=false;
+			i=0;
+		});
+		
+		
 		var login = '${login ne null}';
 		if (login == 'false') {
 			location.href='${root}empty';
@@ -156,10 +184,10 @@
 				<h1>
 					<a href="${root}"><em class="snd_only">FESTA</em></a>
 				</h1>
-				<form class="search_box" action="${root }search">
+				<form class="search_box" action="${root}search/">
 					<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
 					<button type="submit">
-						<img src="${root }resources/images/ico/btn_search.png" alt="검색">
+						<img src="${root}resources/images/ico/btn_search.png" alt="검색">
 					</button>
 				</form>
 				<ul id="gnb">
@@ -369,6 +397,9 @@
 				</div>
 			</div>
 		</section>
+		<div id="iframe">
+			<iframe id="reali" src="${root }admin/camp/gl_camp" width="1000" height="500" scrolling="no" frameborder="1"></iframe>
+		</div>
 		<section class="location_area">
 			<div class="container">
 				<h4 class="sub_tit">오시는 길</h4>

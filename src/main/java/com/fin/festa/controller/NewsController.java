@@ -1,5 +1,8 @@
 package com.fin.festa.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +41,23 @@ public class NewsController {
 		return "news/index";
 	}
 	
-	//뉴스피드 조회 (더보기)
+	//뉴스피드 조회 (피드 더보기)
 	@RequestMapping(value = "more", method = RequestMethod.POST)
 	public String newsFeedMore(HttpServletRequest req, MyFollowingVo myFollowingVo){
 		newsService.newsFeedMore(req, myFollowingVo);
 		return "news/more";
+	}
+	
+	//뉴스피드 조회 (댓글 더보기)
+	@RequestMapping(value = "comment", method = RequestMethod.GET)
+	public @ResponseBody List<?> newsCommentMore(Model model, MyPostVo myPost, GroupPostVo groupPost){
+		List<?> list = null;
+		if (groupPost.getGpnum() == 0) {
+			list = newsService.newsFeedCommentMore(model, myPost);
+		} else {
+			list = newsService.newsGroupCommentMore(model, groupPost);
+		}
+		return list;
 	}
 	
 	//내 피드 수정 (팝업)

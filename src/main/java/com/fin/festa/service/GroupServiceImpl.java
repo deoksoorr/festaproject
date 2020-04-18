@@ -30,6 +30,7 @@ import com.fin.festa.model.entity.PageSearchVo;
 import com.fin.festa.model.entity.ProfileVo;
 import com.fin.festa.model.entity.ReportListVo;
 import com.fin.festa.model.entity.UpdateWaitVo;
+import com.fin.festa.util.DateCalculate;
 import com.fin.festa.util.UploadPhoto;
 
 @Service
@@ -383,6 +384,7 @@ public class GroupServiceImpl implements GroupService{
 	//페이지기능을 위한 가입유저조회 테이블 로우갯수 뽑기
 	@Override
 	public void groupUserAdminSelectAll(HttpServletRequest req, GroupVo groupVo, PageSearchVo pageSearchVo) {
+		DateCalculate date=new DateCalculate();
 		//첫화면불러올때 페이지넘버가 0이니까 1로 맞춰줌
 		if(pageSearchVo.getPage()==0) {
 			pageSearchVo.setPage(1);
@@ -392,12 +394,12 @@ public class GroupServiceImpl implements GroupService{
 			pageSearchVo.setKeyword("");
 			groupVo.setPageSearch(pageSearchVo);		
 			groupVo.getPageSearch().setTotalCount(groupDao.groupUserTotalCount(groupVo));
-			req.setAttribute("userdetail", groupDao.groupUserSelectAll(groupVo));
+			req.setAttribute("userdetail", date.proidnumFormat(groupDao.groupUserSelectAll(groupVo)));
 			req.setAttribute("pageSearch", groupVo.getPageSearch());
 		} else {
 			groupVo.setPageSearch(pageSearchVo);		
 			groupVo.getPageSearch().setTotalCount(groupDao.groupUserTotalCount(groupVo));
-			req.setAttribute("userdetail", groupDao.groupUserSearch(groupVo));
+			req.setAttribute("userdetail", date.proidnumFormat(groupDao.groupUserSearch(groupVo)));
 			req.setAttribute("pageSearch", groupVo.getPageSearch());
 		}
 	}
@@ -409,7 +411,6 @@ public class GroupServiceImpl implements GroupService{
 	public void groupUserKick(HttpServletRequest req, GroupVo groupVo, JoinGroupVo joinGroupVo) {
 		groupDao.groupUserKick(joinGroupVo);
 		groupDao.groupTotalMinus(groupVo);
-		
 		ProfileVo profileVo=new ProfileVo();
 		profileVo.setPronum(groupVo.getPronum());
 		HttpSession session = req.getSession();
@@ -437,13 +438,14 @@ public class GroupServiceImpl implements GroupService{
 	//페이지기능을 위한 가입신청조회 테이블 로우갯수 뽑기
 	@Override
 	public void groupRequestSelectAll(HttpServletRequest req, GroupVo groupVo, PageSearchVo pageSearchVo) {
+		DateCalculate date=new DateCalculate();
 		//첫화면불러올때 페이지넘버가 0이니까 1로 맞춰줌
 		if(pageSearchVo.getPage2()==0) {
 			pageSearchVo.setPage2(1);
 		}
 		groupVo.setPageSearch(pageSearchVo);
 		groupVo.getPageSearch().setTotalCount2(groupDao.groupRequestTotalCount(groupVo));
-		req.setAttribute("request", groupDao.groupRequestSelectAll(groupVo));
+		req.setAttribute("request", date.proidnumFormatt(groupDao.groupRequestSelectAll(groupVo)));
 		req.setAttribute("pageSearch", groupVo.getPageSearch());
 	}
 
@@ -457,7 +459,6 @@ public class GroupServiceImpl implements GroupService{
 		groupDao.groupRequestHello(updateWaitVo);
 		groupDao.groupTotalPlus(groupVo);
 		groupDao.groupRequestSorry(updateWaitVo);
-		
 		ProfileVo profileVo=new ProfileVo();
 		profileVo.setPronum(groupVo.getPronum());
 		

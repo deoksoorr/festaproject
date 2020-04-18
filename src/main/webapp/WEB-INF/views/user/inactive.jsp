@@ -34,7 +34,8 @@ if(url.indexOf('inactive')>0){
 		      }
 		   });
 		});
-		$('#btn_inactive').on('click',function(){
+		$('#btn_inactive').on('click',function(e){
+			e.preventDefault();
 			var pronum = "${profile.pronum}";
 			$.post('${root}user/inactive','pronum='+pronum,function(data){
 				if(data == 1){
@@ -43,12 +44,12 @@ if(url.indexOf('inactive')>0){
 				}
 				else if(data ==0){
 					openPop('ok');
-					$('#btn_ok').on('click',function(){
-						window.location = "http://localhost:8080/festa/";
-					});
 				}
 				
 			});
+		});
+		$('#btn_ok').on('click',function(){
+			location.href = "${root}";
 		});
 	});
 </script>
@@ -65,7 +66,7 @@ if(url.indexOf('inactive')>0){
 	<div class="btn_box">
 		<ul class="comm_buttons">
 			<li><button type="button" class="btn_close comm_btn cnc">취소</button></li>
-			<li><button type="button" id="btn_inactive" class="btn_close comm_btn sbm">확인</button></li>
+			<li><button type="submit" id="btn_inactive" class="btn_close comm_btn sbm">확인</button></li>
 		</ul>
 	</div>
 </div>

@@ -4,6 +4,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:url value="/" var="root" />
 <c:url value="/resources/upload" var="upload" />
+<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
+   <c:redirect url="/empty"/>
+</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -20,29 +23,82 @@
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
 	<title>FESTA</title>
 	<script type="text/javascript">
+	function btn_close(){
+	       document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+	       var url = window.location.href;
+	   	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+	   		window.location.href='${root}';
+	   	}
+	}
+
 		$(document).ready(function(){
 			var cookie = '${cookie.loginCookie.value}';
-			var login = '${login}';
+			var login = '${login ne null}';
+
+			if(cookie!=''&&login=='false'){
+				openPop('loginCookie',none,btn_close);
+			}
+
+			$('#btnCookie').on('click',function(){
+				$.post('${root}member/loginCookie','id='+cookie,function(data){
+					if (data.prorn == '0') {
+						location.reload();
+					} else if (data.prorn == '1') {
+						location.href = "${root}member/stop";
+					} else if (data.prorn == '2') {
+						location.href = "${root}member/kick";
+					} else if (data.prorn == '3') {
+						location.reload();
+					} else if (data.prorn == '4') {
+						location.href = "${root}";
+					}
+				});
+			});
+
 			
-			if(cookie!=''&&login==''){
-			   openPop('loginCookie');
+			var mvnum = $('#mvnum').val();
+			var mvname = $('#mvname').val();
+			var mvaddr = $('#mvaddr').val();
+			var mvaddrsuv = $('#mvaddrsuv').val();
+			
+			if(mvnum!=null && mvname!=null && mvaddr !=null && mvaddrsuv !=null){
+				$('#save').prop('type','submit');
 			}
 			
-			$('#btnCookie').on('click',function(){
-			   $.post('${root}member/loginCookie','id='+cookie,function(data){
-			      if (data.prorn == '0') {
-			         location.reload();
-			      } else if (data.prorn == '1') {
-			         location.href = "${root}member/stop";
-			      } else if (data.prorn == '2') {
-			         location.href = "${root}member/kick";
-			      } else if (data.prorn == '3') {
-			         location.reload();
-			      } else if (data.prorn == '4') {
-			         location.href = "${root}";
-			      }
-			   });
-			});
+			//캠핑장 이름 유효성 검사
+			$("#mvname").on('propertychange change keyup paste input',function() {
+				if($('#mvname').val().length>20){
+					$('#mvnameCheck').show();
+					$('#save').prop('type','button');
+				}
+				else{
+					$('#mvnameCheck').hide();
+					if($('#mvnameCheck').attr("style")=="display: none;" && $('#mvaddr').val()!="" && $('#mvaddrsuvCheck').attr("style")=="display: none;"){
+						$('#save').prop('type','submit');
+					}
+					else{
+						$('#save').prop('type','button');
+					}
+				}
+				
+			});//캠핑장이름 유효성 검사 긑
+			
+			//서브주소 유효성 검사
+			$("#mvaddrsuv").on('propertychange change keyup paste input',function() {
+				if($('#mvaddrsuv').val().length>40){
+					$('#mvaddrsuvCheck').show();
+					$('#save').prop('type','button');
+				}
+				else{
+					$('#mvaddrsuvCheck').hide();
+					if($('#mvnameCheck').attr("style")=="display: none;" && $('#mvaddr').val()!="" && $('#mvaddrsuvCheck').attr("style")=="display: none;"){
+						$('#save').prop('type','submit');
+					}
+					else{
+						$('#save').prop('type','button');
+					}
+				}
+			});//서브주소 유효성 검사 긑
 			
 			$('#rst').on('submit',function(e){
 				e.preventDefault();
@@ -52,10 +108,11 @@
 				var mvaddrsuv = $('#mvaddrsuv').val();
 				$.post('${root}user/venture/edit','mvnum='+mvnum+'&mvname='+mvname+'&mvaddr='+mvaddr+'&mvaddrsuv='+mvaddrsuv,function(){
 					openPop("ok");
-					$('#btn_ok').on('click',function(){
-						window.location.reload();
-					});
 				});
+			});
+			
+			$('#btn_ok').on('click',function(){
+				window.location.reload();
 			});
 		});
 	</script>
@@ -76,10 +133,12 @@
 				<h1>
 					<a href="${root }"><em class="snd_only">FESTA</em></a>
 				</h1>
-				<form class="search_box">
-					<input type="text" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
-					<button type="submit"><img src="${root }resources/images/ico/btn_search.png" alt="검색"></button>
-				</form>
+				<form action="${root }search/" class="search_box">
+						<input type="text" name="keyword" placeholder="캠핑장 또는 그룹을 검색해보세요!" required="required">
+						<button type="submit">
+							<img src="${root }resources/images/ico/btn_search.png" alt="검색">
+						</button>
+					</form>
 				<ul id="gnb">
 						<li><a href="${root}camp/">캠핑정보</a></li>
 						<li><a href="${root}hot/">인기피드</a></li>
@@ -360,6 +419,7 @@
 							<p><label for="festa5">캠핑장 이름</label></p>
 							<div>
 								<input type="text" id="mvname" name="mvname" value="${myVenture.mvname }">
+								<p hidden="hidden" id="mvnameCheck" class="f_message rst" style="display: none;">20자를 초과하였습니다.</p>
 							</div>
 						</li>
 						<li class="set_half box">
@@ -375,12 +435,13 @@
 						<li class="box">
 							<div>
 								<input type="text" class="kko_addr2" id="mvaddrsuv" name="mvaddrsuv" value="${myVenture.mvaddrsuv }" placeholder="상세주소를 입력해주세요">
+								<p hidden="hidden" id="mvaddrsuvCheck" class="f_message rst" style="display: none;">40자를 초과하였습니다.</p>
 							</div>
 						</li>
 					</ul>
 					<ul class="comm_buttons">
 						<li><button type="reset" class="btn_close comm_btn cnc">취소</button></li>
-						<li><button type="submit" id="save" class="comm_btn sbm">저장</button></li>
+						<li><button type="button" id="save" class="comm_btn sbm">저장</button></li>
 					</ul>
 				</form>
 			</section>
@@ -426,12 +487,12 @@
 </div>
 <!-- #팝업 처리완료 { -->
 <div id="loginCookie" class="fstPop">
-   <div class="confirm_wrap pop_wrap">
-      <p class="pop_tit">로그인을 유지 시키겠습니까?</p>
-      <ul class="comm_buttons">
-         <li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
-         <li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
-      </ul>
-   </div>
+	<div class="confirm_wrap pop_wrap">
+		<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
+		<ul class="comm_buttons">
+			<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
+		</ul>
+	</div>
 </div>
 </html>

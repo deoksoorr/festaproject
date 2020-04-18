@@ -17,13 +17,22 @@
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
 	<title>FESTA</title>
 	<script type="text/javascript">
+	
+		function btn_close(){
+		       document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
+		       var url = window.location.href;
+		   	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
+		   		window.location.href='${root}';
+		   	}
+		}		
+	
 		$(document).ready(function(){
 			
 			var cookie = '${cookie.loginCookie.value}';
 			var login = '${login ne null}';
 			
 			if(cookie!=''&&login=='false'){
-				openPop('loginCookie');
+				openPop('loginCookie',none,btn_close);
 			}
 			
 			$('#btnCookie').on('click',function(){
@@ -79,6 +88,9 @@
 	</script>
 </head>
 <body>
+<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
+   <c:redirect url="/empty"/>
+</c:if>
 <c:if test="${sessionScope.login ne null }">
 	<c:if test="${sessionScope.login.proid ne 'admin@festa.com' }">
 		<c:redirect url="/empty"/>
@@ -297,9 +309,9 @@
 <!-- #팝업 처리완료 { -->
 <div id="loginCookie" class="fstPop">
 	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">로그인을 유지 시키겠습니까?</p>
+		<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
 		<ul class="comm_buttons">
-			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+			<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
 			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
 		</ul>
 	</div>

@@ -60,4 +60,8 @@ public interface NewsDao {
 	List<MyGoodVo> myGoodRenewal(MyGoodVo good);
 	
 	int feedReportCountUpdate(ReportListVo report);
+
+	List<MyCommentVo> followCommentMore(MyPostVo myPost);
+
+	List<GroupCommentVo> joingroupCmmtMore(GroupPostVo groupPost);
 }

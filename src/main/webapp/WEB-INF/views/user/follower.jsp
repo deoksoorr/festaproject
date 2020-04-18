@@ -43,13 +43,13 @@ $(document).ready(function(){
 	 for(var i = 0; i< listSize; i++){
 	 	if(listSize!=1){
 		 	if($('.follow_wrap .scrBar li').eq(i).find('.btn_follow').hasClass('act')==false){
-            var userNum = $('.follow_wrap .scrBar li').eq(i).find('input[type=hidden]').val();
-            var myNum = $('.follow_wrap input[type=hidden]').eq(0).val();
-            if(userNum != myNum){
-               $('.follow_wrap .scrBar li').eq(i).append('<button class="btn_follow">팔로우</button>');
+            	var userNum = $('.follow_wrap .scrBar li').eq(i).find('input[type=hidden]').val();
+            	var myNum = $('.follow_wrap input[type=hidden]').eq(0).val();
+            	if(myNum != userNum){
+            		$('.follow_wrap .scrBar li').eq(i).append('<button class="btn_follow">팔로우</button>');
+            	}
             }
          }
-	 	}
       }
 });
 </script>
@@ -63,7 +63,7 @@ $(document).ready(function(){
 			<c:if test="${fn:length(follower) > 0}">
 				<c:forEach items="${follower }" var="follower">
 						<li>
-							<a href="">
+							<a href="${root }user/?pronum=${follower.profile.pronum}">
 								<span class="pf_picture">
 									<c:if test="${!empty follower.profile.prophoto}">
 											<img src="${upload }/${follower.profile.prophoto}" alt="${follower.profile.prophoto }님의 프로필 썸네일" onload="squareTrim($(this), 50)">
