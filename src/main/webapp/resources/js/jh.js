@@ -319,7 +319,7 @@ function feedList(data,view,pronum,prophoto,logincheck){
 				}
 				//게시글갯수가 3개초과일때 댓글더보기버튼 생성
 				if(data[0][index].mptotal>3){
-					moreBtn='<button class="cmt_btn_more mc"><span class="snd_only">1</span>3개의 댓글 더 보기</button>';
+					moreBtn='<button class="cmt_btn_more mc"><span class="snd_only">1</span>댓글 더 보기</button>';
 				//3개이하일때 댓글더보기버튼 삭제
 				}else{
 					moreBtn='';
@@ -396,7 +396,7 @@ function feedList(data,view,pronum,prophoto,logincheck){
 				}
 				//게시글갯수가 3개초과일때 댓글더보기버튼 생성
 				if(data[0][index].gptotal>3){
-					moreBtn='<button class="cmt_btn_more gc"><span class="snd_only">1</span>3개의 댓글 더 보기</button>';
+					moreBtn='<button class="cmt_btn_more gc"><span class="snd_only">1</span>댓글 더 보기</button>';
 				//3개이하일때 댓글더보기버튼 삭제
 				}else{
 					moreBtn='';
@@ -587,7 +587,7 @@ function feedList(data,view,pronum,prophoto,logincheck){
 			var adminprophototag;
 			
 			if(data[0][index].gptotal>3){
-				moreBtn='<button class="cmt_btn_more dt"><span class="snd_only">1</span>3개의 댓글 더 보기</button>';
+				moreBtn='<button class="cmt_btn_more dt"><span class="snd_only">1</span>댓글 더 보기</button>';
 			}else{
 				moreBtn='';
 			}
@@ -724,7 +724,7 @@ function feedList(data,view,pronum,prophoto,logincheck){
 			var adminprophototag;
 			
 			if(data[0][index].mptotal>3){
-				moreBtn='<button class="cmt_btn_more"><span class="snd_only">1</span>3개의 댓글 더 보기</button>';
+				moreBtn='<button class="cmt_btn_more"><span class="snd_only">1</span>댓글 더 보기</button>';
 			}else{
 				moreBtn='';
 			}

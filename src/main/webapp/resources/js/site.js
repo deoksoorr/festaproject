@@ -128,15 +128,21 @@ function btnPop(button) {
 }
 // 라디오 팝업 버튼
 function rdoPop() {
+	var rdoProp = function() {
+		var radio = $('.rdo_pop, .rdo_pop2');
+		console.log(radio);
+		radio.prop('checked', false);
+	}
 	var radio = $('.rdo_pop');
 	radio.on('change', function(e) {
-	   var url = $(this).data('url'); /* + '.html'*/
-	   openLayer(e, url, none, rdoProp);
+		var url = $(this).data('url'),
+			layer = $(this).data('layer');
+		if (url != undefined) {
+			openLayer(e, url, none, rdoProp);
+		} else {
+			openPop(layer, none, rdoProp);
+		}
 	});
-	function rdoProp() {
-	   var radio = $('.rdo_pop');
-	   radio.prop('checked', false);
-	}
  }
 // 피드 팝업 버튼
 function openFeed() {

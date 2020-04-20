@@ -18,13 +18,24 @@
 	<title>FESTA</title>
 	<script type="text/javascript">
 	$(function(){
-	    if ('${login ne null}' == 'false') {
-	    	if ('${cookie.loginCookie.value ne null}' == 'true') openPop('loginCookie')
-	    	else location.href='${root}empty';
-	    }
+		var cookie = '${cookie.loginCookie.value}';
+		var login = '${login ne null}';
+
+		if(cookie!=''&&login=='false'){
+			openPop('loginCookie',none,btn_close);
+		}
+
+		setInterval(function(){
+			$.post('${root}member/loginSession','',function(data){
+				if(data==''&&document.cookie!=''){
+					clearInterval();
+					openPop('loginCookie',none,btn_close);
+				}
+			});
+		},1000*60*10);
 		
 		$('#btnCookie').on('click',function(){
-			$.post('${root}member/loginCookie','id='+'${cookie.loginCookie.value}',function(data){
+			$.post('${root}member/loginCookie','id='+cookie,function(data){
 				if (data.prorn == '0') {
 					location.reload();
 				} else if (data.prorn == '1') {
@@ -288,6 +299,9 @@
 	</script>
 </head>
 <body>
+<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
+	<c:redirect url="${root}empty"/>
+</c:if>
 <c:if test="${sessionScope.login ne null }">
    <c:if test="${sessionScope.login.proid eq 'admin@festa.com'}">
       <c:redirect url="${root}empty"/>
@@ -531,7 +545,7 @@
 								</c:forEach>
 							</ul>
 							<c:if test="${cmmtCount gt 3}">
-								<button class="cmt_btn_more" onclick="moreComment($(this))"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
+								<button class="cmt_btn_more" onclick="moreComment($(this))"><span class="snd_only">1</span>댓글 더 보기</button>
 							</c:if>
 						</div>
 						<form class="message_form" method="POST" action="${root}news/cmmtadd">
@@ -709,10 +723,10 @@
 </div>
 <div id="loginCookie" class="fstPop">
 	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">로그인을 유지하시겠습니까?</p>
+		<p class="pop_tit">기존 정보로 로그인 하시겠습니까?</p>
 		<ul class="comm_buttons">
-			<li><button type="button" class="btn_close comm_btn cnc">로그아웃</button></li>
-			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">확인</button></li>
+			<li><button type="button" class="btn_close btnCookieClose comm_btn cnc">로그아웃</button></li>
+			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">로그인</button></li>
 		</ul>
 	</div>
 </div>

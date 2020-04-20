@@ -128,7 +128,7 @@
 					</c:forEach>
 				</ul>
 				<c:if test="${cmmtCount gt 3}">
-					<button class="cmt_btn_more" onclick="moreComment($(this))"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
+					<button class="cmt_btn_more" onclick="moreComment($(this))"><span class="snd_only">1</span>댓글 더 보기</button>
 				</c:if>
 			</div>
 			<form class="message_form" method="POST" action="${root}news/cmmtadd">

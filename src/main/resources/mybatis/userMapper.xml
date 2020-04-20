@@ -380,7 +380,7 @@
    </select>
    
    <insert id="myGroupJoin" parameterType="GroupVo">
-   		insert into joingroup (pronum8,grnum3,grname,jgdate) values (#{pronum},#{grnum},#{grname},now());
+   		insert into joingroup (pronum8,grnum3,grname,jgdate,joinstatus) values (#{pronum},#{grnum},#{grname},now(),0);
    </insert>
    
    <!-- 그룹 등록 처리(공식) -->

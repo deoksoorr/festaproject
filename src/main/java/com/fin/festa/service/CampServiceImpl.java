@@ -15,53 +15,54 @@ import com.fin.festa.model.entity.MyBookMarkVo;
 import com.fin.festa.model.entity.MyGoodVo;
 import com.fin.festa.model.entity.PageSearchVo;
 import com.fin.festa.model.entity.ReportListVo;
-import com.fin.festa.util.CampAvg;
 import com.fin.festa.util.UploadPhoto;
 
 @Service
 public class CampServiceImpl implements CampService{
 
-	//µî·Ï,¼öÁ¤,»èÁ¦°¡ ÃÖ¼Ò2°³ÀÌ»ó µé¾î°¡´Â ¸Þ¼Òµå´Â ²À Æ®·£Àè¼Ç Àû¿ëÇÒ°Í!!
+	//ë“±ë¡,ìˆ˜ì •,ì‚­ì œê°€ ìµœì†Œ2ê°œì´ìƒ ë“¤ì–´ê°€ëŠ” ë©”ì†Œë“œëŠ” ê¼­ íŠ¸ëžœìž­ì…˜ ì ìš©í• ê²ƒ!!
 	
 	@Autowired
 	CampDaoImpl campDao;
 	
-	//½Å±ÔÄ·ÇÎÀå ¸ñ·Ï Ãâ·Â
-	//Àü±¹Ä·ÇÎÀå ¸ñ·Ï Ãâ·Â
+	//ì‹ ê·œìº í•‘ìž¥ ëª©ë¡ ì¶œë ¥
+	//ì „êµ­ìº í•‘ìž¥ ëª©ë¡ ì¶œë ¥
 	@Override
 	public void campSelectAll(Model model) {
 		model.addAttribute("newCampList", campDao.newCampSelectAll());
 		model.addAttribute("campList", campDao.allLocationCamp());
 	}
 
-	//Æ¯Á¤Áö¿ª Ä·ÇÎÀå ¸ñ·Ï Ãâ·Â
+	//íŠ¹ì •ì§€ì—­ ìº í•‘ìž¥ ëª©ë¡ ì¶œë ¥
 	@Override
 	public void campLocation(Model model, CampVo campVo) {
 		model.addAttribute("campList", campDao.locationCamp(campVo));
 	}
 	
-	//ÇØ´ç Ä·ÇÎÀåÀÌ °ø½Ä±×·ìÀÌ ÀÖ´ÂÁö Ã¼Å©
-	//°ø½Ä±×·ìÀÌ ÀÖÀ¸¸é °ø½Ä±×·ì µ¥ÀÌÅÍ°ª ÀúÀå(¸ðµ¨¿¡ ´ã¾ÆµÎ±â)
-	//ÇØ´ç Ä·ÇÎÀå Á¤º¸ Ãâ·Â
-	//ÇÑÁÙÆò °¹¼ö Ãâ·Â
-	//ÇÑÁÙÆò Ãâ·Â
-	//ÇØ´çÄ·ÇÎÀå°ú °°ÀºÁö¿ªÀÇ Ä·ÇÎÀå ¸ñ·Ï Ãâ·Â
+	//í•´ë‹¹ ìº í•‘ìž¥ì´ ê³µì‹ê·¸ë£¹ì´ ìžˆëŠ”ì§€ ì²´í¬
+	//ê³µì‹ê·¸ë£¹ì´ ìžˆìœ¼ë©´ ê³µì‹ê·¸ë£¹ ë°ì´í„°ê°’ ì €ìž¥(ëª¨ë¸ì— ë‹´ì•„ë‘ê¸°)
+	//í•´ë‹¹ ìº í•‘ìž¥ ì •ë³´ ì¶œë ¥
+	//í•œì¤„í‰ ê°¯ìˆ˜ ì¶œë ¥
+	//í•œì¤„í‰ ì¶œë ¥
+	//í•´ë‹¹ìº í•‘ìž¥ê³¼ ê°™ì€ì§€ì—­ì˜ ìº í•‘ìž¥ ëª©ë¡ ì¶œë ¥
 	@Override
 	public void campSelectOne(Model model, CampVo campVo) {
-		model.addAttribute("ventureGroup", campDao.campVentureGroup(campVo));	// °ø½Ä±×·ì µ¥ÀÌÅÍ°ª ÀúÀå(¸ðµ¨¿¡ ´ã¾ÆµÎ±â)
+		model.addAttribute("ventureGroup", campDao.campVentureGroup(campVo));	// ê³µì‹ê·¸ë£¹ ë°ì´í„°ê°’ ì €ìž¥
 		
-		model.addAttribute("camp", campDao.campInfoSelectOne(campVo));			// ÇØ´ç Ä·ÇÎÀå Á¤º¸ Ãâ·Â
+		model.addAttribute("camp", campDao.campInfoSelectOne(campVo));			// í•´ë‹¹ ìº í•‘ìž¥ ì •ë³´ ì¶œë ¥
 		
 		int campReviewCount = campDao.campReviewCount(campVo);
-		if (campReviewCount > 0) {
-			model.addAttribute("campReviewCount", campReviewCount);				// ÇÑÁÙÆò °¹¼ö Ãâ·Â
-			if(campVo.getPageSearch() == null) {								// ÇÑÁÙÆò ÆäÀÌÁö ÃÊ±âÈ­ (Ã¹ ÆäÀÌÁö)
-				PageSearchVo pageSearch = new PageSearchVo();
-				pageSearch.setPage2(1);
-				campVo.setPageSearch(pageSearch);
+		if (campReviewCount > 0) {		
+			model.addAttribute("campReviewCount", campReviewCount);					// í•œì¤„í‰ ê°¯ìˆ˜ ì¶œë ¥
+			if(campVo.getPageSearch() == null) {								// í•œì¤„í‰ íŽ˜ì´ì§€ ì´ˆê¸°í™” (ì²« íŽ˜ì´ì§€)
+				PageSearchVo page = new PageSearchVo();
+				page.setPage2(1);
+				campVo.setPageSearch(page);
 			}
-			campVo.getPageSearch().setTotalCount2(campReviewCount);				// ÇÑÁÙÆò ÆäÀÌÁö ÃÑ ·Î¿ì°¹¼ö
-			model.addAttribute("campReviewList", campDao.campReview(campVo));	// ÇÑÁÙÆò Ãâ·Â
+			campVo.getPageSearch().setTotalCount2(campReviewCount);				// í•œì¤„í‰ íŽ˜ì´ì§€ ì´ ë¡œìš°ê°¯ìˆ˜
+			model.addAttribute("paging", campVo.getPageSearch());
+			
+			model.addAttribute("campReviewList", campDao.campReview(campVo));	// í•œì¤„í‰ ì¶œë ¥
 		}
 	}
 	
@@ -70,9 +71,9 @@ public class CampServiceImpl implements CampService{
 		model.addAttribute("sameList", campDao.sameLocationCamp(campVo));
 	}
 
-	//Ä·ÇÎÀå ÁÁ¾Æ¿äµî·Ï
-	//Ä·ÇÎÀå ÁÁ¾Æ¿ä °¹¼ö ¾÷µ¥ÀÌÆ®
-	//³» ÁÁ¾Æ¿ä¸ñ·Ï °»½Å
+	//ìº í•‘ìž¥ ì¢‹ì•„ìš”ë“±ë¡
+	//ìº í•‘ìž¥ ì¢‹ì•„ìš” ê°¯ìˆ˜ ì—…ë°ì´íŠ¸
+	//ë‚´ ì¢‹ì•„ìš”ëª©ë¡ ê°±ì‹ 
 	@Transactional
 	@Override
 	public void likeInsertOne(HttpServletRequest req, MyGoodVo myGoodVo) {
@@ -85,9 +86,9 @@ public class CampServiceImpl implements CampService{
 		req.getSession().setAttribute("goodlist", campDao.myGoodRenewal(myGoodVo));
 	}
 
-	//Ä·ÇÎÀå ÁÁ¾Æ¿äÇØÁ¦
-	//Ä·ÇÎÀå ÁÁ¾Æ¿ä °¹¼ö ¾÷µ¥ÀÌÆ®
-	//³» ÁÁ¾Æ¿ä¸ñ·Ï °»½Å
+	//ìº í•‘ìž¥ ì¢‹ì•„ìš”í•´ì œ
+	//ìº í•‘ìž¥ ì¢‹ì•„ìš” ê°¯ìˆ˜ ì—…ë°ì´íŠ¸
+	//ë‚´ ì¢‹ì•„ìš”ëª©ë¡ ê°±ì‹ 
 	@Transactional
 	@Override
 	public void likeDeleteOne(HttpServletRequest req, MyGoodVo myGoodVo) {
@@ -100,26 +101,24 @@ public class CampServiceImpl implements CampService{
 		req.getSession().setAttribute("goodlist", campDao.myGoodRenewal(myGoodVo));
 	}
 
-	//Ä·ÇÎÀå ºÏ¸¶Å©µî·Ï
-	//³» ºÏ¸¶Å©¸ñ·Ï °»½Å
+	//ìº í•‘ìž¥ ë¶ë§ˆí¬ë“±ë¡
+	//ë‚´ ë¶ë§ˆí¬ëª©ë¡ ê°±ì‹ 
 	@Override
 	public void bookInsertOne(HttpServletRequest req, MyBookMarkVo myBookMarkVo) {
 		campDao.campBookMarkInsert(myBookMarkVo);
 		req.getSession().setAttribute("bookMark", campDao.mybookRenewal(myBookMarkVo));
-		System.out.println(myBookMarkVo);
 	}
 
-	//Ä·ÇÎÀå ºÏ¸¶Å©ÇØÁ¦
-	//³» ºÏ¸¶Å©¸ñ·Ï °»½Å
+	//ìº í•‘ìž¥ ë¶ë§ˆí¬í•´ì œ
+	//ë‚´ ë¶ë§ˆí¬ëª©ë¡ ê°±ì‹ 
 	@Override
 	public void bookDeleteOne(HttpServletRequest req, MyBookMarkVo myBookMarkVo) {
 		campDao.campBookMarkDelete(myBookMarkVo);
 		req.getSession().setAttribute("bookMark", campDao.mybookRenewal(myBookMarkVo));
-		System.out.println(myBookMarkVo);
 	}
 
-	//ÇÑÁÙÆò µî·Ï
-	//Ä·ÇÎÀå ÆòÁ¡¾÷µ¥ÀÌÆ®
+	//í•œì¤„í‰ ë“±ë¡
+	//ìº í•‘ìž¥ í‰ì ì—…ë°ì´íŠ¸
 	@Transactional
 	@Override
 	public void reviewInsertOne(HttpServletRequest req, CampReviewVo campReviewVo) {
@@ -127,8 +126,8 @@ public class CampServiceImpl implements CampService{
 		campDao.campAvgUpdate(campReviewVo);
 	}
 
-	//ÇÑÁÙÆò »èÁ¦
-	//Ä·ÇÎÀå ÆòÁ¡¾÷µ¥ÀÌÆ®
+	//í•œì¤„í‰ ì‚­ì œ
+	//ìº í•‘ìž¥ í‰ì ì—…ë°ì´íŠ¸
 	@Transactional
 	@Override
 	public void reviewDeleteOne(CampReviewVo campReviewVo) {
@@ -136,8 +135,8 @@ public class CampServiceImpl implements CampService{
 		campDao.campAvgUpdate(campReviewVo);
 	}
 
-	//ÇØ´ç Ä·ÇÎÀå ½Å°í
-	//Ä·ÇÎÀåÁÖÀÎ ½Å°í´çÇÑÈ½¼ö +1
+	//í•´ë‹¹ ìº í•‘ìž¥ ì‹ ê³ 
+	//ìº í•‘ìž¥ì£¼ì¸ ì‹ ê³ ë‹¹í•œíšŸìˆ˜ +1
 	@Transactional
 	@Override
 	public void campReport(HttpServletRequest req, MultipartFile[] files, ReportListVo reportListVo) {
@@ -145,11 +144,11 @@ public class CampServiceImpl implements CampService{
 		String rlphoto = up.upload(files, req, reportListVo);
 		reportListVo.setRlphoto(rlphoto);
 		
-		//±âÅ¸¹öÆ°´­·¶´Ù°¡ ´Ù¸¥°Å Ã¼Å©ÇÏ°í ³Ñ¾î¿Â°æ¿ì ´Ù¸¥°Å Ã¼Å©°ªÀ¸·Î ´ëÃ¼
+		//ê¸°íƒ€ë²„íŠ¼ëˆŒë €ë‹¤ê°€ ë‹¤ë¥¸ê±° ì²´í¬í•˜ê³  ë„˜ì–´ì˜¨ê²½ìš° ë‹¤ë¥¸ê±° ì²´í¬ê°’ìœ¼ë¡œ ëŒ€ì²´
 		String rlreport = reportListVo.getRlreport();
 		String[] report = rlreport.split(",");
 		if(report.length>1) {
-			if(report[0].equals("±âÅ¸")) {
+			if(report[0].equals("ê¸°íƒ€")) {
 				rlreport = report[1];
 			}else {
 				rlreport = report[0];

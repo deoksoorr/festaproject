@@ -70,7 +70,7 @@
 				<c:otherwise><img src="${root}resources/images/thumb/no_profile.png" alt="${feed.profile.proname}님의 프로필 썸네일" onload="squareTrim($(this), 55)"></c:otherwise>
 			</c:choose>
 			</p>
-			<textarea name="${content}" placeholder="${feed.profile.proname} 님, 무슨 생각을 하고 계신가요?">${feedContent}</textarea>
+			<textarea name="${content}" placeholder="${feed.profile.proname} 님, 무슨 생각을 하고 계신가요?" required="required">${feedContent}</textarea>
 		</div>
 		<div class="file_thumbnail mk_thumb box">
 			<ul>

@@ -293,13 +293,13 @@
 						}else if('${login.pronum}'!=data[index].pronum){
 							delbtn = '';
 						}else{
-							'<button class="btn_pop btn_delete btn_cmmt" data-layer="delete_cmmt" data-value="'+data[index].mcnum+'"><em class="snd_only">삭제하기</em></button></p>'
+							delbtn='<button class="btn_pop btn_delete btn_cmmt" data-layer="delete_cmmt" data-value="'+data[index].mcnum+'"><em class="snd_only">삭제하기</em></button></p>'
 						}
 						comments.append('<li>'+
 								'<a href="${root }user/?pronum='+data[index].pronum+'" class="pf_picture">'+
 								prophototag+
 								'</a><p class="cmt_content">'+
-									'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].mcauthor+'</a>'+
+									'<a href="${root }user/?pronum='+data[index].pronum+'" class="cmt_name">'+data[index].mcauthor+'</a>&nbsp;'+
 									data[index].mccontent+
 									'<span class="cmt_date">'+data[index].mcdate1+'</span>'+
 									delbtn+
@@ -324,6 +324,7 @@
 					if(thisValues.find('.fd_group').length==0){
 						$.post('${root}hot/cmmtadd','mpnum='+thisnum+'&pronum='+pronum+'&pronum_sync='+pronum_sync+'&mcauthor='+author+'&mccontent='+content,function(){
 							location.reload();
+							
 						});
 					//그룹피드 댓글등록
 					}else{
@@ -387,7 +388,7 @@
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
 												<c:choose>
-													<c:when test="${joinGroup.group.grphoto eq null }">
+													<c:when test="${empty joinGroup.group.grphoto }">
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
 																<span><img src="${root}resources/images/thumb/no_profile.png"
@@ -412,7 +413,7 @@
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
 												<c:choose>
-													<c:when test="${joinGroup.group.grphoto eq null }"> 
+													<c:when test="${empty joinGroup.group.grphoto }"> 
 														<li>
 															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
 																<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
@@ -590,7 +591,7 @@
 										</c:forEach>
 									</ul>
 									<c:if test="${feedList.mptotal gt 3 }">
-										<button class="cmt_btn_more mc"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
+										<button class="cmt_btn_more mc"><span class="snd_only">1</span>댓글 더 보기</button>
 									</c:if>
 								</div>
 								<c:if test="${login ne null }">
@@ -757,7 +758,7 @@
 										</c:forEach>
 									</ul>
 									<c:if test="${feedList.gptotal gt 3 }">
-										<button class="cmt_btn_more gc"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
+										<button class="cmt_btn_more gc"><span class="snd_only">1</span>댓글 더 보기</button>
 									</c:if>
 								</div>
 								<c:if test="${login ne null }">

@@ -18,48 +18,8 @@
    <link rel="shortcut icon" href="${root }resources/favicon.ico">
    <title>FESTA</title>
    <script type="text/javascript">
-   function btn_close(){
-       document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
-       var url = window.location.href;
-   	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
-   		window.location.href='${root}';
-   	}
-}
-      $(document).ready(function(){
-    	  var cookie = '${cookie.loginCookie.value}';
-    	  var login = '${login ne null}';
-
-    	  if(cookie!=''&&login=='false'){
-    	     openPop('loginCookie',none,btn_close);
-    	  }
-    	  
-    	  
-    	  setInterval(function(){
-    		  setInterval(function(){
-    	 		   $.post('${root}member/loginSession','',function(data){
-    	 		      if(data==''&&document.cookie!=''){
-    	 		         clearInterval();
-    	 		         openPop('loginCookie',none,btn_close);
-    	 		      }
-    	 		   });
-    	 		},1000*60);
-
-    	  $('#btnCookie').on('click',function(){
-    	  	$.post('${root}member/loginCookie','id='+cookie,function(data){
-    	  		if (data.prorn == '0') {
-    	  			location.reload();
-    	  		} else if (data.prorn == '1') {
-    	  			location.href = "${root}member/stop";
-    	  		} else if (data.prorn == '2') {
-    	  			location.href = "${root}member/kick";
-    	  		} else if (data.prorn == '3') {
-    	  			location.reload();
-    	  		} else if (data.prorn == '4') {
-    	  			location.href = "${root}";
-    	  		}
-    	  	});
-    	  });
-            
+      $(document).ready(function(){ 
+    	 
          //parameter 추출
             $.urlParam = function(name){
                 var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
@@ -90,11 +50,16 @@
             else{
             	$('#proprovide').val(0);
             }
+            if($('#propw').val()=='123123123a'){
+            	$('#pwok').text('');
+        		 $('#pwok').show();
+        	 } 
             
          //이메일 형식 유효성 검사
          $('#email_check').on('click',function(){
             var id = $('#proid').val();
-            var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+            var regExp = /^[0-9a-zA-Z]([a-zA-Z0-9_\-])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+            
             if(id.match(regExp)!=null){ 
                $.post('${root}member/join/idcheck','id='+id,function(data){
                    if(data == '0'){
@@ -118,7 +83,7 @@
                $("#idfail").hide();
                $("#idok").hide();
             }
-            if($('#proid').attr("readonly")=="readonly" && $('#proname').val() != "" && $('#pwok').attr("style")=="display: block;"  && $('#datefail').attr("style")=="display: none;" && $('input:radio[name=projender]').is(':checked') ==true &&	$('input:checkbox[id=festa10]').is(':checked')==true && $('input:checkbox[id=festa11]').is(':checked')==true && $('input:checkbox[id=festa12]').is(':checked')==true && $('#proaddr').val() != "관심지역"){
+            if(	$('#proid').attr("readonly")=="readonly" && $('#proname').val() != "" && $('#pwok').attr("style")=="display: block;"  && $('#datefail').attr("style")=="display: none;" && $('input:radio[name=projender]').is(':checked') ==true &&	$('input:checkbox[id=festa10]').is(':checked')==true && $('input:checkbox[id=festa11]').is(':checked')==true && $('input:checkbox[id=festa12]').is(':checked')==true && $('#proaddr').val() != "관심지역"){
          			$('#joinBtn').prop('type','submit');
 	            }
 	            else{
@@ -469,14 +434,25 @@
                         <input type="checkbox" class="comm_chk" id="festa11" name="serviceCheck">
                         <label for="festa11">페스타 이용약관 동의</label>
                         <div class="scrBar">
-                           이용약관을 입력해주세요.
+                           여러분을 환영합니다.
+페스타 서비스 및 제품(이하 ‘서비스’)을 이용해 주셔서 감사합니다.<br> 본 약관은 다양한 페스타 서비스의 이용과 관련하여 페스타 서비스를 제공하는 페스타 주식회사(이하 ‘페스타’)와 이를 이용하는 페스타 서비스 회원(이하 ‘회원’) 또는 비회원과의 관계를 설명하며, 
+<br>아울러 여러분의 페스타 서비스 이용에 도움이 될 수 있는 유익한 정보를 포함하고 있습니다.
+<br>페스타 서비스를 이용하시거나 페스타 서비스 회원으로 가입하실 경우 여러분은 본 약관 및 관련 운영 정책을 확인하거나 동의하게 되므로, 
+<br>잠시 시간을 내시어 주의 깊게 살펴봐 주시기 바랍니다.<br>
+<br><b>여러분이 제공한 콘텐츠를 소중히 다룰 것입니다.</b><br>
+<br>페스타는 여러분이 게재한 게시물이 페스타는 서비스를 통해 다른 이용자들에게 전달되어 우리 모두의 삶을 더욱 풍요롭게 해줄 것을 기대합니다.
+<br>게시물은 여러분이 타인 또는 자신이 보게 할 목적으로 페스타는 서비스 상에 게재한 부호, 문자, 음성, 음향, 그림, 사진, 동영상, 링크 등으로 구성된 각종 콘텐츠 자체 또는 파일을 말합니다.
                         </div>
                      </dd>
                      <dd>
                         <input type="checkbox" class="comm_chk" id="festa12" name="privacyCheck">
                         <label for="festa12">개인정보 수집 및 이용에 동의</label>
                         <div class="scrBar">
-                           개인정보 처리방침을 입력해주세요.
+                           정보통신망법 규정에 따라 페스타에 회원가입 신청하시는 분께 수집하는 개인정보의 항목, 개인정보의 수집 및 이용목적, 개인정보의 보유 및 이용기간을 안내 드리오니 자세히 읽은 후 동의하여 주시기 바랍니다.<br>
+<br>
+1. 수집하는 개인정보<br>
+<br>이용자는 회원가입을 하지 않아도 정보 검색, 뉴스 보기 등 대부분의 페스타 서비스를 회원과 동일하게 이용할 수 있습니다. 
+<br>이용자가 메일, 캘린더, 카페, 블로그 등과 같이 개인화 혹은 회원제 서비스를 이용하기 위해 회원가입을 할 경우, 페스타 서비스 이용을 위해 필요한 최소한의 개인정보를 수집합니다.
                         </div>
                      </dd>
                   </dl>

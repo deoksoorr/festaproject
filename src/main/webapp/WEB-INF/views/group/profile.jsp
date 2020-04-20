@@ -280,7 +280,7 @@
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
 												<c:choose>
-													<c:when test="${joinGroup.group.grphoto eq null }">
+													<c:when test="${joinGroup.group.grphoto eq null || joinGroup.group.grphoto eq ''}">
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
 																<span><img src="${root }resources/upload/thumb/no_profile.png"
@@ -305,7 +305,7 @@
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
 												<c:choose>
-													<c:when test="${joinGroup.group.grphoto eq null }"> 
+													<c:when test="${joinGroup.group.grphoto eq null || joinGroup.group.grphoto eq '' }"> 
 														<li>
 															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
 																<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
@@ -427,7 +427,7 @@
 								</c:if>
 							</dd>
 							<c:choose>
-								<c:when test="${detail.grphoto eq null }">
+								<c:when test="${detail.grphoto eq null || detail.grphoto eq ''}">
 									<dd class="pf_picture">
 										<img src="${root }resources/upload/thumb/no_profile.png" alt="${detail.grname } 그룹 썸네일">
 									</dd>
@@ -470,7 +470,7 @@
 									<p class="pf_picture">
 										<input type="file" id="festa2" name="files" accept="image/*">
 										<c:choose>
-											<c:when test="${detail.grphoto eq null }">
+											<c:when test="${detail.grphoto eq null || detail.grphoto eq ''}">
 												<input type="hidden" id="grphoto" name="grphoto" value="" />
 												<img src="${root}resources/images/thumb/no_profile.png" alt="그룹의 프로필 썸네일">	
 											</c:when>
@@ -547,7 +547,7 @@
 							<li class="set_chk box">
 								<p>그룹 설정</p>
 								<div>
-									<input type="checkbox" class="comm_rdo rdo_pop btn_pop" id="festa8" name="festa8" data-layer="del">
+									<input type="checkbox" class="comm_rdo rdo_pop" id="festa8" name="festa8" data-layer="del">
 									<label for="festa8">그룹 삭제</label>
 									<p class="txt_explan">
 										그룹 삭제 시 프로필 및 공유한 피드가 모두 삭제되며, 복구가 불가능합니다.<br>
@@ -622,9 +622,6 @@
 			</form>
 		</div>
 	</div>
-	<button type="button" class="btn_close">
-		<em class="snd_only">창 닫기</em>
-	</button>
 	
 	<div id="groupfail" class="fstPop">
 		<div class="confirm_wrap pop_wrap">
@@ -647,7 +644,7 @@
 	</div>
 	
 	<div id="edit" class="fstPop">
-		<div class="out_wrap pop_wrap">
+		<div class="confirm_wrap pop_wrap">
 			<h3 class="pop_tit">정보를 수정하시겠습니까?</h3>
 			<input type="hidden" id="num" value="">
 			<div class="btn_box">
@@ -657,9 +654,6 @@
 				</ul>
 			</div>
 		</div>
-		<button type="button" class="btn_close">
-			<em class="snd_only">창 닫기</em>
-		</button>
 	</div>
 	
 	<!-- #팝업 처리완료 { -->
@@ -685,7 +679,6 @@
 	<script type="text/javascript">
 		rdoPop();
 		setOneFile();
-		btnPop('btn_pop2');
 	</script>
 </body>
 </html>

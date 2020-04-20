@@ -142,7 +142,14 @@
 	}
 	
 	$(document).ready(function(){
-
+		setTimeout(function() {
+			var scr = $('.text.box .scrBar');
+			var slide = $('.feed_viewer .thumb_slide');
+			var images = $('.feed_viewer .thumb_slide img');
+			sliderLoad(slide);
+			scrBar(scr);
+			squareTrim(images, 290);
+		}, 1000);
 		//좋아요버튼 갯수조절
 	    var good = $('.feed_viewer .feed_options');
 		//로그인상태일때
@@ -192,6 +199,8 @@
 				}
 			}
 		});
+		
+		
 	});
 </script>
 <!-- #팝업 피드 -->
@@ -305,7 +314,7 @@
 						</c:forEach>
 					</ul>
 					<c:if test="${feedDetail.mptotal gt 3 }">
-						<button class="cmt_btn_more mc" onclick="mored($(this))"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
+						<button class="cmt_btn_more mc" onclick="mored($(this))"><span class="snd_only">1</span>댓글 더 보기</button>
 					</c:if>
 				</div>
 				<c:if test="${login ne null }">
@@ -465,7 +474,7 @@
 						</c:forEach>
 					</ul>
 					<c:if test="${feedDetail.gptotal gt 3 }">
-						<button class="cmt_btn_more gc" onclick="mored($(this))"><span class="snd_only">1</span>3개의 댓글 더 보기</button>
+						<button class="cmt_btn_more gc" onclick="mored($(this))"><span class="snd_only">1</span>댓글 더 보기</button>
 					</c:if>
 				</div>
 				<c:if test="${login ne null }">

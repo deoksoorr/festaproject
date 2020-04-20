@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:url value="/" var="root"></c:url>
 <c:url value="/resources/upload" var="upload"></c:url>
 <!DOCTYPE html>
@@ -258,14 +259,12 @@
 				<h4 class="sub_tit">캠핑장 사진</h4>
 				<c:if test="${!empty campdetail.caphoto }">
 					<div class="thumb_slide">
-						<div class="thumb_slide">
-							<c:set var="caphoto" value="${campdetail.caphoto }" />
-							<c:forTokens items="${caphoto }" delims="," var="item">
-								<div class="swiper-slide">
-									<img src="${upload }/${item }" alt="">
-								</div>
-							</c:forTokens>
-						</div>
+						<c:set var="caphoto" value="${campdetail.caphoto }" />
+						<c:forTokens items="${caphoto }" delims="," var="item">
+							<div class="swiper-slide">
+								<img src="${upload }/${item }" alt="">
+							</div>
+						</c:forTokens>
 						<div class="swiper-pagination"></div>
 					</div>
 				</c:if>
@@ -292,7 +291,7 @@
 			<div class="container">
 				<h4 class="sub_tit">
 					<p>한줄평 <span>${reviewcount }개</span></p>
-					<p>평점 <span>${campdetail.caavg }점</span></p>
+					<p>평점 <span><fmt:formatNumber value="${campdetail.caavg}" pattern=".0" />점</span></p>
 				</h4>
 				<ul class="rate_list">
 				<c:choose>

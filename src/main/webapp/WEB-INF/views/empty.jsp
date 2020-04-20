@@ -135,7 +135,7 @@
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
 												<c:choose>
-													<c:when test="${joinGroup.group.grphoto eq null }">
+													<c:when test="${empty joinGroup.group.grphoto }">
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
 																<span><img src="${root}resources/images/thumb/no_profile.png"
@@ -160,7 +160,7 @@
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
 												<c:choose>
-													<c:when test="${joinGroup.group.grphoto eq null }"> 
+													<c:when test="${empty joinGroup.group.grphoto }"> 
 														<li>
 															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
 																<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>

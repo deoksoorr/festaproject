@@ -18,46 +18,7 @@
 	<link rel="shortcut icon" href="${root }resources/favicon.ico">
 	<title>FESTA</title>
 	<script type="text/javascript">
-	function btn_close(){
-	       document.cookie = 'loginCookie' + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;path=/';
-	       var url = window.location.href;
-	   	if(url.indexOf('group')>0||url.indexOf('news')>0||url.indexOf('user')>0||url.indexOf('admin')>0||url.indexOf('empty')>0){
-	   		window.location.href='${root}';
-	   	}
-	}
 		$(document).ready(function(){
-			var cookie = '${cookie.loginCookie.value}';
-			var login = '${login ne null}';
-
-			if(cookie!=''&&login=='false'){
-			   openPop('loginCookie',none,btn_close);
-			}
-			
-			setInterval(function(){
-		 		   $.post('${root}member/loginSession','',function(data){
-		 		      if(data==''&&document.cookie!=''){
-		 		         clearInterval();
-		 		         openPop('loginCookie',none,btn_close);
-		 		      }
-		 		   });
-		 		},1000*60);
-
-			$('#btnCookie').on('click',function(){
-				$.post('${root}member/loginCookie','id='+cookie,function(data){
-					if (data.prorn == '0') {
-						location.reload();
-					} else if (data.prorn == '1') {
-						location.href = "${root}member/stop";
-					} else if (data.prorn == '2') {
-						location.href = "${root}member/kick";
-					} else if (data.prorn == '3') {
-						location.reload();
-					} else if (data.prorn == '4') {
-						location.href = "${root}";
-					}
-				});
-			});
-		      
 		      $('#enjoyFesta').on('click',function(){
 		    	 location.href="${root}"; 
 		      });

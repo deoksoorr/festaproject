@@ -18,30 +18,18 @@
 	<title>FESTA</title>
 	<script type="text/javascript">
 	$(function(){
-		var cookie = '${cookie.loginCookie.value}';
-		var login = '${login}';
-	    
-		if(cookie!=''&&login==''){
-			openPop('loginCookie');
-		}
-	    
-		$('#btnCookie').on('click',function(){
-			$.post('${root}member/loginCookie','id='+cookie,function(data){
-				if (data.prorn == '0') {
-					location.reload();
-				} else if (data.prorn == '1') {
-					location.href = "${root}member/stop";
-				} else if (data.prorn == '2') {
-					location.href = "${root}member/kick";
-				} else if (data.prorn == '3') {
-					location.reload();
-				} else if (data.prorn == '4') {
-					location.href = "${root}";
-				}
-			});
-		});
-		
 		paramTop();
+		
+		if ('${login eq null}' == 'true') {
+			var newfeedBtn = $('#gnb').find('li').eq(2).find('a');
+			newfeedBtn.on('click', function(e) {
+				e.preventDefault();
+				openPop('alert');
+			});
+		}
+		$('#loginBtn').on('click', function() {
+			$('#alert').bPopup().close();
+		});
 		
 		var container = $('.result_area .camp_list'),
 		li = container.find('li'),
@@ -336,12 +324,12 @@
 	</div>
 </div>
 <!-- #팝업 { -->
-<div id="loginCookie" class="fstPop">
+<div id="alert" class="fstPop">
 	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">로그인을 유지하시겠습니까?</p>
+		<h4 class="pop_tit">로그인이 필요한 서비스입니다.</h4>
 		<ul class="comm_buttons">
-			<li><button type="button" class="btn_close comm_btn cnc">로그아웃</button></li>
-			<li><button type="button" id="btnCookie" class="ok comm_btn cfm">확인</button></li>
+			<li><button type="button" class="btn_close comm_btn cnc">닫기</button></li>
+			<li><a href="${root}member/login" id="loginBtn" class="comm_btn cfm btn_pop">로그인</a></li>
 		</ul>
 	</div>
 </div>

@@ -111,6 +111,20 @@
 		order by gcdate desc
 	</select>
 	
+	<!-- 내 팔로잉유저 피드댓글더보기 -->
+	<select id="followingCmmtMore" parameterType="MyPostVo" resultMap="cmmt">
+		select * from (select @rownum:=@rownum+1 as prorn,a.*,b.prophoto,b.proname from mycomment
+		 a inner join profile b on a.pronum13=b.pronum,(select @rownum:=0) r where mpnum1=#{mpnum} order by mcdate desc)
+		  c where prorn<![CDATA[ >= ]]>#{pageSearch.startnum} and prorn<![CDATA[ <= ]]>#{pageSearch.endnum}+1
+	</select>
+	
+	<!-- 내 가입그룹 피드댓글더보기 -->
+	<select id="joingroupCmmtMore" parameterType="GroupPostVo" resultMap="groupcmmt">
+		select * from (select @rownum:=@rownum+1 as prorn,a.*,b.prophoto,b.proname from groupcomment a inner join profile b
+		 on a.pronum4=b.pronum,(select @rownum:=0) r where gpnum1=#{gpnum} order by gcdate desc) c where
+		  prorn<![CDATA[ >= ]]>#{pageSearch.startnum} and prorn<![CDATA[ <= ]]>#{pageSearch.endnum}+1
+	</select>
+	
 	<!-- 화면출력 end -->
 	<!-- 피드,댓글 수정,등록,삭제 start -->
 	

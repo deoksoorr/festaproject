@@ -233,7 +233,7 @@
 			window.location.reload();
 		})//비밀번호변경 유효성 종료
 		
-		$('#googleLogin').on("clifk",function(){
+		$('#googleLogin').on("click",function(){
 			console.log("클릭");
 		});
 	});
@@ -267,6 +267,14 @@
 						<script>
 						      function onSignIn(googleUser) {
 						        // Useful data for your client-side scripts:
+						        	
+						        var auth2 = gapi.auth2.getAuthInstance();
+						        auth2.disconnect();
+
+								setTimeout(function(){
+									
+								},1000);
+						        
 						        var profile = googleUser.getBasicProfile();
 								$.get("${root}member/socialJoin?id="+profile.getEmail()+"&proname="+profile.getName()+"&proprovide=1",function(data){
 									if(data.prorn==0){
@@ -278,9 +286,9 @@
 								});
 						        // The ID token you need to pass to your backend:
 						        var id_token = googleUser.getAuthResponse().id_token;
-						        console.log("ID Token: " + id_token);
-      }
-    </script>
+								
+      							}
+  					  </script>
 					</dd>
 				</dl>
 				<ul class="lg_find">

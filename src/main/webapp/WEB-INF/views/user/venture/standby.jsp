@@ -4,9 +4,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <c:url value="/" var="root" />
 <c:url value="/resources/upload" var="upload" />
-<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
-   <c:redirect url="/empty"/>
-</c:if>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -68,7 +65,7 @@
 	</script>
 </head>
 <body>
-<c:if test="${sessionScope.login eq null}">
+<c:if test="${sessionScope.login eq null and empty cookie.loginCookie.value}">
    <c:redirect url="/empty"/>
 </c:if>
 <c:if test="${sessionScope.login ne null }">
@@ -97,7 +94,7 @@
 							<li><a href="${root}member/login" id="btn_pop" class="btn_pop">로그인</a></li>
 						</c:if>
 						<c:if test="${login ne null }">
-							<li><a href="${root}user/index">마이페이지</a></li>
+							<li><a href="${root}user/?pronum=${login.pronum}">마이페이지</a></li>
 						</c:if>
 					</ul>
 					<c:if test="${login ne null }">
@@ -107,7 +104,7 @@
 							</button>
 							<dl class="menu_box" tabindex="0">
 								<dt>
-									<b>${login.proname }</b>
+									<b>${login.proname }님 환영합니다.</b>
 								</dt>
 								<dd>
 									<span class="btn_mylist">나의 그룹</span>
@@ -115,10 +112,10 @@
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
 												<c:choose>
-													<c:when test="${joinGroup.group.grphoto eq null }">
+													<c:when test="${joinGroup.group.grphoto eq null || joinGroup.group.grphoto eq ''}">
 														<li><a
 															href="${root }group/?grnum=${joinGroup.grnum}&pronum=${login.pronum}">
-																<span><img src="${root }resources/upload/thumb/no_profile.png"
+																<span><img src="${root}resources/images/thumb/no_profile.png"
 																	alt="${joinGroup.group.grname } 그룹 썸네일"></span> <b>${joinGroup.group.grname }</b>
 														</a></li>
 													</c:when>
@@ -140,7 +137,7 @@
 										<ul>
 											<c:forEach items="${joinGroup }" var="joinGroup">
 												<c:choose>
-													<c:when test="${joinGroup.group.grphoto eq null }"> 
+													<c:when test="${joinGroup.group.grphoto eq null || joinGroup.group.grphoto eq ''}"> 
 														<li>
 															<a style="cursor: pointer" onclick="window.open('${root}group/chat?grnum=${joinGroup.grnum }','Festa chat','width=721,height=521,location=no,status=no,scrollbars=no');">
 																<span><img src="${root}resources/images/thumb/no_profile.png" alt="${joinGroup.group.grname } 그룹 썸네일"></span>
@@ -165,27 +162,19 @@
 									<span class="btn_mylist">나의 캠핑장</span>
 									<div class="my_list">
 										<ul>
-											<c:forEach items="${bookMark}" var="bookMark">
-												<li><a
-													href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
-														<span> <c:set var="image"
-																value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
-															<c:if
-																test="${!empty bookMark.camp.caphoto && empty image}">
-																<img src="${upload}/${bookMark.camp.caphoto}"
-																	alt="${bookMark.camp.caname}">
-															</c:if> <c:if
-																test="${!empty bookMark.camp.caphoto && !empty image}">
-																<img src="${upload}/${image}"
-																	alt="${bookMark.camp.caname}">
-															</c:if> <c:if
-																test="${empty bookMark.camp.caphoto && empty image}">
-																<img src="${root}resources/images/thumb/no_profile.png"
-																	alt="${bookMark.camp.caname}">
-															</c:if>
-													</span> <b>${bookMark.camp.caname}</b>
-												</a></li>
-											</c:forEach>
+										<c:forEach items="${bookMark}" var="bookMark">
+											<li>
+												<a href="${root}camp/detail?canum=${bookMark.camp.canum}&caaddrsel=${bookMark.camp.caaddrsel}">
+													<span>
+														<c:set var="image" value="${fn:substringBefore(bookMark.camp.caphoto,',')}"></c:set>
+														<c:if test="${!empty bookMark.camp.caphoto && empty image}"><img src="${upload}/${bookMark.camp.caphoto}" alt="${bookMark.camp.caname}"></c:if>
+														<c:if test="${!empty bookMark.camp.caphoto && !empty image}"><img src="${upload}/${image}" alt="${bookMark.camp.caname}"></c:if>
+														<c:if test="${empty bookMark.camp.caphoto && empty image}"><img src="${root}resources/images/thumb/no_profile.png" alt="${bookMark.camp.caname}"></c:if>
+													</span>
+													<b>${bookMark.camp.caname}</b>
+												</a>
+											</li>
+										</c:forEach>
 										</ul>
 									</div>
 								</dd>
@@ -197,63 +186,7 @@
 							</dl>
 						</div>
 					</c:if>
-					<c:if test="${login ne null }">
-						<div id="userMenu" class="fstLyr">
-							<button class="btn_menu">
-								<em class="snd_only">나의 메뉴 더보기</em>
-							</button>
-							<dl class="menu_box" tabindex="0">
-								<dt>
-									<b>${login.proname }</b>
-								</dt>
-								<dd>
-									<span class="btn_mylist">나의 그룹</span>
-									<div class="my_list">
-										<ul>
-											<c:forEach items="${joinGroup }" var="joinGroup">
-												<li><a
-													href="${root }group?grnum=${joinGroup.group.grnum}"> <span><img
-															src="http://placehold.it/45x45" alt="입돌아간다 그룹 썸네일"></span>
-														<b>${joinGroup.group.grname }</b>
-												</a></li>
-											</c:forEach>
-										</ul>
-									</div>
-								</dd>
-								<dd>
-									<span class="btn_mylist">나의 채팅</span>
-									<div class="my_list">
-										<ul>
-											<c:forEach items="${joinGroup }" var="joinGroup">
-												<li><a href=""> <span><img
-															src="http://placehold.it/45x45" alt="입돌아간다 그룹 썸네일"></span>
-														<b>${joinGroup.group.grname }</b>
-												</a></li>
-											</c:forEach>
-										</ul>
-									</div>
-								</dd>
-								<dd>
-									<span class="btn_mylist">나의 캠핑장</span>
-									<div class="my_list">
-										<ul>
-											<c:forEach items="${bookMark }" var="bookMark">
-												<li><a href="${root }camp?canum=${bookMark.camp.canum}">
-														<span><img src="http://placehold.it/45x45"
-															alt="캠핑장 썸네일"></span> <b>${bookMark.camp.caname }</b>
-												</a></li>
-											</c:forEach>
-										</ul>
-									</div>
-								</dd>
-								<dd class="btn_logout">
-									<form>
-										<a href="${root}member/logout" class="btn_pop">로그아웃</a>
-									</form>
-								</dd>
-							</dl>
-						</div>
-					</c:if>
+					
 				<button type="button" id="btnTop"><em class="snd_only">맨 위로</em></button>
 			</div>
 		</div>

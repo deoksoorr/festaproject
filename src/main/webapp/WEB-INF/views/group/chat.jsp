@@ -159,7 +159,7 @@
 			<ul class="chat_info box">
 				<li class="pf_picture">
 					<c:choose>
-						<c:when test="${detail.grphoto eq null }">
+						<c:when test="${detail.grphoto eq null || detail.grphoto eq ''}">
 							<img src="${root}resources/images/thumb/no_profile.png" alt="${detail.grname }  그룹 썸네일" onload="squareTrim($(this), 30)">
 						</c:when>
 						<c:otherwise>
@@ -183,9 +183,18 @@
 			</div>
 			<form class="message_form">
 				<input type="hidden" id="proid" value="${login.proid }" />
-				<a class="pf_picture" href="" target="_blank"> 
-					<img src="${upload }/${login.prophoto }" alt="나의 프로필 썸네일" onload="squareTrim($(this), 30)"> 
-				</a>
+				<c:choose>
+					<c:when test="${login.prophoto eq null || login.prophoto eq '' }">
+						<a class="pf_picture" href="" target="_blank"> 
+							<img src="${root}resources/images/thumb/no_profile.png" alt="나의 프로필 썸네일" onload="squareTrim($(this), 30)"> 
+						</a>
+					</c:when>
+					<c:otherwise>
+						<a class="pf_picture" href="" target="_blank"> 
+							<img src="${upload }/${login.prophoto }" alt="나의 프로필 썸네일" onload="squareTrim($(this), 30)"> 
+						</a>
+					</c:otherwise>
+				</c:choose>
 				<p class="msg_input">
 					<input type="hidden" id="lastchance" value="${detail.grnum }" />
 					<textarea class="msg_txt" id="chstmsg" name="" placeholder="메세지를 입력해주세요"></textarea>
@@ -203,9 +212,18 @@
 						<c:forEach items="${joinmember }" var="member">
 							<li>
 								<input type="hidden" value="${member.profile.pronum }" />
-								<a class="pf_picture" href="${root }user/?pronum=${member.profile.pronum}" target="_blank">
-									<img src="${upload}/${member.profile.prophoto}" alt="${member.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
-								</a>
+								<c:choose>
+									<c:when test="${member.profile.prophoto eq null || member.profile.prophoto eq '' }">
+										<a class="pf_picture" href="${root }user/?pronum=${member.profile.pronum}" target="_blank">
+											<img src="${root}resources/images/thumb/no_profile.png" alt="${member.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
+										</a>
+									</c:when>
+									<c:otherwise>
+										<a class="pf_picture" href="${root }user/?pronum=${member.profile.pronum}" target="_blank">
+											<img src="${upload}/${member.profile.prophoto}" alt="${member.profile.proname }님의 프로필 썸네일" onload="squareTrim($(this), 30)">
+										</a>
+									</c:otherwise>
+								</c:choose>
 								<a class="pf_name" href="${root }user/?pronum=${member.profile.pronum}" target="_blank">${member.profile.proname } (${member.profile.proid })</a>
 							</li>
 						</c:forEach>

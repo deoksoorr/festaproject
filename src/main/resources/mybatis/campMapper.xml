@@ -134,7 +134,7 @@
 	<!-- 해당캠핑장 한줄평출력 -->
 	<select id="campReview" parameterType="CampVo" resultMap="campreview">
 		<!-- select a.*,b.prophoto from campreview a inner join profile b on a.pronum5=b.pronum where canum1=#{canum} order by crdate desc -->
-		select * from (select @rownum:=@rownum+1 as crrn,a.*,b.prophoto from campreview a inner join profile b on a.pronum5=b.pronum,(select @rownum:=0) r where canum1=#{canum}) c where crrn<![CDATA[ >= ]]>#{pageSearch.startnum} and crrn<![CDATA[ <= ]]>#{pageSearch.endnum}
+		select * from (select @rownum:=@rownum+1 as crrn,a.*,b.prophoto from campreview a inner join profile b on a.pronum5=b.pronum,(select @rownum:=0) r where canum1=#{canum} order by crdate desc) c where crrn<![CDATA[ >= ]]>#{pageSearch.startnum} and crrn<![CDATA[ <= ]]>#{pageSearch.endnum}
 	</select>
 	
 	<!-- 한줄평 총 갯수출력 -->

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fin.festa.model.CampDaoImpl;
 import com.fin.festa.model.IndexDaoImpl;
 import com.fin.festa.model.MemberDaoImpl;
 import com.fin.festa.model.UserDaoImpl;
@@ -46,6 +47,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	IndexDaoImpl indexDao;
+	
+	@Autowired
+	CampDaoImpl campDao;
 	
 	//추가사항
 	//유저 댓글 더보기 비동기
@@ -293,7 +297,8 @@ public class UserServiceImpl implements UserService {
 
 		MyVentureVo myVenture = userDao.myVentureInfo(profileVo);
 		int campCheck = userDao.campCheck(myVenture);
-
+		System.out.println("myVenture : " + myVenture);
+		System.out.println("myVentureRequestCheck : " + myVentureRequestCheck);
 		session.setAttribute("groupCheck", groupCheck);
 
 		session.setAttribute("myVenture", myVenture);
@@ -408,6 +413,9 @@ public class UserServiceImpl implements UserService {
 	// 그룹 등록
 	@Override
 	public GroupVo groupInsertOne(HttpServletRequest req,MultipartFile[] files, GroupVo groupVo) {
+		UploadPhoto up = new UploadPhoto();
+		String grphoto = up.upload(files, req, groupVo);
+		groupVo.setGrphoto(grphoto);
 		HttpSession session = req.getSession();
 		ProfileVo profile = (ProfileVo) session.getAttribute("profile");
 		int ventureCheck = (int) session.getAttribute("ventureCheck");

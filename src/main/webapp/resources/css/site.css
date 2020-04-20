@@ -1841,7 +1841,7 @@ form .f_message.ok {
   float: left;
 }
 
-.fstPage li > a, .fstPage li > b {
+.fstPage li > a, .fstPage li > b, .fstPage li > span {
   display: block;
   width: 30px;
   height: 30px;
@@ -2259,7 +2259,7 @@ form .f_message.ok {
   position: relative;
   display: table-cell;
   vertical-align: middle;
-  width: 342px;
+  width: 341px;
   padding-right: 20px;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
@@ -3990,6 +3990,7 @@ form .f_message.ok {
   width: 0;
   height: 0;
   overflow: hidden;
+  visibility: hidden;
 }
 
 .camp_wrap .rate_form .rt_rates label {
@@ -4845,7 +4846,7 @@ form .f_message.ok {
 
 .profile_area .cnt_list b, .profile_area .cnt_list a {
   display: block;
-  margin: 0 auto;
+  margin: 10px auto 0;
   height: 1.2em;
   line-height: 1.2em;
   font-family: "GothamM";
@@ -6136,6 +6137,10 @@ form .f_message.ok {
   font-size: 18px;
 }
 
+.pop_wrap a.comm_btn {
+	line-height: 50px;
+}
+
 .pop_wrap .btn_close.comm_btn {
   position: relative;
   top: auto;
@@ -6553,4 +6558,15 @@ form .f_message.ok {
   text-decoration: underline;
   font-size: 15px;
 }
+
+#ventureImage .confirm_wrap {
+	width: 620px;
+}
+
+#ventureImage .scrBar {
+	margin-top: 30px;
+	max-height: 300px;
+	text-align: center;
+}
+
 /*# sourceMappingURL=site.css.map */

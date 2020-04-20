@@ -353,8 +353,10 @@
 <!-- #사업자등록증 { -->
 <div id="ventureImage" class="fstPop">
 	<div class="confirm_wrap pop_wrap">
-		<p class="pop_tit">사업자등록증 사진</p><br/>
-			<img alt="">
+		<p class="pop_tit">사업자등록증 사진</p>
+		<div class="scrBar">
+			<img>
+		</div>
 		<ul class="comm_buttons">
 			<li><button type="button" class="btn_close comm_btn cfm">확인</button></li>
 		</ul>
